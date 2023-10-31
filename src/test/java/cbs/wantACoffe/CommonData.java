@@ -1,5 +1,6 @@
 package cbs.wantACoffe;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -21,7 +22,7 @@ public class CommonData {
     }
     
     public static List<RegisteredUser> getRegUsersForGroupWithSuffix(final String suffix) {
-        return List.of(
+        List<RegisteredUser> users = List.of(
                 RegisteredUser.builder()
                         .username("Mariela" + suffix)
                         .email("mariela@mail.seo" + suffix)
@@ -37,6 +38,8 @@ public class CommonData {
                         .email("laura@mail.se" + suffix)
                         .password("1234")
                         .build());
+
+        return new ArrayList<RegisteredUser>(users);
     }
     
     public static Group getTestGroup() {

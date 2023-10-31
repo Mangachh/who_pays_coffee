@@ -14,6 +14,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.test.context.ActiveProfiles;
 
 import cbs.wantACoffe.CommonData;
 import cbs.wantACoffe.entity.Member;
@@ -22,6 +23,7 @@ import cbs.wantACoffe.exceptions.NullValueInUserDataException;
 import cbs.wantACoffe.exceptions.UsernameEmailAlreadyExistsException;
 import cbs.wantACoffe.repository.IRegisteredMemberRepo;
 
+@ActiveProfiles("h2_test")
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @TestMethodOrder(OrderAnnotation.class)
 public class GroupUserServiceIntegrationTest {
@@ -42,9 +44,8 @@ public class GroupUserServiceIntegrationTest {
 
     @BeforeEach
     void saveUsers() {
-        ArrayList<RegisteredUser> usersNew = new ArrayList<>(users);
         try{
-            for (RegisteredUser u : usersNew) {
+            for (RegisteredUser u : users) {
                 this.userRepo.save(u);
             }
         } catch (Exception e) {
