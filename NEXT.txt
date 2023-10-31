@@ -1,0 +1,8 @@
+- Create group
+- Create Member -> RegUser in group
+- Create Member in group
+- Get all the participants by group
+- Get all the groups by owner
+--------------
+- OJU!!! Check admin logic, is cramped
+- Check is token is in session!!!!!!!
