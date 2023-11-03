@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import cbs.wantACoffe.dto.CreateGroup;
 import cbs.wantACoffe.dto.GroupModel;
+import cbs.wantACoffe.dto.MemberGroup;
 import cbs.wantACoffe.entity.Group;
 import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.RegisteredUser;
+import cbs.wantACoffe.exceptions.UserNotExistsException;
 import cbs.wantACoffe.service.auth.IAuthService;
 import cbs.wantACoffe.service.group.IMemberService;
 import cbs.wantACoffe.service.group.IGroupService;
@@ -52,10 +54,7 @@ public class GroupController {
                     @RequestBody CreateGroup groupData) throws Exception {
 
             // get user
-            Long userId = this.authService.getUserIdByToken(
-                            AuthUtils.stringToToken(token));
-
-            RegisteredUser user = this.userService.findById(userId);
+            RegisteredUser user = this.getUserByToken(token);
 
             // Creamos primero el user-group
             // como estamos creando grupo, es admin sí o sí
@@ -88,17 +87,55 @@ public class GroupController {
     public ResponseEntity<List<GroupModel>> getAllGroupsByMember(
             @RequestHeader(AuthUtils.HEADER_AUTH_TXT) final String token) throws Exception {
         // pillamos id
-        Long id = this.authService.getUserIdByToken(AuthUtils.stringToToken(token));
-        RegisteredUser u = this.userService.findById(id);
-        List<Group> groups = this.groupService.findAllByRegUser(u);
+        RegisteredUser user = this.getUserByToken(token);
+        List<Group> groups = this.groupService.findAllByRegUser(user);
         List<GroupModel> model = groups.stream().map(g -> new GroupModel(g.getGroupId(), g.getGroupName())).toList();
 
         return ResponseEntity.ok().body(model);
     }
     
     @PostMapping(value = "add_member")
-    public ResponseEntity<String> addMemberToGroup() {
+    public ResponseEntity<String> addMemberToGroup(@RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token,
+            @RequestBody(required = true) MemberGroup memberGroup) throws Exception {
+
+        // pillamos el usuario que mete esto
+        RegisteredUser admin = this.getUserByToken(token);
+
+        // pillamos grupo donde queremos meter
+        Group group = this.groupService.findGroupById(memberGroup.getGroupId());
+
+        if (group.getMembers().stream().anyMatch(p -> p.getRegUser().equals(admin) && p.isAdmin()) == false) {
+            // throw exception
+            throw new Exception();
+        }
+
+        // mmm esto no me gusta... pero lo dejamos así.
+        RegisteredUser user;
+        try {
+            user = this.userService.findByUsername(memberGroup.getUsername());
+        } catch (UserNotExistsException e) {
+            user = null;
+        }
+
+        Member newMember = Member.builder()
+                .nickname(memberGroup.getNickname())
+                .group(group)
+                .regUser(user)
+                .build();
+
+        if (group.tryAddMember(newMember)) {
+            this.groupService.saveGroup(group);
+        } else {
+            // exception si ya existe.
+        }
+        
+        
         return null;
+    }
+    
+    private RegisteredUser getUserByToken(final String token) throws Exception {
+        Long id = this.authService.getUserIdByToken(AuthUtils.stringToToken(token));
+        return this.userService.findById(id);
     }
 }
 

@@ -48,7 +48,7 @@ public class Group {
     private String groupName;
 
     // create
-    @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.REMOVE })
+    @OneToMany(mappedBy = "group", fetch = FetchType.EAGER, cascade = { CascadeType.MERGE, CascadeType.REMOVE })
     @JsonBackReference
     @Builder.Default
     private List<Member> members = new ArrayList<>();
@@ -61,15 +61,17 @@ public class Group {
                 "isAdmin: " + String.valueOf(m.isAdmin() + ", ")).toList().toString() + "]";
     }
     
+    // mmm, esto se puede optimizar creo
     public boolean tryAddMember(final Member member) {
-        if (this.members.contains(member)) {
-            // exception???
-            return false;
-        } else {
-            this.members.add(member);
-            member.setGroup(this);
-            return true;
+        for (Member m : this.members) {
+            if (m.getRegUser() != null &&
+                    m.getRegUser().equals(member.getRegUser())) {
+                return false;
+            }
         }
-
+        
+        this.members.add(member);
+        member.setGroup(this);
+        return true;        
     }
 }
