@@ -105,6 +105,7 @@ public class AuthFilter extends OncePerRequestFilter {
 
         }
 
+        log.error("The user don't have permission to access {}", request.getRequestURI());
         response.sendError(403, "You don't have permissions");
     }
     

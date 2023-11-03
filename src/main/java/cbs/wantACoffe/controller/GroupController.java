@@ -126,7 +126,7 @@ public class GroupController {
         if (group.tryAddMember(newMember)) {
             this.groupService.saveGroup(group);
         } else {
-            // exception si ya existe.
+            // exception si aya existe.
         }
         
         
