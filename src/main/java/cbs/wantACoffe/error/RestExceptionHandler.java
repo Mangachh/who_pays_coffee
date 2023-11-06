@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
 import cbs.wantACoffe.exceptions.IncorrectPasswordException;
+import cbs.wantACoffe.exceptions.MemberAlreadyIsInGroup;
 import cbs.wantACoffe.exceptions.NullValueInUserDataException;
 import cbs.wantACoffe.exceptions.UserNotExistsException;
 import cbs.wantACoffe.exceptions.UsernameEmailAlreadyExistsException;
@@ -57,5 +58,14 @@ public class RestExceptionHandler {
         ErrorMessage error = new ErrorMessage(status, message);
         this.log.error("Execption raised: {}", message);
         return ResponseEntity.status(error.getStatus()).body(error);
+    }
+
+    /**********************************/
+    /*      GROUP EXCEPTIONS         */
+    /********************************/
+
+    @ExceptionHandler(MemberAlreadyIsInGroup.class)
+    private ResponseEntity<ErrorMessage> memberIsInGroup(MemberAlreadyIsInGroup e, WebRequest request) {
+        return this.createResponseEntity(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 }

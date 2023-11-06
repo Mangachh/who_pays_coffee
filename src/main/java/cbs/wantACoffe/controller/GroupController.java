@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import cbs.wantACoffe.dto.CreateGroup;
@@ -16,6 +17,7 @@ import cbs.wantACoffe.dto.MemberGroup;
 import cbs.wantACoffe.entity.Group;
 import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.RegisteredUser;
+import cbs.wantACoffe.exceptions.MemberAlreadyIsInGroup;
 import cbs.wantACoffe.exceptions.UserNotExistsException;
 import cbs.wantACoffe.service.auth.IAuthService;
 import cbs.wantACoffe.service.group.IMemberService;
@@ -41,6 +43,10 @@ public class GroupController {
     private final IGroupService groupService;
     private final IAuthService authService;
     private final IRegisteredUserService userService;
+
+    private static final String TYPE_ADMIN = "admin";
+    private static final String TYPE_MEMBER = "member";
+    private static final String TYPE_ALL = "all";
 
     /**
      * Añade un grupo a la base de datos.
@@ -85,10 +91,26 @@ public class GroupController {
      */
     @GetMapping
     public ResponseEntity<List<GroupModel>> getAllGroupsByMember(
-            @RequestHeader(AuthUtils.HEADER_AUTH_TXT) final String token) throws Exception {
+            @RequestHeader(AuthUtils.HEADER_AUTH_TXT) final String token,
+            @RequestParam final String type) throws Exception {
         // pillamos id
+
+        if (type == null || type.isBlank()) {
+            //exception
+            
+        }
+
         RegisteredUser user = this.getUserByToken(token);
-        List<Group> groups = this.groupService.findAllByRegUser(user);
+        List<Group> groups = switch(type){
+            case TYPE_ADMIN -> this.groupService.findAllByRegUserIsAdmin(user, true);
+            case TYPE_MEMBER -> this.groupService.findAllByRegUserIsAdmin(user, false);
+            case TYPE_ALL -> this.groupService.findAllByRegUser(user);
+            default -> null;
+        };
+        
+
+        
+        //List<Group> groups = this.groupService.findAllByRegUser(user);
         List<GroupModel> model = groups.stream().map(g -> new GroupModel(g.getGroupId(), g.getGroupName())).toList();
 
         return ResponseEntity.ok().body(model);
@@ -126,11 +148,11 @@ public class GroupController {
         if (group.tryAddMember(newMember)) {
             this.groupService.saveGroup(group);
         } else {
-            // exception si aya existe.
+            throw new MemberAlreadyIsInGroup();
         }
         
         
-        return null;
+        return ResponseEntity.ok("New member added");
     }
     
     private RegisteredUser getUserByToken(final String token) throws Exception {

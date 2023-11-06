@@ -1,9 +1,12 @@
 package cbs.wantACoffe.service.group;
 
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import cbs.wantACoffe.entity.Group;
 import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.RegisteredUser;
 import cbs.wantACoffe.repository.IMemberRepo;
@@ -37,6 +40,16 @@ public class MemberServiceImpl implements IMemberService {
     }
 
     @Override
+    public List<Group> findAllByRegUserIdAndIsAdminTrue(RegisteredUser user) {
+        return this.repo.findGroupByRegUserAndIsAdminTrue(user);
+    }
+
+    @Override
+    public List<Group> findAllByRegUserIdAndIsAdminFalse(RegisteredUser user) {
+        return this.repo.findGroupByRegUserAndIsAdminFalse(user);
+    }
+
+    @Override
     public Member updateNickname(String newNickname) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'updateNickname'");
@@ -59,6 +72,8 @@ public class MemberServiceImpl implements IMemberService {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'deleteGroupMember'");
     }
+
+    
 
 
     

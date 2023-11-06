@@ -42,9 +42,18 @@ public class GroupServiceImpl implements IGroupService {
     
     @Override
     public Group findGroupById(Long id) throws Exception {
-        return this.repo.findById(id).orElseThrow(()-> new Exception());
+        return this.repo.findById(id).orElseThrow(() -> new Exception());
+    }
+    
+    @Override
+    public List<Group> findAllByRegUser(RegisteredUser user) {
+        return this.repo.findAllByMembersRegUser(user);
     }
 
+    @Override
+    public List<Group> findAllByRegUserIsAdmin(RegisteredUser user, boolean isAdmin) {
+        return this.repo.findAllByMembersAndMembersIsAdminTrue(user.getUserId(), isAdmin);
+    }
     @Override
     public void deleteGroup(Group group) {
         // TODO Auto-generated method stub
@@ -79,11 +88,9 @@ public class GroupServiceImpl implements IGroupService {
         return null;
     }
 
-    @Override
-    public List<Group> findAllByRegUser(RegisteredUser user) {
-        // TODO Auto-generated method stub
-        return this.repo.findAllByMembersRegUser(user);
-    }
+    
+
+    
     
     
 }

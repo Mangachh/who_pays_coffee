@@ -72,6 +72,8 @@ public interface IGroupService {
      */
     List<Group> findAllByRegUser(final RegisteredUser user);
 
+    List<Group> findAllByRegUserIsAdmin(final RegisteredUser user, boolean isAdmin);
+
     /**
      * Intenta añadir un miembro al grupo
      * @param member

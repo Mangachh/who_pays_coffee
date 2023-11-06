@@ -1,5 +1,8 @@
 package cbs.wantACoffe.service.group;
 
+import java.util.List;
+
+import cbs.wantACoffe.entity.Group;
 import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.RegisteredUser;
 
@@ -22,5 +25,8 @@ public interface IMemberService {
     Member addGroupMember(final Member regUser);
     
     Member deleteGroupMember(final Long id);
+
+    List<Group> findAllByRegUserIdAndIsAdminTrue(final RegisteredUser user);
+    List<Group> findAllByRegUserIdAndIsAdminFalse(final RegisteredUser user);
 
 }
