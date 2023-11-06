@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import cbs.wantACoffe.dto.Token;
 import cbs.wantACoffe.dto.Token.TokenType;
 import cbs.wantACoffe.dto.user.RegisteredUserToken;
+import cbs.wantACoffe.dto.user.UserPassword;
 import cbs.wantACoffe.entity.RegisteredUser;
 import cbs.wantACoffe.exceptions.IncorrectPasswordException;
 import cbs.wantACoffe.exceptions.NullValueInUserDataException;
@@ -145,16 +146,16 @@ public class RegisteredUserController {
     @PutMapping("modPassword")
     public ResponseEntity<String> modifyPassword(@RequestHeader(
                 AuthUtils.HEADER_AUTH_TXT) final String header,
-            @RequestBody final String newPass) throws Exception {
+            @RequestBody final UserPassword newPass) throws Exception {
         
-        if (newPass == null || newPass.isEmpty()) {
+        if (newPass == null || newPass.getPassword().isEmpty()) {
             throw new NullValueInUserDataException();
         }
         
         Token token = AuthUtils.stringToToken(header);
         Long userId = this.authService.getUserIdByToken(token);
         RegisteredUser u = this.userService.findById(userId);
-        u.setPassword(newPass);
+        u.setPassword(newPass.getPassword());
         this.userService.saveNewUser(u);
         return ResponseEntity.ok().body("New Password accepted");
 
