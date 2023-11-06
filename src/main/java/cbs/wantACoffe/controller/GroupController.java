@@ -17,6 +17,7 @@ import cbs.wantACoffe.dto.MemberGroup;
 import cbs.wantACoffe.entity.Group;
 import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.RegisteredUser;
+import cbs.wantACoffe.exceptions.MemberAdminTypeUnknown;
 import cbs.wantACoffe.exceptions.MemberAlreadyIsInGroup;
 import cbs.wantACoffe.exceptions.UserNotExistsException;
 import cbs.wantACoffe.service.auth.IAuthService;
@@ -96,8 +97,7 @@ public class GroupController {
         // pillamos id
 
         if (type == null || type.isBlank()) {
-            //exception
-            
+            throw new MemberAdminTypeUnknown();            
         }
 
         RegisteredUser user = this.getUserByToken(token);
@@ -105,12 +105,9 @@ public class GroupController {
             case TYPE_ADMIN -> this.groupService.findAllByRegUserIsAdmin(user, true);
             case TYPE_MEMBER -> this.groupService.findAllByRegUserIsAdmin(user, false);
             case TYPE_ALL -> this.groupService.findAllByRegUser(user);
-            default -> null;
-        };
-        
+            default -> throw new MemberAdminTypeUnknown();
+        };  
 
-        
-        //List<Group> groups = this.groupService.findAllByRegUser(user);
         List<GroupModel> model = groups.stream().map(g -> new GroupModel(g.getGroupId(), g.getGroupName())).toList();
 
         return ResponseEntity.ok().body(model);
