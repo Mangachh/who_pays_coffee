@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import cbs.wantACoffe.TableNames;
 import cbs.wantACoffe.dto.group.IGroupInfo;
 import cbs.wantACoffe.entity.Group;
+import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.RegisteredUser;
 
 /**
@@ -23,17 +24,22 @@ public interface IGroupRepo extends JpaRepository<Group, Long> {
 
     List<Group> findAllByMembersRegUser(RegisteredUser user);
 
-    @Query(value = "SELECT g.group_id, g.group_name FROM groups g " +
-            "LEFT JOIN group_members gm USING(group_id) " +
-            "WHERE gm.reg_user_id = :id AND gm.is_admin = :isAdmin", nativeQuery = true)
+    @Query(
+            value= "SELECT g." + Group.COLUMN_ID_NAME + ", g." + Group.COLUMN_GROUP_NAME +
+            " FROM " + Group.TABLE_NAME + " g" + 
+            " LEFT JOIN " + Member.TABLE_NAME + " gm USING(" + Group.COLUMN_ID_NAME + ")" +
+                    " WHERE gm. " + Member.COLUMN_REG_USER_ID_NAME + " = :id " +
+                    " AND gm." + Member.COLUMN_IS_ADMIN_NAME + " = :isAdmin", 
+            nativeQuery = true)
     List<Group> findAllByMembersAndMembersIsAdminTrue(
             @Param("id") long id,
             @Param("isAdmin") boolean isAdmin);
             
-   @Query(
-        value = "SELECT g.group_name AS groupName, COUNT(gm.id) AS numMembers from " + TableNames.NAME_GROUP + " g " + //
-                        "LEFT JOIN " + TableNames.NAME_GROUP_MEMBERS + " gm USING(group_id)" + //
-                        "GROUP BY g.group_id; ",
+    @Query(
+        value = "SELECT g. " + Group.COLUMN_GROUP_NAME + " AS groupName, COUNT(gm." + Member.COLUMN_ID_NAME + ") AS numMembers" +
+        " FROM " + Group.TABLE_NAME + " g" + 
+        " LEFT JOIN " + Member.TABLE_NAME + " gm USING (" + Member.COLUMN_GROUP_ID_NAME + ")" + 
+        "GROUP BY g." + Group.COLUMN_ID_NAME ,
         nativeQuery = true
     )
     List<IGroupInfo> findAllGroupsAndCountMembers();
