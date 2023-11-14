@@ -2,6 +2,8 @@ package cbs.wantACoffe.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,6 +50,7 @@ public class GroupController {
     private static final String TYPE_ADMIN = "admin";
     private static final String TYPE_MEMBER = "member";
     private static final String TYPE_ALL = "all";
+        private final Logger log = LoggerFactory.getLogger(GroupController.class);
 
     /**
      * Añade un grupo a la base de datos.
@@ -58,10 +61,12 @@ public class GroupController {
      */
     @PostMapping(value = "add_group")
     public ResponseEntity<GroupModel> createGroup(@RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token, 
-                    @RequestBody CreateGroup groupData) throws Exception {
-
+            @RequestBody CreateGroup groupData) throws Exception {
+            
+           
             // get user
             RegisteredUser user = this.getUserByToken(token);
+            log.info("User {} wants to create a new group", user.getUsername());
 
             // Creamos primero el user-group
             // como estamos creando grupo, es admin sí o sí
@@ -79,7 +84,7 @@ public class GroupController {
             m.setGroup(g);
 
             this.groupService.saveGroup(g);
-
+            log.info("User {} creates a new group by name {}", user.getUsername(), g.getGroupName());
             return ResponseEntity.ok().body(
                             GroupModel.builder()
                                       .id(g.getGroupId())
@@ -97,12 +102,13 @@ public class GroupController {
             @RequestHeader(AuthUtils.HEADER_AUTH_TXT) final String token,
             @RequestParam final String type) throws Exception {
         // pillamos id
-
+         
         if (type == null || type.isBlank()) {
             throw new MemberAdminTypeUnknown();            
         }
 
         RegisteredUser user = this.getUserByToken(token);
+        log.info("User {} tries to get all their groups", user.getUsername());
         List<Group> groups = switch(type){
             case TYPE_ADMIN -> this.groupService.findAllByRegUserIsAdmin(user, true);
             case TYPE_MEMBER -> this.groupService.findAllByRegUserIsAdmin(user, false);
@@ -111,6 +117,7 @@ public class GroupController {
         };  
 
         List<GroupModel> model = groups.stream().map(g -> new GroupModel(g.getGroupId(), g.getGroupName())).toList();
+        log.info("User {} got {} groups", user.getUsername(), model.size());
         return ResponseEntity.ok().body(model);
     }
     
@@ -120,10 +127,10 @@ public class GroupController {
 
         // pillamos el usuario que mete esto
         RegisteredUser admin = this.getUserByToken(token);
-
+        
         // pillamos grupo donde queremos meter
         Group group = this.groupService.findGroupById(memberGroup.getGroupId());
-
+        log.info("User {} wants to add a new member into group{}", admin.getUsername(), group.getGroupName());
         if (group.getMembers().stream().anyMatch(p -> p.getRegUser().equals(admin) && p.isAdmin()) == false) {
             // throw exception
             throw new Exception();
@@ -133,8 +140,10 @@ public class GroupController {
         RegisteredUser user;
         try {
             user = this.userService.findByUsername(memberGroup.getUsername());
+            log.info("The new user is a registered_member by name {}", user.getUsername());
         } catch (UserNotExistsException e) {
             user = null;
+            log.info("The new user is not a registered user");
         }
 
         Member newMember = Member.builder()
@@ -145,6 +154,7 @@ public class GroupController {
 
         if (group.tryAddMember(newMember)) {
             this.groupService.saveGroup(group);
+            log.info("Member {} added correctly into group {}", newMember.getNickname(), group.getGroupName());
         } else {
             throw new MemberAlreadyIsInGroup();
         }
