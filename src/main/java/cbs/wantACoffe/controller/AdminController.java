@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 import cbs.wantACoffe.dto.AdminToken;
 import cbs.wantACoffe.dto.Token;
 import cbs.wantACoffe.dto.Token.TokenType;
+import cbs.wantACoffe.dto.user.BasicUserInfo;
 import cbs.wantACoffe.dto.user.LoginAdminUser;
 import cbs.wantACoffe.entity.AdminUser;
 import cbs.wantACoffe.exceptions.IncorrectPasswordException;
 import cbs.wantACoffe.exceptions.UserNotExistsException;
 import cbs.wantACoffe.repository.IAdminUserRepo;
-import cbs.wantACoffe.repository.IRegisteredMemberRepo.IBasicData;
 import cbs.wantACoffe.service.admin.IAdminService;
 import cbs.wantACoffe.service.auth.IAuthService;
 import cbs.wantACoffe.service.auth.IEncryptService;
@@ -52,12 +52,6 @@ public class AdminController {
 
     @Autowired
     private IAdminService adminService;
-
-    @Autowired
-    private IRegisteredUserService regUserService;
-
-    @Autowired
-    private IGroupService groupService;
     
     /**
      * Añadimos un {@link AdminUser}. De momento lo metemos así.
@@ -132,9 +126,9 @@ public class AdminController {
      * @return
      */
     @GetMapping(value = "r/getAllUsers")
-    public ResponseEntity<List<IBasicData>> getAllUsers() {
+    public ResponseEntity<List<BasicUserInfo>> getAllUsers() {
 
-        List<IBasicData> users = this.adminService.findAllRegisteredUsers();
+        List<BasicUserInfo> users = this.adminService.findAllRegisteredUsers();
         return ResponseEntity.ok().body(users);
     }
     

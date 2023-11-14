@@ -5,13 +5,13 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import cbs.wantACoffe.dto.user.BasicUserInfo;
 import cbs.wantACoffe.entity.AdminUser;
 import cbs.wantACoffe.exceptions.IncorrectPasswordException;
 import cbs.wantACoffe.exceptions.UserNotExistsException;
 import cbs.wantACoffe.repository.IAdminUserRepo;
 import cbs.wantACoffe.repository.IGroupRepo;
 import cbs.wantACoffe.repository.IRegisteredMemberRepo;
-import cbs.wantACoffe.repository.IRegisteredMemberRepo.IBasicData;
 import cbs.wantACoffe.service.auth.IEncryptService;
 import lombok.RequiredArgsConstructor;
 
@@ -67,7 +67,7 @@ public class AdminUserServiceImpl implements IAdminService{
     }
 
     @Override
-    public List<IBasicData> findAllRegisteredUsers() {
+    public List<BasicUserInfo> findAllRegisteredUsers() {
         
 
         return this.regUserRepo.findAllBasicData();

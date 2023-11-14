@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import cbs.wantACoffe.TableNames;
+import cbs.wantACoffe.dto.user.BasicUserInfo;
 import cbs.wantACoffe.entity.RegisteredUser;
 
 
@@ -28,13 +29,6 @@ public interface IRegisteredMemberRepo extends JpaRepository<RegisteredUser, Lon
     @Query(
         value = "SELECT email, username FROM " + TableNames.NAME_REGISTERED_USERS,
         nativeQuery = true)
-    List<IBasicData> findAllBasicData();
-
-
-    // TODO: change?
-    public interface IBasicData{
-        String getEmail();
-        String getName();
-    }
+    List<BasicUserInfo> findAllBasicData();    
     
 }
