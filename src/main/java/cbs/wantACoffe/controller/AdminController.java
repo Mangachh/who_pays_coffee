@@ -20,6 +20,7 @@ import cbs.wantACoffe.repository.IRegisteredMemberRepo.IBasicData;
 import cbs.wantACoffe.service.admin.IAdminService;
 import cbs.wantACoffe.service.auth.IAuthService;
 import cbs.wantACoffe.service.auth.IEncryptService;
+import cbs.wantACoffe.service.user.IRegisteredUserService;
 import cbs.wantACoffe.util.AuthUtils;
 import jakarta.annotation.PostConstruct;
 
@@ -49,6 +50,9 @@ public class AdminController {
 
     @Autowired
     private IAdminService adminService;
+
+    @Autowired
+    private IRegisteredUserService regUserService;
     
     /**
      * Añadimos un {@link AdminUser}. De momento lo metemos así.
@@ -57,11 +61,16 @@ public class AdminController {
     private void addUSer() {
         AdminUser admin = AdminUser.builder().username("Lluís").password(
                 encrypt.encryptPassword("1234")).build();
-        this.repo.save(admin);
-        // Generate token
-        Token t = this.auth.generateToken(admin, TokenType.ADMIN);
-        auth.addUserTokenToSession(t, admin);
-        System.out.println(t.toString());
+        try{
+            this.repo.save(admin);
+            // Generate token
+            Token t = this.auth.generateToken(admin, TokenType.ADMIN);
+            auth.addUserTokenToSession(t, admin);
+            System.out.println(t.toString());
+        } catch (Exception e) {
+            
+        }
+        
     }
 
     /**
@@ -118,9 +127,14 @@ public class AdminController {
      * @return
      */
     @GetMapping(value = "r/getAllUsers")
-    public ResponseEntity<List<IBasicData>> getAllUsers(){
+    public ResponseEntity<List<IBasicData>> getAllUsers() {
 
         List<IBasicData> users = this.adminService.findAllRegisteredUsers();
         return ResponseEntity.ok().body(users);
+    }
+    
+    @GetMapping(value = "r/countUsers")
+    public ResponseEntity<Long> getCountUsers() {
+        return ResponseEntity.ok().body(this.regUserService.countAllRegisteredUsers());
     }
 }

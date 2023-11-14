@@ -30,6 +30,8 @@ public interface IRegisteredMemberRepo extends JpaRepository<RegisteredUser, Lon
         nativeQuery = true)
     List<IBasicData> findAllBasicData();
 
+
+    // TODO: change?
     public interface IBasicData{
         String getEmail();
         String getName();

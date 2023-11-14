@@ -33,6 +33,16 @@ public class AdminUserServiceImpl implements IAdminService{
     private final IEncryptService cryptService;
 
     @Override
+    public AdminUser save(AdminUser admin) {
+        admin.setPassword(
+            this.cryptService.encryptPassword(admin.getPassword())
+        );
+
+        return this.adminRepo.save(admin);
+        
+    }
+
+    @Override
     public AdminUser findByUsername(String username) throws UserNotExistsException {
         return adminRepo.findByUsername(username).orElseThrow(() -> new UserNotExistsException());
     }

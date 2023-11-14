@@ -39,8 +39,9 @@ public class AdminUserServiceImplIntegrationTest {
     @BeforeAll
     static void addAdmin() {
         admin = CommonData.getTestAdmin();
-        admin.setUserId(null);        
+        admin.setUserId(null);
     }
+    
     
 
     @Test

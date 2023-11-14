@@ -15,6 +15,8 @@ import cbs.wantACoffe.repository.IRegisteredMemberRepo.IBasicData;
  */
 public interface IAdminService {
 
+    AdminUser save(AdminUser admin);
+
     AdminUser findById(Long id) throws UserNotExistsException;
     
     AdminUser findByUsername(String username) throws UserNotExistsException;

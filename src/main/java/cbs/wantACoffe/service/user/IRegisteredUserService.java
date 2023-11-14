@@ -81,5 +81,8 @@ public interface IRegisteredUserService {
      *                                       base de datos no corresponde con el pasado por
      *                                       parametro.
      */
-    RegisteredUser findByEmailAndCheckPass(final String username, final String password) throws UserNotExistsException, IncorrectPasswordException;
+    RegisteredUser findByEmailAndCheckPass(final String username, final String password)
+            throws UserNotExistsException, IncorrectPasswordException;
+    
+    Long countAllRegisteredUsers();
 }

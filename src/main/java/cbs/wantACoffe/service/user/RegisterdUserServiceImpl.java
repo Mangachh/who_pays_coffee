@@ -88,4 +88,9 @@ public class RegisterdUserServiceImpl implements IRegisteredUserService {
         this.userRepo.deleteById(id);
     }
 
+    @Override
+    public Long countAllRegisteredUsers() {
+        return this.userRepo.count();
+    }
+
 }

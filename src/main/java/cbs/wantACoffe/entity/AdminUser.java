@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +19,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = TableNames.NAME_ADMIN_USER,
-indexes = @Index(name="idx_admin_name", columnList = "username"))
+        indexes = @Index(name="idx_admin_name", columnList = "username"),
+        uniqueConstraints = @UniqueConstraint(name = "unique_admin_username", columnNames = "username"))
 /**
  * Clase del Usuario Administrador.
  */
