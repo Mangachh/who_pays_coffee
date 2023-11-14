@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import cbs.wantACoffe.TableNames;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,7 +34,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "groups", 
+@Table(name = TableNames.NAME_GROUP, 
         indexes = { @Index(name = "idx_group_group_name", columnList = "group_name"),
                 //@Index(name = "idx_group_group_owner", columnList = "group_owner_id")
         })

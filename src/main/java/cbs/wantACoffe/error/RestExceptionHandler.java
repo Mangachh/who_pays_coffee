@@ -57,7 +57,7 @@ public class RestExceptionHandler {
 
     private ResponseEntity<ErrorMessage> createResponseEntity(final HttpStatus status, final String message) {
         ErrorMessage error = new ErrorMessage(status, message);
-        this.log.error("Execption raised: {}", message);
+        this.log.error("Exception raised: {}", message);
         return ResponseEntity.status(error.getStatus()).body(error);
     }
 

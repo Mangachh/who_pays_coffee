@@ -59,9 +59,9 @@ public class AdminController {
                 encrypt.encryptPassword("1234")).build();
         this.repo.save(admin);
         // Generate token
-        //Token t = this.auth.generateToken(admin, TokenType.ADMIN);
-        //auth.addUserTokenToSession(t, admin);
-        //System.out.println(t.toString());
+        Token t = this.auth.generateToken(admin, TokenType.ADMIN);
+        auth.addUserTokenToSession(t, admin);
+        System.out.println(t.toString());
     }
 
     /**

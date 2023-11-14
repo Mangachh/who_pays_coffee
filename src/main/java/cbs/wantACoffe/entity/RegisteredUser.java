@@ -1,5 +1,6 @@
 package cbs.wantACoffe.entity;
 
+import cbs.wantACoffe.TableNames;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,7 +21,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Data
-@Table(name="registered_users", 
+@Table(name=TableNames.NAME_REGISTERED_USERS, 
        indexes = {@Index(name= "idx_username", columnList = "username"),
                   @Index(name= "idx_user_email", columnList = "email")})
 

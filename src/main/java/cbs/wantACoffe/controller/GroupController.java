@@ -65,30 +65,32 @@ public class GroupController {
 
             // Creamos primero el user-group
             // como estamos creando grupo, es admin sí o sí
-            Member m = this.memberService.saveGroupMember(user, groupData.getMemberName(), true);
+            Member m = this.memberService.saveGroupMember(user,
+                    groupData.getMemberName(),
+            true);
 
             // creamos el grupo
             Group g = Group.builder()
                             .groupName(groupData.getGroupName())
                             .members(List.of(m))
-                            .build();
-
+                    .build();
+            
+            // ponemos el grupo al miembro
             m.setGroup(g);
 
             this.groupService.saveGroup(g);
 
             return ResponseEntity.ok().body(
                             GroupModel.builder()
-                                            .id(g.getGroupId())
-                                            .name(g.getGroupName())
-                                            .build());
+                                      .id(g.getGroupId())
+                                      .name(g.getGroupName())
+                                      .build());
     }
     
     /**
      * Devuelve todos los grupos a los que pertenece un usuario
      * @param token -> token de sesión del usuario
      * @return -> lista de grupos usando {@link GroupModel}
-     * @throws Exception -> TODO: cambiar por excepciones concretas
      */
     @GetMapping
     public ResponseEntity<List<GroupModel>> getAllGroupsByMember(
@@ -109,7 +111,6 @@ public class GroupController {
         };  
 
         List<GroupModel> model = groups.stream().map(g -> new GroupModel(g.getGroupId(), g.getGroupName())).toList();
-
         return ResponseEntity.ok().body(model);
     }
     

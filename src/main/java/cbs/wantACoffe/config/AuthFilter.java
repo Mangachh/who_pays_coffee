@@ -82,7 +82,7 @@ public class AuthFilter extends OncePerRequestFilter {
             try {
                 token = AuthUtils.stringToToken(header);
             } catch (Exception e) {
-                System.out.println("ERROR: Header is not a valid token: " + header);
+                log.error("Header is not a valid token: " + header);
                 response.sendError(403, "You don't have permissions");
                 return;
             }

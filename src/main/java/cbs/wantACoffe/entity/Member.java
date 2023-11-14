@@ -2,6 +2,7 @@ package cbs.wantACoffe.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import cbs.wantACoffe.TableNames;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,7 +34,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 //TODO: maybe unique nickname?
-@Table(name = "group_members", 
+@Table(name = TableNames.NAME_GROUP_MEMBERS, 
         indexes = {
             @Index(name = "idx_group_member_nickname", columnList = "nickname"),
             @Index(name = "idx_group_member_reg_user_id", columnList = "reg_user_id"),

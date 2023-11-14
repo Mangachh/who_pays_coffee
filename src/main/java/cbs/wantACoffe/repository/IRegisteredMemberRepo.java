@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import cbs.wantACoffe.TableNames;
 import cbs.wantACoffe.entity.RegisteredUser;
 
 
@@ -25,7 +26,7 @@ public interface IRegisteredMemberRepo extends JpaRepository<RegisteredUser, Lon
     Optional<RegisteredUser> findByEmail(String email);
 
     @Query(
-        value = "SELECT email, name FROM users",
+        value = "SELECT email, username FROM " + TableNames.NAME_REGISTERED_USERS,
         nativeQuery = true)
     List<IBasicData> findAllBasicData();
 
