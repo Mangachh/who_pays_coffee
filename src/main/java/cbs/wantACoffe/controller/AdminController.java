@@ -20,6 +20,7 @@ import cbs.wantACoffe.repository.IRegisteredMemberRepo.IBasicData;
 import cbs.wantACoffe.service.admin.IAdminService;
 import cbs.wantACoffe.service.auth.IAuthService;
 import cbs.wantACoffe.service.auth.IEncryptService;
+import cbs.wantACoffe.service.group.IGroupService;
 import cbs.wantACoffe.service.user.IRegisteredUserService;
 import cbs.wantACoffe.util.AuthUtils;
 import jakarta.annotation.PostConstruct;
@@ -39,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 @RestController
 @RequestMapping("coffee/api/admin")
 public class AdminController {
+
     @Autowired
     private IAdminUserRepo repo;
 
@@ -53,6 +55,9 @@ public class AdminController {
 
     @Autowired
     private IRegisteredUserService regUserService;
+
+    @Autowired
+    private IGroupService groupService;
     
     /**
      * Añadimos un {@link AdminUser}. De momento lo metemos así.
@@ -135,6 +140,11 @@ public class AdminController {
     
     @GetMapping(value = "r/countUsers")
     public ResponseEntity<Long> getCountUsers() {
-        return ResponseEntity.ok().body(this.regUserService.countAllRegisteredUsers());
+        return ResponseEntity.ok().body(this.adminService.countRegisteredUsers());
+    }
+
+    @GetMapping(value = "r/countGroups")
+    public ResponseEntity<Long> getCountGroups() {
+        return ResponseEntity.ok().body(this.adminService.countGroups());
     }
 }

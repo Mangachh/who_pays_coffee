@@ -24,4 +24,8 @@ public interface IAdminService {
     AdminUser findByUsernameAndCheckPass(String username, String password) throws UserNotExistsException, IncorrectPasswordException;
     
     List<IBasicData> findAllRegisteredUsers();
+
+    Long countGroups();
+
+    Long countRegisteredUsers();
 }

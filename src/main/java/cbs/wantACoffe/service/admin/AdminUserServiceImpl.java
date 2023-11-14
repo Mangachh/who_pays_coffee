@@ -9,6 +9,7 @@ import cbs.wantACoffe.entity.AdminUser;
 import cbs.wantACoffe.exceptions.IncorrectPasswordException;
 import cbs.wantACoffe.exceptions.UserNotExistsException;
 import cbs.wantACoffe.repository.IAdminUserRepo;
+import cbs.wantACoffe.repository.IGroupRepo;
 import cbs.wantACoffe.repository.IRegisteredMemberRepo;
 import cbs.wantACoffe.repository.IRegisteredMemberRepo.IBasicData;
 import cbs.wantACoffe.service.auth.IEncryptService;
@@ -28,7 +29,9 @@ public class AdminUserServiceImpl implements IAdminService{
 
     private final IAdminUserRepo adminRepo;
 
-    private final IRegisteredMemberRepo userRepo;
+    private final IRegisteredMemberRepo regUserRepo;
+
+    private final IGroupRepo groupRepo;
 
     private final IEncryptService cryptService;
 
@@ -67,7 +70,17 @@ public class AdminUserServiceImpl implements IAdminService{
     public List<IBasicData> findAllRegisteredUsers() {
         
 
-        return this.userRepo.findAllBasicData();
+        return this.regUserRepo.findAllBasicData();
+    }
+
+    @Override
+    public Long countGroups() {
+        return this.groupRepo.count();
+    }
+
+    @Override
+    public Long countRegisteredUsers() {
+        return this.regUserRepo.count();
     }
 
    

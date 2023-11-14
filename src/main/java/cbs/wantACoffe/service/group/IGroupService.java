@@ -80,4 +80,5 @@ public interface IGroupService {
      * @param group
      */
     void tryAddMemberToGroup(final Member member, final Group group);
+
 }

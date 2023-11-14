@@ -84,5 +84,4 @@ public interface IRegisteredUserService {
     RegisteredUser findByEmailAndCheckPass(final String username, final String password)
             throws UserNotExistsException, IncorrectPasswordException;
     
-    Long countAllRegisteredUsers();
 }
