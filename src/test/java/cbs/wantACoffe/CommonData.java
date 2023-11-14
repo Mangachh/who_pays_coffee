@@ -52,7 +52,7 @@ public class CommonData {
     public static AdminUser getTestAdmin() {
         return AdminUser.builder()
                 .userId(100L)
-                .username("Lluís")
+                .username("Test Admin")
                 .password("1234")
                 .build();        
     }

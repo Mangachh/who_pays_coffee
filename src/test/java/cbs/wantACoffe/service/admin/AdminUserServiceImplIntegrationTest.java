@@ -48,10 +48,9 @@ public class AdminUserServiceImplIntegrationTest {
     @Order(1)
     void testFindByUsername() throws UserNotExistsException {
         // add the user
-        //AdminUser toSave = CommonData.getTestAdmin();
-        //toSave.setPassword(encrypt.encryptPassword(toSave.getPassword()));
-        //this.adminRepo.save(toSave);
-        
+        AdminUser toSave = CommonData.getTestAdmin();
+        toSave.setPassword(encrypt.encryptPassword(toSave.getPassword()));
+        this.adminRepo.save(toSave);
         AdminUser result = this.service.findByUsername(admin.getUsername());
         assertEquals(admin.getUsername(), result.getUsername());
 
@@ -105,8 +104,5 @@ public class AdminUserServiceImplIntegrationTest {
 
     }
 
-    @Test    
-    void testFindAllRegisteredUsers() {
-        //TODO
-    }
+    
 }
