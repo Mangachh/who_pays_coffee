@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import cbs.wantACoffe.TableNames;
+import cbs.wantACoffe.dto.group.IGroupInfo;
 import cbs.wantACoffe.entity.Group;
 import cbs.wantACoffe.entity.RegisteredUser;
 
@@ -27,5 +29,13 @@ public interface IGroupRepo extends JpaRepository<Group, Long> {
     List<Group> findAllByMembersAndMembersIsAdminTrue(
             @Param("id") long id,
             @Param("isAdmin") boolean isAdmin);
+            
+   @Query(
+        value = "SELECT g.group_name AS groupName, COUNT(gm.id) AS numMembers from " + TableNames.NAME_GROUP + " g " + //
+                        "LEFT JOIN " + TableNames.NAME_GROUP_MEMBERS + " gm USING(group_id)" + //
+                        "GROUP BY g.group_id; ",
+        nativeQuery = true
+    )
+    List<IGroupInfo> findAllGroupsAndCountMembers();
 }
 

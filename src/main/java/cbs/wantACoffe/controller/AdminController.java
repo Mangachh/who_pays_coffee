@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import cbs.wantACoffe.dto.AdminToken;
 import cbs.wantACoffe.dto.Token;
 import cbs.wantACoffe.dto.Token.TokenType;
-import cbs.wantACoffe.dto.user.BasicUserInfo;
+import cbs.wantACoffe.dto.group.IGroupInfo;
+import cbs.wantACoffe.dto.user.IBasicUserInfo;
 import cbs.wantACoffe.dto.user.LoginAdminUser;
 import cbs.wantACoffe.entity.AdminUser;
 import cbs.wantACoffe.exceptions.IncorrectPasswordException;
@@ -126,9 +127,9 @@ public class AdminController {
      * @return
      */
     @GetMapping(value = "r/getAllUsers")
-    public ResponseEntity<List<BasicUserInfo>> getAllUsers() {
+    public ResponseEntity<List<IBasicUserInfo>> getAllUsers() {
 
-        List<BasicUserInfo> users = this.adminService.findAllRegisteredUsers();
+        List<IBasicUserInfo> users = this.adminService.findAllRegisteredUsers();
         return ResponseEntity.ok().body(users);
     }
     
@@ -140,5 +141,10 @@ public class AdminController {
     @GetMapping(value = "r/countGroups")
     public ResponseEntity<Long> getCountGroups() {
         return ResponseEntity.ok().body(this.adminService.countGroups());
+    }
+
+    @GetMapping(value = "r/getAllGroups")
+    public ResponseEntity<List<IGroupInfo>> getAllGroups() {
+        return ResponseEntity.ok().body(this.adminService.findAllGroupsAndCountMembers());
     }
 }

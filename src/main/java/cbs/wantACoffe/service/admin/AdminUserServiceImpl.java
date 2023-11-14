@@ -5,7 +5,8 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import cbs.wantACoffe.dto.user.BasicUserInfo;
+import cbs.wantACoffe.dto.group.IGroupInfo;
+import cbs.wantACoffe.dto.user.IBasicUserInfo;
 import cbs.wantACoffe.entity.AdminUser;
 import cbs.wantACoffe.exceptions.IncorrectPasswordException;
 import cbs.wantACoffe.exceptions.UserNotExistsException;
@@ -67,7 +68,7 @@ public class AdminUserServiceImpl implements IAdminService{
     }
 
     @Override
-    public List<BasicUserInfo> findAllRegisteredUsers() {
+    public List<IBasicUserInfo> findAllRegisteredUsers() {
         
 
         return this.regUserRepo.findAllBasicData();
@@ -82,6 +83,12 @@ public class AdminUserServiceImpl implements IAdminService{
     public Long countRegisteredUsers() {
         return this.regUserRepo.count();
     }
+
+    @Override
+    public List<IGroupInfo> findAllGroupsAndCountMembers() {
+        return this.groupRepo.findAllGroupsAndCountMembers();
+    }
+
 
    
     

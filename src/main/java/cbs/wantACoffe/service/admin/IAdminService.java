@@ -2,7 +2,8 @@ package cbs.wantACoffe.service.admin;
 
 import java.util.List;
 
-import cbs.wantACoffe.dto.user.BasicUserInfo;
+import cbs.wantACoffe.dto.group.IGroupInfo;
+import cbs.wantACoffe.dto.user.IBasicUserInfo;
 import cbs.wantACoffe.entity.AdminUser;
 import cbs.wantACoffe.exceptions.IncorrectPasswordException;
 import cbs.wantACoffe.exceptions.UserNotExistsException;
@@ -22,7 +23,10 @@ public interface IAdminService {
 
     AdminUser findByUsernameAndCheckPass(String username, String password) throws UserNotExistsException, IncorrectPasswordException;
     
-    List<BasicUserInfo> findAllRegisteredUsers();
+    List<IBasicUserInfo> findAllRegisteredUsers();
+
+    List<IGroupInfo> findAllGroupsAndCountMembers();
+
 
     Long countGroups();
 

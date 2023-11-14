@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import cbs.wantACoffe.dto.CreateGroup;
-import cbs.wantACoffe.dto.GroupModel;
 import cbs.wantACoffe.dto.MemberGroup;
+import cbs.wantACoffe.dto.group.CreateGroup;
+import cbs.wantACoffe.dto.group.GroupModel;
 import cbs.wantACoffe.entity.Group;
 import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.RegisteredUser;
