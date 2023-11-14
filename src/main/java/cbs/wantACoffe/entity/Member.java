@@ -19,6 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Builder.ObtainVia;
 
 /**
  * Clase para los miembros del grupo. Los miembros pueden estar registrados en la app
@@ -33,8 +34,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-//TODO: maybe unique nickname?
-@Table(name = TableNames.NAME_GROUP_MEMBERS, 
+@Table(name = Member.TABLE_NAME, 
         indexes = {
             @Index(name = "idx_group_member_nickname", columnList = "nickname"),
             @Index(name = "idx_group_member_reg_user_id", columnList = "reg_user_id"),
@@ -46,22 +46,32 @@ import lombok.NoArgsConstructor;
 
 public class Member {
 
+    public final static String TABLE_NAME = "group_members";
+    public final static String COLUMN_ID_NAME = "member_id";
+    public final static String COLUMN_NICKNAME_NAME = "nickname";
+    public final static String COLUMN_REG_USER_ID_NAME = "reg_user_id";
+    public final static String COLUMN_IS_ADMIN_NAME = "is_admin";
+    public final static String COLUMN_GROUP_ID_NAME = "group_id";
+
     @Id
     @GeneratedValue(generator = "member_id_generator")
     @SequenceGenerator(name = "member_id_generator", initialValue = 1)
+    @Column(name = COLUMN_ID_NAME)
     private Long id;
 
+    @Column(name = COLUMN_NICKNAME_NAME)
     private String nickname;
 
     @ManyToOne(targetEntity = RegisteredUser.class)
     @JsonBackReference
-    @JoinColumn(name = "reg_user_id")
+    @JoinColumn(name = COLUMN_REG_USER_ID_NAME)
     private RegisteredUser regUser;
 
+    @Column(name = COLUMN_IS_ADMIN_NAME)
     private boolean isAdmin;
 
     @ManyToOne(targetEntity = Group.class, fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "group_id")
+    @JoinColumn(name = COLUMN_GROUP_ID_NAME)
     private Group group;
 
     public boolean isRegisteredUser() {

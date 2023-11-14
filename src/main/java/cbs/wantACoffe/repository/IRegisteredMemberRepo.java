@@ -27,7 +27,9 @@ public interface IRegisteredMemberRepo extends JpaRepository<RegisteredUser, Lon
     Optional<RegisteredUser> findByEmail(String email);
 
     @Query(
-        value = "SELECT email, username FROM " + TableNames.NAME_REGISTERED_USERS,
+        value = "SELECT " + RegisteredUser.COLUMN_EMAIL_NAME + ", " + RegisteredUser.COLUMN_USERNAME_NAME +
+                " FROM " + RegisteredUser.TABLE_NAME ,
+        /*value = "SELECT email, username FROM " + TableNames.NAME_REGISTERED_USERS,*/
         nativeQuery = true)
     List<IBasicUserInfo> findAllBasicData();    
     

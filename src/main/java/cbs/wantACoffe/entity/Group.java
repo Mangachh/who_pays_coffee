@@ -34,18 +34,23 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = TableNames.NAME_GROUP, 
+@Table(name = Group.TABLE_NAME, 
         indexes = { @Index(name = "idx_group_group_name", columnList = "group_name"),
                 //@Index(name = "idx_group_group_owner", columnList = "group_owner_id")
         })
 public class Group {
-    
+    public final static String TABLE_NAME = "groups";
+    public final static String COLUMN_ID_NAME = "group_id";
+    public final static String COLUMN_GROUP_NAME = "group_name";
+
+
     @Id
     @GeneratedValue(generator = "group_id_generator")
     @SequenceGenerator(name = "group__id_generator", initialValue = 1)
+    @Column(name = COLUMN_ID_NAME)
     private Long groupId;
 
-    @Column(name = "group_name")
+    @Column(name = COLUMN_GROUP_NAME)
     private String groupName;
 
     // create

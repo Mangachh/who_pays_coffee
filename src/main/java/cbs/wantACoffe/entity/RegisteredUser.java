@@ -21,36 +21,44 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Data
-@Table(name=TableNames.NAME_REGISTERED_USERS, 
+@Table(name=RegisteredUser.TABLE_NAME, 
        indexes = {@Index(name= "idx_username", columnList = "username"),
                   @Index(name= "idx_user_email", columnList = "email")})
 
 public class RegisteredUser implements IUser{
-
+    public final static String TABLE_NAME = "registered_users";
+    public final static String COLUMN_ID_NAME = "user_id";
+    public final static String COLUMN_USERNAME_NAME = "username";
+    public final static String COLUMN_EMAIL_NAME = "email";
+    public final static String COLUMN_PASSWORD_NAME = "password";
 
     @Id
     @GeneratedValue(generator = "user_id_generator")
     @SequenceGenerator(name = "user__id_generator", initialValue = 1)
+    @Column(name = COLUMN_ID_NAME)
     /**
      * Id del usuario
-     */
+     */    
     private Long userId;
 
     @Column(unique = true, 
-            nullable = false)
+            nullable = false,
+            name = COLUMN_USERNAME_NAME)
     /**
      * Nombre del usuario. Tiene que ser único.
      */
     private String username;    
 
     @Column(unique = true,
-            nullable = false)
+            nullable = false,
+            name = COLUMN_EMAIL_NAME)
         /**
          * Correo del usuario. Tiene que ser único.
          */
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false,
+            name = COLUMN_PASSWORD_NAME)
     /**
      * Password del usuario
      */
