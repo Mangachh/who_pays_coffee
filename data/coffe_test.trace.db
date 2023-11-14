@@ -1,11 +1,3 @@
-2023-11-14 13:15:36 jdbc[3]: exception
+2023-11-14 16:25:50 jdbc[3]: exception
 org.h2.jdbc.JdbcSQLNonTransientException: El objeto ya está cerrado
 The object is already closed [90007-214]
-2023-11-14 13:17:09 jdbc[3]: exception
-org.h2.jdbc.JdbcSQLSyntaxErrorException: Error de Sintaxis en sentencia SQL "SELECT g.group_id, g.group_name FROM groups g LEFT JOIN group_members gm [*]USING group_idWHERE gm. reg_user_id = ?  AND gm.is_admin ?"
-Syntax error in SQL statement "SELECT g.group_id, g.group_name FROM groups g LEFT JOIN group_members gm [*]USING group_idWHERE gm. reg_user_id = ?  AND gm.is_admin ?"; SQL statement:
-SELECT g.group_id, g.group_name FROM groups g LEFT JOIN group_members gm USING group_idWHERE gm. reg_user_id = ?  AND gm.is_admin ? [42000-214]
-2023-11-14 13:18:35 jdbc[3]: exception
-org.h2.jdbc.JdbcSQLSyntaxErrorException: Error de Sintaxis en sentencia SQL "SELECT g.group_id, g.group_name FROM groups g LEFT JOIN group_members gm USING(group_id) WHERE gm. reg_user_id = ?  AND gm.is_admin [*]?"
-Syntax error in SQL statement "SELECT g.group_id, g.group_name FROM groups g LEFT JOIN group_members gm USING(group_id) WHERE gm. reg_user_id = ?  AND gm.is_admin [*]?"; SQL statement:
-SELECT g.group_id, g.group_name FROM groups g LEFT JOIN group_members gm USING(group_id) WHERE gm. reg_user_id = ?  AND gm.is_admin ? [42000-214]

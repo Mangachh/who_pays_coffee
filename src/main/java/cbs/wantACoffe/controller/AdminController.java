@@ -2,6 +2,8 @@ package cbs.wantACoffe.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,6 +55,8 @@ public class AdminController {
 
     @Autowired
     private IAdminService adminService;
+
+    private final Logger log = LoggerFactory.getLogger(AdminController.class);
     
     /**
      * Añadimos un {@link AdminUser}. De momento lo metemos así.
@@ -67,6 +71,7 @@ public class AdminController {
             Token t = this.auth.generateToken(admin, TokenType.ADMIN);
             auth.addUserTokenToSession(t, admin);
             System.out.println(t.toString());
+            log.info("Create admin {}", admin.getUsername());
         } catch (Exception e) {
             
         }
@@ -88,6 +93,7 @@ public class AdminController {
 
         Token t = this.auth.generateToken(adminUser, TokenType.ADMIN);
         auth.addUserTokenToSession(t, adminUser);
+        log.info("Logged Admin: {}", adminUser.getUsername());
         return ResponseEntity.ok().body(
             AdminToken.builder().username(admin.getUsername())
             .head(t.getType().getHead())
@@ -103,6 +109,7 @@ public class AdminController {
      */
     @GetMapping(value="r")
     public ResponseEntity<String> adminTest() {
+        log.info("Test endpoint for admin");
         return ResponseEntity.ok().body("Eres un buen admin tio");
     }
 
@@ -118,6 +125,7 @@ public class AdminController {
         Token t = AuthUtils.stringToToken(header);
         //long id = this.auth.getUserIdByToken(t);
         auth.removeTokenFromSession(t);
+        log.info("Logout admin");
         return ResponseEntity.ok().body("Bye Bye admin");
 
     }
@@ -128,18 +136,20 @@ public class AdminController {
      */
     @GetMapping(value = "r/getAllUsers")
     public ResponseEntity<List<IBasicUserInfo>> getAllUsers() {
-
+        log.info("Admin getting all users");
         List<IBasicUserInfo> users = this.adminService.findAllRegisteredUsers();
         return ResponseEntity.ok().body(users);
     }
     
     @GetMapping(value = "r/countUsers")
     public ResponseEntity<Long> getCountUsers() {
+        log.info("Admin getting count of users");
         return ResponseEntity.ok().body(this.adminService.countRegisteredUsers());
     }
 
     @GetMapping(value = "r/countGroups")
     public ResponseEntity<Long> getCountGroups() {
+        log.info("Admin getting count of groups");
         return ResponseEntity.ok().body(this.adminService.countGroups());
     }
 
