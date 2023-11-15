@@ -27,6 +27,8 @@ public interface IMemberService {
     Member deleteGroupMember(final Long id);
 
     List<Group> findAllByRegUserIdAndIsAdminTrue(final RegisteredUser user);
+
     List<Group> findAllByRegUserIdAndIsAdminFalse(final RegisteredUser user);
+    Member findMemberByGroupIdAndRegUserId(final Long groupId, final Long memberId);
 
 }

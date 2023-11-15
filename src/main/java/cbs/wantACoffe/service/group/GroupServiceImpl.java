@@ -54,10 +54,10 @@ public class GroupServiceImpl implements IGroupService {
     public List<Group> findAllByRegUserIsAdmin(RegisteredUser user, boolean isAdmin) {
         return this.repo.findAllByMembersAndMembersIsAdminTrue(user.getUserId(), isAdmin);
     }
+    
     @Override
-    public void deleteGroup(Group group) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteGroup'");
+    public void deleteGroup(long id) {
+        this.repo.deleteById(id);
     }
 
     
@@ -68,13 +68,7 @@ public class GroupServiceImpl implements IGroupService {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findAllGroupMembers'");
     }
-
-    @Override
-    public Member findGroupOwner(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findGroupOwner'");
-    }
-
+   
     @Override
     public Member addGroupUser(Member user) {
         // TODO Auto-generated method stub
@@ -86,6 +80,14 @@ public class GroupServiceImpl implements IGroupService {
         
         // return this.repo.findAll
         return null;
-    }   
+    }
+
+    @Override
+    public boolean isUserInGroup() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'isUserInGroup'");
+    }
+
+    
     
 }

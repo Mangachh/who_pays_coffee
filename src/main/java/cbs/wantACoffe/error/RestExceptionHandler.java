@@ -12,6 +12,8 @@ import org.springframework.web.context.request.WebRequest;
 import cbs.wantACoffe.exceptions.IncorrectPasswordException;
 import cbs.wantACoffe.exceptions.MemberAdminTypeUnknown;
 import cbs.wantACoffe.exceptions.MemberAlreadyIsInGroup;
+import cbs.wantACoffe.exceptions.MemberIsNotAdmin;
+import cbs.wantACoffe.exceptions.MemberNotInGroup;
 import cbs.wantACoffe.exceptions.NullValueInUserDataException;
 import cbs.wantACoffe.exceptions.UserNotExistsException;
 import cbs.wantACoffe.exceptions.UsernameEmailAlreadyExistsException;
@@ -73,5 +75,15 @@ public class RestExceptionHandler {
     @ExceptionHandler(MemberAdminTypeUnknown.class)
     private ResponseEntity<ErrorMessage> memberAdminTypeUnknow(MemberAdminTypeUnknown e, WebRequest reuqest) {
         return this.createResponseEntity(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler(MemberNotInGroup.class)
+    private ResponseEntity<ErrorMessage> memberNotInGroup(MemberNotInGroup e, WebRequest request) {
+        return this.createResponseEntity(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler(MemberIsNotAdmin.class)
+    private ResponseEntity<ErrorMessage> memberIsNotAdmin(MemberIsNotAdmin e, WebRequest request) {
+        return this.createResponseEntity(HttpStatus.FORBIDDEN, e.getMessage());
     }
 }

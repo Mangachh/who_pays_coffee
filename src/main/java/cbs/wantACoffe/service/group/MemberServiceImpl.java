@@ -40,6 +40,11 @@ public class MemberServiceImpl implements IMemberService {
     }
 
     @Override
+    public Member findMemberByGroupIdAndRegUserId(Long groupId, Long memberId) {
+        return this.repo.findMemberByGroupIdAndRegUserId(groupId, memberId);
+    }   
+
+    @Override
     public List<Group> findAllByRegUserIdAndIsAdminTrue(RegisteredUser user) {
         return this.repo.findGroupByRegUserAndIsAdminTrue(user);
     }

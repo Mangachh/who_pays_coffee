@@ -43,5 +43,7 @@ public interface IGroupRepo extends JpaRepository<Group, Long> {
         nativeQuery = true
     )
     List<IGroupInfo> findAllGroupsAndCountMembers();
+
+    
 }
 

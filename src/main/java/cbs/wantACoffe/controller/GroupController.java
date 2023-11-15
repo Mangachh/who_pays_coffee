@@ -5,7 +5,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -21,12 +23,15 @@ import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.RegisteredUser;
 import cbs.wantACoffe.exceptions.MemberAdminTypeUnknown;
 import cbs.wantACoffe.exceptions.MemberAlreadyIsInGroup;
+import cbs.wantACoffe.exceptions.MemberIsNotAdmin;
+import cbs.wantACoffe.exceptions.MemberNotInGroup;
 import cbs.wantACoffe.exceptions.UserNotExistsException;
 import cbs.wantACoffe.service.auth.IAuthService;
 import cbs.wantACoffe.service.group.IMemberService;
 import cbs.wantACoffe.service.group.IGroupService;
 import cbs.wantACoffe.service.user.IRegisteredUserService;
 import cbs.wantACoffe.util.AuthUtils;
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -127,7 +132,7 @@ public class GroupController {
 
         // pillamos el usuario que mete esto
         RegisteredUser admin = this.getUserByToken(token);
-        
+
         // pillamos grupo donde queremos meter
         Group group = this.groupService.findGroupById(memberGroup.getGroupId());
         log.info("User {} wants to add a new member into group{}", admin.getUsername(), group.getGroupName());
@@ -158,10 +163,39 @@ public class GroupController {
         } else {
             throw new MemberAlreadyIsInGroup();
         }
-        
-        
+
         return ResponseEntity.ok("New member added");
     }
+
+    // delete member
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<String> deleteGroup(
+            @RequestHeader(AuthUtils.HEADER_AUTH_TXT) final String token,
+            @PathVariable(name = "id", required = true) final Long groupId) throws Exception  {
+        
+               
+        Long userId = this.authService.getUserIdByToken(AuthUtils.stringToToken(token));
+        Member member = this.memberService.findMemberByGroupIdAndRegUserId(groupId, userId);
+
+        if (member == null) {
+            log.error("No member exists in this group");
+            throw new MemberNotInGroup();
+        }
+
+        // si no es admin
+        if (member.isAdmin() == false) {
+            log.error("The member is not admin");
+            throw new MemberIsNotAdmin();
+        }
+
+        // ahora sí, borramos grupo...
+        this.groupService.deleteGroup(groupId);
+        return ResponseEntity.ok().body("Groupd deleted");
+    }
+
+    // delete group
+
+    // mod reg_user
     
     private RegisteredUser getUserByToken(final String token) throws Exception {
         Long id = this.authService.getUserIdByToken(AuthUtils.stringToToken(token));

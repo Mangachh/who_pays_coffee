@@ -23,9 +23,9 @@ public interface IGroupService {
 
     /**
      * Elimina un grupo con todos sus integrantes
-     * @param group -> grupo a eliminar
+     * @param group -> id del grupo a eliminar
      */
-    void deleteGroup(final Group group);
+    void deleteGroup(long id);
 
     /**
      * Devuelve un grupo a partir de su id
@@ -50,13 +50,7 @@ public interface IGroupService {
      */
     List<Member> findAllGroupMembers();
     
-    /**
-     * @deprecated
-     * @param id
-     * @return
-     */
-    Member findGroupOwner(final Long id);
-
+    
     /**
      * Añade un miembro al grupo
      * TODO: no implementado
@@ -80,5 +74,9 @@ public interface IGroupService {
      * @param group
      */
     void tryAddMemberToGroup(final Member member, final Group group);
+
+    boolean isUserInGroup();
+
+    
 
 }
