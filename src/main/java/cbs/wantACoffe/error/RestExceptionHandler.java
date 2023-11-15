@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
 import cbs.wantACoffe.exceptions.IncorrectPasswordException;
+import cbs.wantACoffe.exceptions.InvalidTokenFormat;
 import cbs.wantACoffe.exceptions.MemberAdminTypeUnknown;
 import cbs.wantACoffe.exceptions.MemberAlreadyIsInGroup;
 import cbs.wantACoffe.exceptions.MemberIsNotAdmin;
@@ -85,5 +86,14 @@ public class RestExceptionHandler {
     @ExceptionHandler(MemberIsNotAdmin.class)
     private ResponseEntity<ErrorMessage> memberIsNotAdmin(MemberIsNotAdmin e, WebRequest request) {
         return this.createResponseEntity(HttpStatus.FORBIDDEN, e.getMessage());
+    }
+
+    /**********************************/
+    /*           AUTH                */
+    /********************************/
+
+    @ExceptionHandler(InvalidTokenFormat.class)
+    private ResponseEntity<ErrorMessage> invalidTokenFormat(InvalidTokenFormat e, WebRequest request) {
+        return this.createResponseEntity(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 }

@@ -21,6 +21,7 @@ import cbs.wantACoffe.dto.group.GroupModel;
 import cbs.wantACoffe.entity.Group;
 import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.RegisteredUser;
+import cbs.wantACoffe.exceptions.InvalidTokenFormat;
 import cbs.wantACoffe.exceptions.MemberAdminTypeUnknown;
 import cbs.wantACoffe.exceptions.MemberAlreadyIsInGroup;
 import cbs.wantACoffe.exceptions.MemberIsNotAdmin;
@@ -171,7 +172,7 @@ public class GroupController {
     @DeleteMapping("delete/{id}")
     public ResponseEntity<String> deleteGroup(
             @RequestHeader(AuthUtils.HEADER_AUTH_TXT) final String token,
-            @PathVariable(name = "id", required = true) final Long groupId) throws Exception  {
+            @PathVariable(name = "id", required = true) final Long groupId) {
         
                
         Long userId = this.authService.getUserIdByToken(AuthUtils.stringToToken(token));
@@ -197,7 +198,7 @@ public class GroupController {
 
     // mod reg_user
     
-    private RegisteredUser getUserByToken(final String token) throws Exception {
+    private RegisteredUser getUserByToken(final String token) throws InvalidTokenFormat, UserNotExistsException {
         Long id = this.authService.getUserIdByToken(AuthUtils.stringToToken(token));
         return this.userService.findById(id);
     }

@@ -2,6 +2,7 @@ package cbs.wantACoffe.util;
 
 import cbs.wantACoffe.dto.Token;
 import cbs.wantACoffe.dto.Token.TokenType;
+import cbs.wantACoffe.exceptions.InvalidTokenFormat;
 
 /**
  * Clase con útiles para la autentificación.
@@ -41,9 +42,10 @@ public class AuthUtils {
      *
      * @param text
      * @return
+     * @throws InvalidTokenFormat
      * @throws Exception -> the string is not a token. TODO: custom exception
      */
-    public static Token stringToToken(final String text) throws Exception {
+    public static Token stringToToken(final String text) throws InvalidTokenFormat{
         if (isPrefixAuthValid(text)) {
             TokenType type = TokenType.getTypeFromStr(text);
             String body = text.substring(type.getHead().length());
@@ -54,7 +56,7 @@ public class AuthUtils {
         }
         
         // exception
-        throw new Exception();
+        throw new InvalidTokenFormat();
     }
 
     /**
