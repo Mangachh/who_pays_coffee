@@ -108,54 +108,66 @@ public class GroupController {
             @RequestHeader(AuthUtils.HEADER_AUTH_TXT) final String token,
             @RequestParam final String type) throws Exception {
         // pillamos id
-         
+
         if (type == null || type.isBlank()) {
-            throw new MemberAdminTypeUnknown();            
+            throw new MemberAdminTypeUnknown();
         }
 
         RegisteredUser user = this.getUserByToken(token);
         log.info("User {} tries to get all their groups", user.getUsername());
-        List<Group> groups = switch(type){
+        List<Group> groups = switch (type) {
             case TYPE_ADMIN -> this.groupService.findAllByRegUserIsAdmin(user, true);
             case TYPE_MEMBER -> this.groupService.findAllByRegUserIsAdmin(user, false);
             case TYPE_ALL -> this.groupService.findAllByRegUser(user);
             default -> throw new MemberAdminTypeUnknown();
-        };  
+        };
 
         List<GroupModel> model = groups.stream().map(g -> new GroupModel(g.getGroupId(), g.getGroupName())).toList();
         log.info("User {} got {} groups", user.getUsername(), model.size());
         return ResponseEntity.ok().body(model);
     }
     
+    /**
+     * Añade un miembro al grupo
+     * @param token
+     * @param memberGroup
+     * @return
+     * @throws Exception
+     */
     @PostMapping(value = "add_member")
     public ResponseEntity<String> addMemberToGroup(@RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token,
             @RequestBody(required = true) MemberGroup memberGroup) throws Exception {
 
         // pillamos el usuario que mete esto
-        RegisteredUser admin = this.getUserByToken(token);
+        RegisteredUser userCaller = this.getUserByToken(token);
 
-        // pillamos grupo donde queremos meter
-        Group group = this.groupService.findGroupById(memberGroup.getGroupId());
-        log.info("User {} wants to add a new member into group{}", admin.getUsername(), group.getGroupName());
-        if (group.getMembers().stream().anyMatch(p -> p.getRegUser().equals(admin) && p.isAdmin()) == false) {
-            // throw exception
-            throw new Exception();
+        // miramos que exista y sea admin
+        Member adminMember = this.memberService.findMemberByGroupIdAndRegUserId(memberGroup.getGroupId(),
+                userCaller.getUserId());
+
+        if (adminMember == null) {
+            throw new MemberNotInGroup();
+        }
+
+        if (adminMember.isAdmin() == false) {
+            throw new MemberIsNotAdmin();
         }
 
         // mmm esto no me gusta... pero lo dejamos así.
-        RegisteredUser user;
+        RegisteredUser newUser;
         try {
-            user = this.userService.findByUsername(memberGroup.getUsername());
-            log.info("The new user is a registered_member by name {}", user.getUsername());
+            newUser = this.userService.findByUsername(memberGroup.getUsername());
+            log.info("The new user is a registered_member by name {}", newUser.getUsername());
         } catch (UserNotExistsException e) {
-            user = null;
+            newUser = null;
             log.info("The new user is not a registered user");
         }
 
+        Group group = this.groupService.findGroupById(memberGroup.getGroupId());
         Member newMember = Member.builder()
                 .nickname(memberGroup.getNickname())
                 .group(group)
-                .regUser(user)
+                .regUser(newUser)
                 .build();
 
         if (group.tryAddMember(newMember)) {
@@ -168,11 +180,20 @@ public class GroupController {
         return ResponseEntity.ok("New member added");
     }
 
-    // delete member
-    @DeleteMapping("delete/{id}")
+
+    /**
+     * Borra un grupo siempre que el usuario logeado sea miembro de este y además admin.
+     * @param token -> token el usuario en sesión
+     * @param groupId -> id del grupo a eliminar
+     * @return -> mensaje
+     * @throws InvalidTokenFormat -> si el token no tiene el formato correcto
+     * @throws MemberNotInGroup -> si el miembro no está en el grupo
+     * @throws MemberIsNotAdmin -> si el miembro SÍ está en el grupo, pero no es admin
+     */
+    @DeleteMapping("delete/group/{id}")
     public ResponseEntity<String> deleteGroup(
             @RequestHeader(AuthUtils.HEADER_AUTH_TXT) final String token,
-            @PathVariable(name = "id", required = true) final Long groupId) {
+            @PathVariable(name = "id", required = true) final Long groupId) throws InvalidTokenFormat, MemberNotInGroup, MemberIsNotAdmin {
         
                
         Long userId = this.authService.getUserIdByToken(AuthUtils.stringToToken(token));
@@ -198,6 +219,14 @@ public class GroupController {
 
     // mod reg_user
     
+    /**
+     * Devuelve un {@link RegisteredUser} a partir del token. 
+     * Primero llama al auth y mira que esté en sesión, luego busca al user en la base de datos
+     * @param token -> token del usuario
+     * @return -> usuario en sesión
+     * @throws InvalidTokenFormat -> si el formato del token es incorrecto
+     * @throws UserNotExistsException -> si el usuario no existe
+     */
     private RegisteredUser getUserByToken(final String token) throws InvalidTokenFormat, UserNotExistsException {
         Long id = this.authService.getUserIdByToken(AuthUtils.stringToToken(token));
         return this.userService.findById(id);
