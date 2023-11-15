@@ -65,7 +65,7 @@ public class GroupController {
      * @return -> {@link GroupModel}
      * @throws Exception -> TODO: cambiar la excepción general por concretas
      */
-    @PostMapping(value = "add_group")
+    @PostMapping(value = "add/group")
     public ResponseEntity<GroupModel> createGroup(@RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token, 
             @RequestBody CreateGroup groupData) throws Exception {
             
@@ -134,7 +134,7 @@ public class GroupController {
      * @return
      * @throws Exception
      */
-    @PostMapping(value = "add_member")
+    @PostMapping(value = "add/member")
     public ResponseEntity<String> addMemberToGroup(@RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token,
             @RequestBody(required = true) MemberGroup memberGroup) throws Exception {
 
@@ -144,10 +144,6 @@ public class GroupController {
         // miramos que exista y sea admin
         Member adminMember = this.memberService.findMemberByGroupIdAndRegUserId(memberGroup.getGroupId(),
                 userCaller.getUserId());
-
-        if (adminMember == null) {
-            throw new MemberNotInGroup();
-        }
 
         if (adminMember.isAdmin() == false) {
             throw new MemberIsNotAdmin();
@@ -198,11 +194,6 @@ public class GroupController {
                
         Long userId = this.authService.getUserIdByToken(AuthUtils.stringToToken(token));
         Member member = this.memberService.findMemberByGroupIdAndRegUserId(groupId, userId);
-
-        if (member == null) {
-            log.error("No member exists in this group");
-            throw new MemberNotInGroup();
-        }
 
         // si no es admin
         if (member.isAdmin() == false) {

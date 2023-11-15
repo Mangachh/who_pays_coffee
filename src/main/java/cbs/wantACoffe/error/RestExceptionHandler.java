@@ -13,6 +13,7 @@ import cbs.wantACoffe.exceptions.IncorrectPasswordException;
 import cbs.wantACoffe.exceptions.InvalidTokenFormat;
 import cbs.wantACoffe.exceptions.MemberAdminTypeUnknown;
 import cbs.wantACoffe.exceptions.MemberAlreadyIsInGroup;
+import cbs.wantACoffe.exceptions.MemberHasNoNicknameException;
 import cbs.wantACoffe.exceptions.MemberIsNotAdmin;
 import cbs.wantACoffe.exceptions.MemberNotInGroup;
 import cbs.wantACoffe.exceptions.NullValueInUserDataException;
@@ -87,6 +88,12 @@ public class RestExceptionHandler {
     private ResponseEntity<ErrorMessage> memberIsNotAdmin(MemberIsNotAdmin e, WebRequest request) {
         return this.createResponseEntity(HttpStatus.FORBIDDEN, e.getMessage());
     }
+
+    @ExceptionHandler(MemberHasNoNicknameException.class)
+    private ResponseEntity<ErrorMessage> memberHasNoNickname(MemberHasNoNicknameException e, WebRequest request) {
+        return this.createResponseEntity(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+    
 
     /**********************************/
     /*           AUTH                */

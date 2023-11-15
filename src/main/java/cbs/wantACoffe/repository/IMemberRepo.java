@@ -20,9 +20,8 @@ import cbs.wantACoffe.entity.RegisteredUser;
 @Repository
 public interface IMemberRepo extends JpaRepository<Member, Long> {
     
-    @Deprecated
     List<Group> findGroupByRegUserAndIsAdminTrue(final RegisteredUser user);
-    @Deprecated
+    
     List<Group> findGroupByRegUserAndIsAdminFalse(final RegisteredUser user);
 
     @Query

@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import cbs.wantACoffe.entity.Group;
 import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.RegisteredUser;
+import cbs.wantACoffe.exceptions.MemberHasNoNicknameException;
+import cbs.wantACoffe.exceptions.MemberNotInGroup;
 import cbs.wantACoffe.repository.IMemberRepo;
 
 /**
@@ -21,10 +23,9 @@ public class MemberServiceImpl implements IMemberService {
     private IMemberRepo repo;
 
     @Override
-    @Deprecated
-    public Member saveGroupMember(Member user) {
+    public Member saveGroupMember(Member user) throws MemberHasNoNicknameException {
         if (user.getNickname().isBlank()) {
-            // exception
+            throw new MemberHasNoNicknameException();
         }
         return this.repo.save(user);
     }
@@ -40,9 +41,16 @@ public class MemberServiceImpl implements IMemberService {
     }
 
     @Override
-    public Member findMemberByGroupIdAndRegUserId(Long groupId, Long memberId) {
+    public Member findMemberByGroupIdAndRegUserId(Long groupId, Long memberId) throws MemberNotInGroup {
+        Member m = this.repo.findMemberByGroupIdAndRegUserId(groupId, memberId);
+
+        if (m == null) {
+            throw new MemberNotInGroup();
+        }
+
         return this.repo.findMemberByGroupIdAndRegUserId(groupId, memberId);
     }   
+    
 
     @Override
     public List<Group> findAllByRegUserIdAndIsAdminTrue(RegisteredUser user) {
@@ -64,13 +72,7 @@ public class MemberServiceImpl implements IMemberService {
     public Member deleteGroupMemberById(Long id) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'deleteGroupMemberById'");
-    }
-
-    @Override
-    public Member addGroupMember(Member regUser) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addGroupMember'");
-    }
+    }   
 
     @Override
     public Member deleteGroupMember(Long id) {
