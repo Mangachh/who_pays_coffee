@@ -203,6 +203,7 @@ public class GroupController {
 
         // ahora sí, borramos grupo...
         this.groupService.deleteGroup(groupId);
+        log.info("Group with id {} deleted. All members deleted too.", groupId);
         return ResponseEntity.ok().body("Groupd deleted");
     }
 
