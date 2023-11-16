@@ -21,6 +21,7 @@ import cbs.wantACoffe.dto.group.GroupModel;
 import cbs.wantACoffe.entity.Group;
 import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.RegisteredUser;
+import cbs.wantACoffe.exceptions.GroupNotExistsException;
 import cbs.wantACoffe.exceptions.InvalidTokenFormat;
 import cbs.wantACoffe.exceptions.MemberAdminTypeUnknown;
 import cbs.wantACoffe.exceptions.MemberAlreadyIsInGroup;
@@ -103,7 +104,7 @@ public class GroupController {
      * @param token -> token de sesión del usuario
      * @return -> lista de grupos usando {@link GroupModel}
      */
-    @GetMapping
+    @GetMapping("get/groups")
     public ResponseEntity<List<GroupModel>> getAllGroupsByMember(
             @RequestHeader(AuthUtils.HEADER_AUTH_TXT) final String token,
             @RequestParam final String type) throws Exception {
@@ -132,11 +133,17 @@ public class GroupController {
      * @param token
      * @param memberGroup
      * @return
-     * @throws Exception
+     * @throws UserNotExistsException -> lanzada si el usuario que quiere meter miembro no existe
+     * @throws InvalidTokenFormat -> token no valido
+     * @throws MemberNotInGroup -> lanzada si el usuario que quiere meter miembro no está en el grupo
+     * @throws MemberIsNotAdmin -> lanzada si el usuario que quiere meter miembro no es admin
+     * @throws GroupNotExistsException -> lanzada si el grupo donde se quiere añadir a un miembro no existe
+     * @throws MemberAlreadyIsInGroup -> lanzada si el miembro a añadir ya está e el grupo. SÓLO funciona si el 
+     *                                   miembro es {@link RegisteredUser}
      */
     @PostMapping(value = "add/member")
     public ResponseEntity<String> addMemberToGroup(@RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token,
-            @RequestBody(required = true) MemberGroup memberGroup) throws Exception {
+            @RequestBody(required = true) MemberGroup memberGroup) throws InvalidTokenFormat, UserNotExistsException, MemberNotInGroup, MemberIsNotAdmin, GroupNotExistsException, MemberAlreadyIsInGroup {
 
         // pillamos el usuario que mete esto
         RegisteredUser userCaller = this.getUserByToken(token);

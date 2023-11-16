@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import cbs.wantACoffe.entity.Group;
 import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.RegisteredUser;
+import cbs.wantACoffe.exceptions.GroupNotExistsException;
 import cbs.wantACoffe.repository.IGroupRepo;
 import lombok.RequiredArgsConstructor;
 
@@ -41,8 +42,8 @@ public class GroupServiceImpl implements IGroupService {
     }
     
     @Override
-    public Group findGroupById(Long id) throws Exception {
-        return this.repo.findById(id).orElseThrow(() -> new Exception());
+    public Group findGroupById(Long id) throws GroupNotExistsException {
+        return this.repo.findById(id).orElseThrow(() -> new GroupNotExistsException());
     }
     
     @Override

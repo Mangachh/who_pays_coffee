@@ -5,6 +5,7 @@ import java.util.List;
 import cbs.wantACoffe.entity.Group;
 import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.RegisteredUser;
+import cbs.wantACoffe.exceptions.GroupNotExistsException;
 
 /**
  * Interfaz para el servicio de gestión de grupos
@@ -31,13 +32,12 @@ public interface IGroupService {
      * Devuelve un grupo a partir de su id
      * @param id -> id del grupo a buscar
      * @return -> grupo
-     * @throws Exception -> TODO: excepciones concreta
+     * @throws GroupNotExistsException -> Lanzada si el grupo no existe
      */
-    Group findGroupById(final Long id) throws Exception;
+    Group findGroupById(final Long id) throws GroupNotExistsException;
 
     /**
      * Encuentra todos los grupos de los que es miembro un usuario.
-     * TODO: no implementado, sujeto a cambios
      * @param id
      * @return
      */
