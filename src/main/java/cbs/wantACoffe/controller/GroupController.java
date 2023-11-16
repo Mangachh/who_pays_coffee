@@ -1,5 +1,7 @@
 package cbs.wantACoffe.controller;
 
+import static org.mockito.Mockito.inOrder;
+
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +36,7 @@ import cbs.wantACoffe.service.group.IMemberService;
 import cbs.wantACoffe.service.group.IGroupService;
 import cbs.wantACoffe.service.user.IRegisteredUserService;
 import cbs.wantACoffe.util.AuthUtils;
+import io.micrometer.core.ipc.http.HttpSender.Response;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 
@@ -197,9 +201,9 @@ public class GroupController {
     @DeleteMapping("delete/group/{id}")
     public ResponseEntity<String> deleteGroup(
             @RequestHeader(AuthUtils.HEADER_AUTH_TXT) final String token,
-            @PathVariable(name = "id", required = true) final Long groupId) throws InvalidTokenFormat, MemberNotInGroup, MemberIsNotAdmin {
-        
-               
+            @PathVariable(name = "id", required = true) final Long groupId)
+            throws InvalidTokenFormat, MemberNotInGroup, MemberIsNotAdmin {
+
         Long userId = this.authService.getUserIdByToken(AuthUtils.stringToToken(token));
         Member member = this.memberService.findMemberByGroupIdAndRegUserId(groupId, userId);
 
@@ -215,7 +219,31 @@ public class GroupController {
         return ResponseEntity.ok().body("Groupd deleted");
     }
 
-    // delete group
+    // TODO: get RegNameUsername?????
+    @GetMapping("get/members/group/{id}")
+    public ResponseEntity<List<MemberGroup>> getAllMembersFromGroup(
+        @RequestHeader(AuthUtils.HEADER_AUTH_TXT) final String token,
+        @PathVariable(name = "id", required = true) final Long groupId
+    ) throws InvalidTokenFormat, UserNotExistsException, GroupNotExistsException, MemberNotInGroup {
+        // hacemos check de user...
+        RegisteredUser user = this.getUserByToken(token);
+        
+        // Pillamos grupo
+        Group g = this.groupService.findGroupById(groupId);
+
+        // siempre está bien hacer un check
+        if (g.getMembers().stream().anyMatch(m -> m.getRegUser() == user) == false) {
+            throw new MemberNotInGroup();
+        }
+
+        return ResponseEntity.ok().body(
+                g.getMembers().stream().map(m -> MemberGroup.builder()
+                        .groupId(g.getGroupId())
+                        .nickname(m.getNickname())
+                        .isAdmin(m.isAdmin())
+                        .build()).toList()
+        );
+    }
 
     // mod reg_user
     
