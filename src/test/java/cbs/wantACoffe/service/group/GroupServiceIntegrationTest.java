@@ -12,6 +12,7 @@ import cbs.wantACoffe.CommonData;
 import cbs.wantACoffe.entity.Group;
 import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.RegisteredUser;
+import cbs.wantACoffe.exceptions.MemberHasNoNicknameException;
 import cbs.wantACoffe.exceptions.NullValueInUserDataException;
 import cbs.wantACoffe.exceptions.UsernameEmailAlreadyExistsException;
 import cbs.wantACoffe.service.user.IRegisteredUserService;
@@ -34,7 +35,7 @@ public class GroupServiceIntegrationTest {
 
     @Test
     @Order(1)
-    void testAddGroupUser() throws NullValueInUserDataException, UsernameEmailAlreadyExistsException {
+    void testAddGroupUser() throws NullValueInUserDataException, UsernameEmailAlreadyExistsException, MemberHasNoNicknameException {
         // create user
         RegisteredUser regUser = CommonData.getTestUserWithSuffix("_GroupServiceIntegrationTest");
         //register

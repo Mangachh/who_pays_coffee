@@ -19,6 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 import cbs.wantACoffe.CommonData;
 import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.RegisteredUser;
+import cbs.wantACoffe.exceptions.MemberHasNoNicknameException;
 import cbs.wantACoffe.exceptions.NullValueInUserDataException;
 import cbs.wantACoffe.exceptions.UsernameEmailAlreadyExistsException;
 import cbs.wantACoffe.repository.IRegisteredMemberRepo;
@@ -56,7 +57,7 @@ public class GroupUserServiceIntegrationTest {
 
     @Test
     @Order(1)
-    void testSaveGroupMember() throws NullValueInUserDataException, UsernameEmailAlreadyExistsException {
+    void testSaveGroupMember() throws NullValueInUserDataException, UsernameEmailAlreadyExistsException, MemberHasNoNicknameException {
         
         Member groupUser = Member.builder()
                 .nickname("First User")
@@ -76,7 +77,7 @@ public class GroupUserServiceIntegrationTest {
 
     @Test
     @Order(2)
-    void testSaveGroupMemberNOReg() throws NullValueInUserDataException, UsernameEmailAlreadyExistsException {
+    void testSaveGroupMemberNOReg() throws NullValueInUserDataException, UsernameEmailAlreadyExistsException, MemberHasNoNicknameException {
         // create user
         Member groupUser = Member.builder()
                 .nickname("Pepote el malote")

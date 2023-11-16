@@ -57,18 +57,19 @@ public class GroupController {
     private static final String TYPE_ADMIN = "admin";
     private static final String TYPE_MEMBER = "member";
     private static final String TYPE_ALL = "all";
-        private final Logger log = LoggerFactory.getLogger(GroupController.class);
+    private final Logger log = LoggerFactory.getLogger(GroupController.class);
 
     /**
      * Añade un grupo a la base de datos.
      * @param token -> token de sesión del usuario.
      * @param groupData -> datos de grupo
      * @return -> {@link GroupModel}
-     * @throws Exception -> TODO: cambiar la excepción general por concretas
+     * @throws UserNotExistsException
+     * @throws InvalidTokenFormat
      */
     @PostMapping(value = "add/group")
     public ResponseEntity<GroupModel> createGroup(@RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token, 
-            @RequestBody CreateGroup groupData) throws Exception {
+            @RequestBody CreateGroup groupData) throws InvalidTokenFormat, UserNotExistsException {
             
            
             // get user
