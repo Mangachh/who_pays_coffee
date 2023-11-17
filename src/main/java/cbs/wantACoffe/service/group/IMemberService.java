@@ -32,4 +32,6 @@ public interface IMemberService {
     
     Member findMemberByGroupIdAndRegUserId(final Long groupId, final Long memberId) throws MemberNotInGroup;
 
+    Member findMemberByGroupIdAndNickname(final Long groupId, final String nickname) throws MemberNotInGroup;
+
 }

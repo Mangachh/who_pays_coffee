@@ -8,6 +8,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
@@ -54,9 +55,9 @@ public class Member {
     public final static String COLUMN_GROUP_ID_NAME = "group_id";
 
     @Id
-    @GeneratedValue(generator = "member_id_generator")
-    @SequenceGenerator(name = "member_id_generator", initialValue = 1)
-    @Column(name = COLUMN_ID_NAME)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "member_id_generator")
+    @SequenceGenerator(sequenceName = "MemberId", name = "member_id_generator", allocationSize = 1)
+    @Column(name = COLUMN_ID_NAME) 
     private Long id;
 
     @Column(name = COLUMN_NICKNAME_NAME)

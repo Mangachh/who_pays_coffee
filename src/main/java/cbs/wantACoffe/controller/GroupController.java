@@ -28,6 +28,7 @@ import cbs.wantACoffe.exceptions.GroupNotExistsException;
 import cbs.wantACoffe.exceptions.InvalidTokenFormat;
 import cbs.wantACoffe.exceptions.MemberAdminTypeUnknown;
 import cbs.wantACoffe.exceptions.MemberAlreadyIsInGroup;
+import cbs.wantACoffe.exceptions.MemberHasNoNicknameException;
 import cbs.wantACoffe.exceptions.MemberIsNotAdmin;
 import cbs.wantACoffe.exceptions.MemberNotInGroup;
 import cbs.wantACoffe.exceptions.UserNotExistsException;
@@ -45,9 +46,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 /**
  * Controlador para la creación de grupos y la gestión de los miembros.
- * En un principio iba a tener dos controladores diferentes, pero como todo 
+ * En un principio iba a tener dos controladores diferentes, pero como todo
  * se hace desde el grupo creo que es más fácil a la hora de mantener
  * hacerlo todo en el mismo controlador
+ * 
  * @author Lluís Cobos Aumatell
  * @version 0.2
  */
@@ -65,47 +67,48 @@ public class GroupController {
 
     /**
      * Añade un grupo a la base de datos.
-     * @param token -> token de sesión del usuario.
+     * 
+     * @param token     -> token de sesión del usuario.
      * @param groupData -> datos de grupo
      * @return -> {@link GroupModel}
      * @throws UserNotExistsException
      * @throws InvalidTokenFormat
      */
     @PostMapping(value = "add/group")
-    public ResponseEntity<GroupModel> createGroup(@RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token, 
+    public ResponseEntity<GroupModel> createGroup(@RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token,
             @RequestBody CreateGroup groupData) throws InvalidTokenFormat, UserNotExistsException {
-            
-           
-            // get user
-            RegisteredUser user = this.getUserByToken(token);
-            log.info("User {} wants to create a new group", user.getUsername());
 
-            // Creamos primero el user-group
-            // como estamos creando grupo, es admin sí o sí
-            Member m = this.memberService.saveGroupMember(user,
-                    groupData.getMemberName(),
-            true);
+        // get user
+        RegisteredUser user = this.getUserByToken(token);
+        log.info("User {} wants to create a new group", user.getUsername());
 
-            // creamos el grupo
-            Group g = Group.builder()
-                            .groupName(groupData.getGroupName())
-                            .members(List.of(m))
-                    .build();
-            
-            // ponemos el grupo al miembro
-            m.setGroup(g);
+        // Creamos primero el user-group
+        // como estamos creando grupo, es admin sí o sí
+        Member m = this.memberService.saveGroupMember(user,
+                groupData.getMemberName(),
+                true);
 
-            this.groupService.saveGroup(g);
-            log.info("User {} creates a new group by name {}", user.getUsername(), g.getGroupName());
-            return ResponseEntity.ok().body(
-                            GroupModel.builder()
-                                      .id(g.getGroupId())
-                                      .name(g.getGroupName())
-                                      .build());
+        // creamos el grupo
+        Group g = Group.builder()
+                .groupName(groupData.getGroupName())
+                .members(List.of(m))
+                .build();
+
+        // ponemos el grupo al miembro
+        m.setGroup(g);
+
+        this.groupService.saveGroup(g);
+        log.info("User {} creates a new group by name {}", user.getUsername(), g.getGroupName());
+        return ResponseEntity.ok().body(
+                GroupModel.builder()
+                        .id(g.getGroupId())
+                        .name(g.getGroupName())
+                        .build());
     }
-    
+
     /**
      * Devuelve todos los grupos a los que pertenece un usuario
+     * 
      * @param token -> token de sesión del usuario
      * @return -> lista de grupos usando {@link GroupModel}
      */
@@ -132,23 +135,31 @@ public class GroupController {
         log.info("User {} got {} groups", user.getUsername(), model.size());
         return ResponseEntity.ok().body(model);
     }
-    
+
     /**
      * Añade un miembro al grupo
+     * 
      * @param token
      * @param memberGroup
      * @return
-     * @throws UserNotExistsException -> lanzada si el usuario que quiere meter miembro no existe
-     * @throws InvalidTokenFormat -> token no valido
-     * @throws MemberNotInGroup -> lanzada si el usuario que quiere meter miembro no está en el grupo
-     * @throws MemberIsNotAdmin -> lanzada si el usuario que quiere meter miembro no es admin
-     * @throws GroupNotExistsException -> lanzada si el grupo donde se quiere añadir a un miembro no existe
-     * @throws MemberAlreadyIsInGroup -> lanzada si el miembro a añadir ya está e el grupo. SÓLO funciona si el 
-     *                                   miembro es {@link RegisteredUser}
+     * @throws UserNotExistsException  -> lanzada si el usuario que quiere meter
+     *                                 miembro no existe
+     * @throws InvalidTokenFormat      -> token no valido
+     * @throws MemberNotInGroup        -> lanzada si el usuario que quiere meter
+     *                                 miembro no está en el grupo
+     * @throws MemberIsNotAdmin        -> lanzada si el usuario que quiere meter
+     *                                 miembro no es admin
+     * @throws GroupNotExistsException -> lanzada si el grupo donde se quiere añadir
+     *                                 a un miembro no existe
+     * @throws MemberAlreadyIsInGroup  -> lanzada si el miembro a añadir ya está e
+     *                                 el grupo. SÓLO funciona si el
+     *                                 miembro es {@link RegisteredUser}
      */
     @PostMapping(value = "add/member")
-    public ResponseEntity<String> addMemberToGroup(@RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token,
-            @RequestBody(required = true) MemberGroup memberGroup) throws InvalidTokenFormat, UserNotExistsException, MemberNotInGroup, MemberIsNotAdmin, GroupNotExistsException, MemberAlreadyIsInGroup {
+    public ResponseEntity<String> addMemberToGroup(
+            @RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token,
+            @RequestBody(required = true) MemberGroup memberGroup) throws InvalidTokenFormat, UserNotExistsException,
+            MemberNotInGroup, MemberIsNotAdmin, GroupNotExistsException, MemberAlreadyIsInGroup {
 
         // pillamos el usuario que mete esto
         RegisteredUser userCaller = this.getUserByToken(token);
@@ -188,15 +199,17 @@ public class GroupController {
         return ResponseEntity.ok("New member added");
     }
 
-
     /**
-     * Borra un grupo siempre que el usuario logeado sea miembro de este y además admin.
-     * @param token -> token el usuario en sesión
+     * Borra un grupo siempre que el usuario logeado sea miembro de este y además
+     * admin.
+     * 
+     * @param token   -> token el usuario en sesión
      * @param groupId -> id del grupo a eliminar
      * @return -> mensaje
      * @throws InvalidTokenFormat -> si el token no tiene el formato correcto
-     * @throws MemberNotInGroup -> si el miembro no está en el grupo
-     * @throws MemberIsNotAdmin -> si el miembro SÍ está en el grupo, pero no es admin
+     * @throws MemberNotInGroup   -> si el miembro no está en el grupo
+     * @throws MemberIsNotAdmin   -> si el miembro SÍ está en el grupo, pero no es
+     *                            admin
      */
     @DeleteMapping("delete/group/{id}")
     public ResponseEntity<String> deleteGroup(
@@ -222,12 +235,12 @@ public class GroupController {
     // TODO: get RegNameUsername?????
     @GetMapping("get/members/group/{id}")
     public ResponseEntity<List<MemberGroup>> getAllMembersFromGroup(
-        @RequestHeader(AuthUtils.HEADER_AUTH_TXT) final String token,
-        @PathVariable(name = "id", required = true) final Long groupId
-    ) throws InvalidTokenFormat, UserNotExistsException, GroupNotExistsException, MemberNotInGroup {
+            @RequestHeader(AuthUtils.HEADER_AUTH_TXT) final String token,
+            @PathVariable(name = "id", required = true) final Long groupId)
+            throws InvalidTokenFormat, UserNotExistsException, GroupNotExistsException, MemberNotInGroup {
         // hacemos check de user...
         RegisteredUser user = this.getUserByToken(token);
-        
+
         // Pillamos grupo
         Group g = this.groupService.findGroupById(groupId);
 
@@ -241,18 +254,52 @@ public class GroupController {
                         .groupId(g.getGroupId())
                         .nickname(m.getNickname())
                         .isAdmin(m.isAdmin())
-                        .build()).toList()
-        );
+                        .build()).toList());
     }
 
     // mod reg_user
-    
+    @PutMapping("update/member/group")
+    public ResponseEntity<String> addRegUserToMember(
+            @RequestHeader(AuthUtils.HEADER_AUTH_TXT) final String token,
+            @RequestBody(required = true) final MemberGroup memberGroup)
+            throws InvalidTokenFormat, UserNotExistsException, GroupNotExistsException, MemberIsNotAdmin, MemberNotInGroup, MemberHasNoNicknameException {
+
+        // get reguser that makes the request
+        RegisteredUser registeredUser = this.getUserByToken(token);
+
+        // get group to update the member
+        Group group = this.groupService.findGroupById(memberGroup.getGroupId());
+
+        // is the requester an admin?
+        if (group.getMembers().stream().anyMatch(member -> member.isAdmin() &&
+                member.getRegUser() == registeredUser) == false) {
+            throw new MemberIsNotAdmin();
+        }
+
+        // get the member to update
+        Member memberToUpdate = group.getMembers()
+                .stream()
+                .filter(m -> m.getNickname().equals(memberGroup.getNickname()))
+                .findFirst()
+                .orElseThrow(MemberNotInGroup::new);
+
+        // get its registereduser
+        RegisteredUser userToMember = this.userService.findByUsername(memberGroup.getUsername());
+
+        memberToUpdate.setRegUser(userToMember);
+
+        this.memberService.saveGroupMember(memberToUpdate);
+        return ResponseEntity.ok().body("Done");
+    }
+
     /**
-     * Devuelve un {@link RegisteredUser} a partir del token. 
-     * Primero llama al auth y mira que esté en sesión, luego busca al user en la base de datos
+     * Devuelve un {@link RegisteredUser} a partir del token.
+     * Primero llama al auth y mira que esté en sesión, luego busca al user en la
+     * base de datos
+     * 
      * @param token -> token del usuario
      * @return -> usuario en sesión
-     * @throws InvalidTokenFormat -> si el formato del token es incorrecto
+     * @throws InvalidTokenFormat     -> si el formato del token es incorrecto
      * @throws UserNotExistsException -> si el usuario no existe
      */
     private RegisteredUser getUserByToken(final String token) throws InvalidTokenFormat, UserNotExistsException {
@@ -260,4 +307,3 @@ public class GroupController {
         return this.userService.findById(id);
     }
 }
-

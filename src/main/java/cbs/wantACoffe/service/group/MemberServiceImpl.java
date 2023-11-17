@@ -42,13 +42,8 @@ public class MemberServiceImpl implements IMemberService {
 
     @Override
     public Member findMemberByGroupIdAndRegUserId(Long groupId, Long memberId) throws MemberNotInGroup {
-        Member m = this.repo.findMemberByGroupIdAndRegUserId(groupId, memberId);
-
-        if (m == null) {
-            throw new MemberNotInGroup();
-        }
-
-        return this.repo.findMemberByGroupIdAndRegUserId(groupId, memberId);
+        return this.repo.findMemberByGroupIdAndRegUserId(groupId, memberId)
+                .orElseThrow(MemberNotInGroup::new);
     }   
     
 
@@ -78,6 +73,13 @@ public class MemberServiceImpl implements IMemberService {
     public Member deleteGroupMember(Long id) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'deleteGroupMember'");
+    }
+
+    @Override
+    public Member findMemberByGroupIdAndNickname(Long groupId, String nickname) throws MemberNotInGroup {
+        return this.repo.findMemberByGroupIdAndNickname(groupId, nickname)
+                    .orElseThrow(MemberNotInGroup::new);
+
     }
 
     
