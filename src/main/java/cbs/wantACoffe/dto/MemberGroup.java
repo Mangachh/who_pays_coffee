@@ -10,6 +10,13 @@ import lombok.Builder.Default;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+/**
+ * Clase con los datos necesarios para 
+ * añadir un nuevo miembro al grupo.
+ * 
+ * @author Lluís Cobos Aumatell
+ * @version 1.0
+ */
 public class MemberGroup {
     
     private Long groupId;

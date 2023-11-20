@@ -19,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 /**
  * Implementación de servicio para {@link IAdminService}
  * 
- * TODO: ampliar conforme añadamos funcionalidades a {@link GroupController}
  * 
  * @author Lluís Cobos Aumatell
  * @version 0.5
@@ -35,7 +34,7 @@ public class AdminUserServiceImpl implements IAdminService{
     private final IGroupRepo groupRepo;
 
     private final IEncryptService cryptService;
-
+    
     @Override
     public AdminUser save(AdminUser admin) {
         admin.setPassword(

@@ -9,6 +9,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+/**
+ * Clase con los datos necesarios para crear un grupo
+ * 
+ * @author Lluís Cobos Aumatell
+ * @version 1.0
+ */
 public class CreateGroup {
     
     private String memberName;

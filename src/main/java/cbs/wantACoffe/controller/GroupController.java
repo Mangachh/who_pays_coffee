@@ -84,11 +84,6 @@ public class GroupController {
         RegisteredUser user = this.getUserByToken(token);
         log.info("User {} wants to create a new group", user.getUsername());
 
-        // Creamos primero el user-group
-        // como estamos creando grupo, es admin sí o sí
-        /*Member m = this.memberService.saveGroupMember(user,
-                groupData.getMemberName(),
-                true);*/
         Member m = Member.builder()
                 .regUser(user)
                 .nickname(groupData.getMemberName())
@@ -210,7 +205,7 @@ public class GroupController {
 
     /**
      * Borra un grupo siempre que el usuario logeado sea miembro de este y además
-     * admin.
+     * sea el owner
      * 
      * @param token   -> token el usuario en sesión
      * @param groupId -> id del grupo a eliminar
@@ -241,7 +236,16 @@ public class GroupController {
         return ResponseEntity.ok().body("Groupd deleted");
     }
 
-    // TODO: get RegNameUsername?????
+    /**
+     * Devuelve todos los miembros de un grupo
+     * @param token -> token de request
+     * @param groupId -> grupo del que queremos pillar los miembors
+     * @return -> Lista de {@link MemberGroup}
+     * @throws InvalidTokenFormat
+     * @throws UserNotExistsException
+     * @throws GroupNotExistsException
+     * @throws MemberNotInGroup
+     */
     @GetMapping("get/members/group/{id}")
     public ResponseEntity<List<MemberGroup>> getAllMembersFromGroup(
             @RequestHeader(AuthUtils.HEADER_AUTH_TXT) final String token,
@@ -266,7 +270,18 @@ public class GroupController {
                         .build()).toList());
     }
 
-    // mod reg_user
+    /**
+     * Añade o modifica un {@link Member#setRegUser(RegisteredUser)}
+     * @param token -> token del solicitante
+     * @param memberGroup -> {@link MemberGroup} con la info
+     * @return
+     * @throws InvalidTokenFormat
+     * @throws UserNotExistsException
+     * @throws GroupNotExistsException
+     * @throws MemberIsNotAdmin
+     * @throws MemberNotInGroup
+     * @throws MemberHasNoNicknameException
+     */
     @PutMapping("add/reguser/member/from/group")
     public ResponseEntity<String> addRegUserToMember(
             @RequestHeader(AuthUtils.HEADER_AUTH_TXT) final String token,
@@ -304,7 +319,19 @@ public class GroupController {
         return ResponseEntity.ok().body("Done");
     }
     
-    // mod nickname
+    /**
+     * Modifica el nickame de un miembro siempre que el requester sea dicho miembro o el requester
+     * sea un administrador
+     * @param token
+     * @param memberGroup
+     * @return
+     * @throws InvalidTokenFormat
+     * @throws UserNotExistsException
+     * @throws GroupNotExistsException
+     * @throws MemberNotInGroup
+     * @throws MemberIsNotAdmin
+     * @throws MemberHasNoNicknameException
+     */
     @PutMapping("update/nickname/group")
     public ResponseEntity<String> updateNickname(
         @RequestHeader(AuthUtils.HEADER_AUTH_TXT) final String token,
@@ -333,7 +360,18 @@ public class GroupController {
         return ResponseEntity.ok("Nickname changed to: " + toUpdate.getNickname());
     }
     
-    // delete groupmember
+    /**
+     * Borra un miembro de la base de datos. SOLO se puede borrar el requester
+     * o un admin.
+     * @param token
+     * @param memberDeleteId
+     * @param groupId
+     * @return
+     * @throws InvalidTokenFormat
+     * @throws UserNotExistsException
+     * @throws MemberNotInGroup
+     * @throws MemberIsNotAdmin
+     */
     @DeleteMapping("delete/member/from/group/{memberId}/{groupId}")
     public ResponseEntity<String> deleteGroupMember(
         @RequestHeader(AuthUtils.HEADER_AUTH_TXT) final String token,
