@@ -219,20 +219,20 @@ public class GroupController {
      * @throws MemberNotInGroup   -> si el miembro no está en el grupo
      * @throws MemberIsNotAdmin   -> si el miembro SÍ está en el grupo, pero no es
      *                            admin
+     * @throws GroupNotExistsException
      */
     @DeleteMapping("delete/group/{id}")
     public ResponseEntity<String> deleteGroup(
             @RequestHeader(AuthUtils.HEADER_AUTH_TXT) final String token,
             @PathVariable(name = "id", required = true) final Long groupId)
-            throws InvalidTokenFormat, MemberNotInGroup, MemberIsNotAdmin {
+            throws InvalidTokenFormat, MemberNotInGroup, MemberIsNotAdmin, GroupNotExistsException {
 
         Long userId = this.authService.getUserIdByToken(AuthUtils.stringToToken(token));
         Member member = this.memberService.findMemberByGroupIdAndRegUserId(groupId, userId);
-
-        // si no es admin
-        if (member.isAdmin() == false) {
-            log.error("The member is not admin");
-            throw new MemberIsNotAdmin();
+        Group group = this.groupService.findGroupById(groupId);
+        
+        if (group.getOwner() != member) {
+            throw new MemberIsNotAdmin(); //TODO: change exception
         }
 
         // ahora sí, borramos grupo...

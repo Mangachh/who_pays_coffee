@@ -58,7 +58,7 @@ public class Group {
     @Column(name = COLUMN_GROUP_NAME)
     private String groupName;
 
-    @OneToOne()
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REMOVE})
     @JoinColumn(name=COLUMN_OWNER_ID, referencedColumnName = Member.COLUMN_ID_NAME)
     private Member owner;
 
