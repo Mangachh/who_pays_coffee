@@ -74,10 +74,11 @@ public class GroupController {
      * @return -> {@link GroupModel}
      * @throws UserNotExistsException
      * @throws InvalidTokenFormat
+     * @throws MemberHasNoNicknameException
      */
     @PostMapping(value = "add/group")
     public ResponseEntity<GroupModel> createGroup(@RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token,
-            @RequestBody CreateGroup groupData) throws InvalidTokenFormat, UserNotExistsException {
+            @RequestBody CreateGroup groupData) throws InvalidTokenFormat, UserNotExistsException, MemberHasNoNicknameException {
 
         // get user
         RegisteredUser user = this.getUserByToken(token);
@@ -85,13 +86,20 @@ public class GroupController {
 
         // Creamos primero el user-group
         // como estamos creando grupo, es admin sí o sí
-        Member m = this.memberService.saveGroupMember(user,
+        /*Member m = this.memberService.saveGroupMember(user,
                 groupData.getMemberName(),
-                true);
-
+                true);*/
+        Member m = Member.builder()
+                .regUser(user)
+                .nickname(groupData.getMemberName())
+                .isAdmin(true)
+                .build();
+        this.memberService.saveGroupMember(m);
+        
         // creamos el grupo
         Group g = Group.builder()
                 .groupName(groupData.getGroupName())
+                .owner(m)
                 .members(List.of(m))
                 .build();
 

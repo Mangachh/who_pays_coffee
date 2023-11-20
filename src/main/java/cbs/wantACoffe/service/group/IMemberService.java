@@ -18,6 +18,8 @@ public interface IMemberService {
     
     Member saveGroupMember(final Member member) throws MemberHasNoNicknameException;
 
+    
+    @Deprecated
     Member saveGroupMember(final RegisteredUser user, final String nickname, boolean isAdmin);
 
     void deleteGroupMemberById(final Long id);

@@ -6,6 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import cbs.wantACoffe.TableNames;
+import io.micrometer.common.lang.NonNull;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,7 +14,10 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -42,6 +46,7 @@ public class Group {
     public final static String TABLE_NAME = "groups";
     public final static String COLUMN_ID_NAME = "group_id";
     public final static String COLUMN_GROUP_NAME = "group_name";
+    public final static String COLUMN_OWNER_ID = "owner_id";
 
 
     @Id
@@ -52,6 +57,10 @@ public class Group {
 
     @Column(name = COLUMN_GROUP_NAME)
     private String groupName;
+
+    @OneToOne()
+    @JoinColumn(name=COLUMN_OWNER_ID, referencedColumnName = Member.COLUMN_ID_NAME)
+    private Member owner;
 
     // create
     @OneToMany(mappedBy = "group", fetch = FetchType.EAGER, cascade = { CascadeType.MERGE, CascadeType.REMOVE })
