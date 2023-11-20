@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import cbs.wantACoffe.dto.MemberGroup;
 import cbs.wantACoffe.dto.group.CreateGroup;
 import cbs.wantACoffe.dto.group.GroupModel;
+import cbs.wantACoffe.dto.user.MemberUpdateNickname;
 import cbs.wantACoffe.entity.Group;
 import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.RegisteredUser;
@@ -258,17 +259,20 @@ public class GroupController {
     }
 
     // mod reg_user
-    @PutMapping("update/member/group")
+    @PutMapping("add/reguser/member/group")
     public ResponseEntity<String> addRegUserToMember(
             @RequestHeader(AuthUtils.HEADER_AUTH_TXT) final String token,
             @RequestBody(required = true) final MemberGroup memberGroup)
-            throws InvalidTokenFormat, UserNotExistsException, GroupNotExistsException, MemberIsNotAdmin, MemberNotInGroup, MemberHasNoNicknameException {
+            throws InvalidTokenFormat, UserNotExistsException, GroupNotExistsException, MemberIsNotAdmin,
+            MemberNotInGroup, MemberHasNoNicknameException {
 
         // get reguser that makes the request
         RegisteredUser registeredUser = this.getUserByToken(token);
 
         // get group to update the member
         Group group = this.groupService.findGroupById(memberGroup.getGroupId());
+
+        // if the requester is the same as the wanted change
 
         // is the requester an admin?
         if (group.getMembers().stream().anyMatch(member -> member.isAdmin() &&
@@ -290,6 +294,37 @@ public class GroupController {
 
         this.memberService.saveGroupMember(memberToUpdate);
         return ResponseEntity.ok().body("Done");
+    }
+    
+    // mod nickname
+    @PutMapping("update/nickname/group")
+    public ResponseEntity<String> updateNickname(
+        @RequestHeader(AuthUtils.HEADER_AUTH_TXT) final String token,
+        @RequestBody(required = true) final MemberUpdateNickname memberGroup) throws InvalidTokenFormat, UserNotExistsException, GroupNotExistsException, MemberNotInGroup, MemberIsNotAdmin, MemberHasNoNicknameException
+    {
+        // pillamos requester
+        RegisteredUser registeredUser = this.getUserByToken(token);
+        
+
+        // pillamos el grupo
+        Group group = this.groupService.findGroupById(memberGroup.getGroupId());
+
+        // pillamos al miembro que queremos cambiar el nickname
+        Member toUpdate = this.memberService.findMemberByGroupIdAndNickname(
+                memberGroup.getGroupId(), 
+                memberGroup.getOldNickname());
+
+
+        if (toUpdate.getRegUser() != registeredUser &&
+            group.getMembers().stream().anyMatch(member -> member.isAdmin() &&
+                        member.getRegUser() == registeredUser) == false) {
+            throw new MemberIsNotAdmin();
+        }
+        
+        // hacemos el update
+        toUpdate.setNickname(memberGroup.getNewNickname());
+        this.memberService.saveGroupMember(toUpdate);
+        return ResponseEntity.ok("Nickname changed to: " + toUpdate.getNickname());
     }
 
     /**
