@@ -259,7 +259,7 @@ public class GroupController {
     }
 
     // mod reg_user
-    @PutMapping("add/reguser/member/group")
+    @PutMapping("add/reguser/member/from/group")
     public ResponseEntity<String> addRegUserToMember(
             @RequestHeader(AuthUtils.HEADER_AUTH_TXT) final String token,
             @RequestBody(required = true) final MemberGroup memberGroup)
@@ -304,27 +304,60 @@ public class GroupController {
     {
         // pillamos requester
         RegisteredUser registeredUser = this.getUserByToken(token);
-        
 
         // pillamos el grupo
         Group group = this.groupService.findGroupById(memberGroup.getGroupId());
 
         // pillamos al miembro que queremos cambiar el nickname
         Member toUpdate = this.memberService.findMemberByGroupIdAndNickname(
-                memberGroup.getGroupId(), 
+                memberGroup.getGroupId(),
                 memberGroup.getOldNickname());
 
-
         if (toUpdate.getRegUser() != registeredUser &&
-            group.getMembers().stream().anyMatch(member -> member.isAdmin() &&
+                group.getMembers().stream().anyMatch(member -> member.isAdmin() &&
                         member.getRegUser() == registeredUser) == false) {
             throw new MemberIsNotAdmin();
         }
-        
+
         // hacemos el update
         toUpdate.setNickname(memberGroup.getNewNickname());
         this.memberService.saveGroupMember(toUpdate);
         return ResponseEntity.ok("Nickname changed to: " + toUpdate.getNickname());
+    }
+    
+    // delete groupmember
+    @DeleteMapping("delete/member/from/group/{memberId}/{groupId}")
+    public ResponseEntity<String> deleteGroupMember(
+        @RequestHeader(AuthUtils.HEADER_AUTH_TXT) final String token,
+        @PathVariable(name = "memberId", required = true) final Long memberDeleteId,
+        @PathVariable(name = "groupId", required = true) final Long groupId) throws InvalidTokenFormat, UserNotExistsException, MemberNotInGroup, MemberIsNotAdmin
+    {
+        log.info("Trying to delete the member {} from group {}", memberDeleteId, groupId);
+
+        // ok, pillamos reguser
+        RegisteredUser registeredUser = this.getUserByToken(token);
+
+        // pillamos el grupo
+        Member memberToDelete = this.memberService.findMemberById(memberDeleteId);
+
+        Member executor = memberToDelete;
+
+        // si el reguser no es el mimso que el que queremos deletear
+        if (memberToDelete.getRegUser() != registeredUser) {
+            log.info("Member to delete {} doesn't belong to the reguser {}. Finding executor", memberDeleteId, registeredUser.getUserId());
+            executor = this.memberService.findMemberByGroupIdAndRegUserId(groupId, registeredUser.getUserId());
+            log.info("Executor found");
+            if (executor.isAdmin() == false) {
+                throw new MemberIsNotAdmin();
+            }
+        }
+
+        log.info("Delete member {} ", memberDeleteId);
+        this.memberService.deleteGroupMemberById(memberDeleteId);
+
+        return ResponseEntity.ok("Deleted");
+
+        
     }
 
     /**

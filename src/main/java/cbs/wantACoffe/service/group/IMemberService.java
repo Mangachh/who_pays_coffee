@@ -20,12 +20,10 @@ public interface IMemberService {
 
     Member saveGroupMember(final RegisteredUser user, final String nickname, boolean isAdmin);
 
-    Member deleteGroupMemberById(final Long id);
+    void deleteGroupMemberById(final Long id);
 
-    Member updateNickname(final String newNickname);
+    Member findMemberById(Long memberId) throws MemberNotInGroup;
         
-    Member deleteGroupMember(final Long id);
-
     List<Group> findAllByRegUserIdAndIsAdminTrue(final RegisteredUser user);
 
     List<Group> findAllByRegUserIdAndIsAdminFalse(final RegisteredUser user);

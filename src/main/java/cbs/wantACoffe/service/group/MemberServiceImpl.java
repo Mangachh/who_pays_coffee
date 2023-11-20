@@ -41,10 +41,15 @@ public class MemberServiceImpl implements IMemberService {
     }
 
     @Override
-    public Member findMemberByGroupIdAndRegUserId(Long groupId, Long memberId) throws MemberNotInGroup {
-        return this.repo.findMemberByGroupIdAndRegUserId(groupId, memberId)
+    public Member findMemberByGroupIdAndRegUserId(Long groupId, Long regUserId) throws MemberNotInGroup {
+        return this.repo.findMemberByGroupIdAndRegUserId(groupId, regUserId)
                 .orElseThrow(MemberNotInGroup::new);
-    }   
+    }
+    
+    @Override
+    public Member findMemberById(Long memberId) throws MemberNotInGroup {
+        return this.repo.findById(memberId).orElseThrow(MemberNotInGroup::new);
+    }
     
 
     @Override
@@ -56,30 +61,17 @@ public class MemberServiceImpl implements IMemberService {
     public List<Group> findAllByRegUserIdAndIsAdminFalse(RegisteredUser user) {
         return this.repo.findGroupByRegUserAndIsAdminFalse(user);
     }
+    
 
     @Override
-    public Member updateNickname(String newNickname) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateNickname'");
-    }
-
-    @Override
-    public Member deleteGroupMemberById(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteGroupMemberById'");
-    }   
-
-    @Override
-    public Member deleteGroupMember(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteGroupMember'");
-    }
+    public void deleteGroupMemberById(Long id) {
+        this.repo.deleteById(id);
+    }       
 
     @Override
     public Member findMemberByGroupIdAndNickname(Long groupId, String nickname) throws MemberNotInGroup {
         return this.repo.findMemberByGroupIdAndNickname(groupId, nickname)
                     .orElseThrow(MemberNotInGroup::new);
-
     }
 
     

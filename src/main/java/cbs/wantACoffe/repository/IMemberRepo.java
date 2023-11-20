@@ -47,10 +47,6 @@ public interface IMemberRepo extends JpaRepository<Member, Long> {
         @Param("groupId") final Long groupId,
             @Param("nickname") final String nickname);
     
-    /*@Query(value="UPDATE "+ Member.TABLE_NAME + 
-                " SET " + Member.COLUMN_REG_USER_ID_NAME + "=",
-    nativeQuery = true)
-    Member updateMemberRegUser(
-        @Param("")
-        @Param("reg_user" final RegisteredUser regUser));*/
+    
+    //Member findByMemberId
 }
