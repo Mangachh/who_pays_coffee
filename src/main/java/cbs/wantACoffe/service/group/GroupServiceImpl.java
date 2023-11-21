@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import cbs.wantACoffe.entity.Group;
 import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.RegisteredUser;
+import cbs.wantACoffe.exceptions.GroupHasNoNameException;
 import cbs.wantACoffe.exceptions.GroupNotExistsException;
 import cbs.wantACoffe.repository.IGroupRepo;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,9 @@ public class GroupServiceImpl implements IGroupService {
     
 
     @Override
-    public Group saveGroup(Group group) {
+    public Group saveGroup(Group group) throws GroupHasNoNameException {
         if (group.getGroupName() == null || group.getGroupName().isEmpty()) {
-            // error, no group name
+            throw new GroupHasNoNameException(); 
         }
 
         //group.setGroupOwner(owner);
@@ -63,32 +64,6 @@ public class GroupServiceImpl implements IGroupService {
 
     
 
-
-    @Override
-    public List<Member> findAllGroupMembers() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findAllGroupMembers'");
-    }
-   
-    @Override
-    public Member addGroupUser(Member user) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addGroupUser'");
-    }
-
-    @Override
-    public List<Group> findAllByMemberId(Long id) {
         
-        // return this.repo.findAll
-        return null;
-    }
-
-    @Override
-    public boolean isUserInGroup() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isUserInGroup'");
-    }
-
-    
     
 }

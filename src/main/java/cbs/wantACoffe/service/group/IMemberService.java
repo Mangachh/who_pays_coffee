@@ -2,6 +2,7 @@ package cbs.wantACoffe.service.group;
 
 import java.util.List;
 
+import cbs.wantACoffe.dto.MemberGroup;
 import cbs.wantACoffe.entity.Group;
 import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.RegisteredUser;
@@ -61,4 +62,5 @@ public interface IMemberService {
      */
     Member findMemberByGroupIdAndNickname(final Long groupId, final String nickname) throws MemberNotInGroup;
 
+    List<MemberGroup> findAllMembersByGroupId(final Long groupId);
 }

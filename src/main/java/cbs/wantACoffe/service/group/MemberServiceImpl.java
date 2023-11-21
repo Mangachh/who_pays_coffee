@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import cbs.wantACoffe.dto.MemberGroup;
 import cbs.wantACoffe.entity.Group;
 import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.RegisteredUser;
@@ -65,6 +66,24 @@ public class MemberServiceImpl implements IMemberService {
     public Member findMemberByGroupIdAndNickname(Long groupId, String nickname) throws MemberNotInGroup {
         return this.repo.findMemberByGroupIdAndNickname(groupId, nickname)
                     .orElseThrow(MemberNotInGroup::new);
+    }
+
+    @Override
+    public List<MemberGroup> findAllMembersByGroupId(Long groupId) {
+        List<Member> members = this.repo.findAllMembersByGroupGroupId(groupId);
+        return members.stream().map(m -> /*new MemberGroup(
+            groupId,
+            m.getNickname(),
+            if(),
+            m.isAdmin()*/
+            MemberGroup.builder()
+            .groupId(groupId)
+            .nickname(m.getNickname())
+            .username(m.getRegUser() == null? null : m.getRegUser().getUsername())
+            .build())
+            .toList();
+            
+        
     }
 
     

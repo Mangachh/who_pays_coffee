@@ -21,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.ActiveProfiles;
 
 import cbs.wantACoffe.CommonData;
+import cbs.wantACoffe.dto.MemberGroup;
 import cbs.wantACoffe.entity.Group;
 import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.RegisteredUser;
@@ -179,6 +180,13 @@ public class MemberServiceIntegrationTest {
 
     @Test
     @Order(10)
+    void testFindAllMembersByGroupId() {
+        List<MemberGroup> members = this.memberService.findAllMembersByGroupId(testGroup.getGroupId());
+        assertTrue(true);
+    }
+
+    @Test
+    @Order(11)
     void testDeleteGroumMemberById() {
         // oju! conforme metamos cosas esto dará errores...
         this.memberService.deleteGroupMemberById(testMember.getId());

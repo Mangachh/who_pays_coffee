@@ -48,5 +48,6 @@ public interface IMemberRepo extends JpaRepository<Member, Long> {
             @Param("nickname") final String nickname);
     
     
-    //Member findByMemberId
+    
+    List<Member> findAllMembersByGroupGroupId(long id);
 }

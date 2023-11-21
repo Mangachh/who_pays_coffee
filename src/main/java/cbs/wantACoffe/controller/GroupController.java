@@ -25,6 +25,7 @@ import cbs.wantACoffe.dto.user.MemberUpdateNickname;
 import cbs.wantACoffe.entity.Group;
 import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.RegisteredUser;
+import cbs.wantACoffe.exceptions.GroupHasNoNameException;
 import cbs.wantACoffe.exceptions.GroupNotExistsException;
 import cbs.wantACoffe.exceptions.InvalidTokenFormat;
 import cbs.wantACoffe.exceptions.MemberAdminTypeUnknown;
@@ -75,10 +76,11 @@ public class GroupController {
      * @throws UserNotExistsException
      * @throws InvalidTokenFormat
      * @throws MemberHasNoNicknameException
+     * @throws GroupHasNoNameException
      */
     @PostMapping(value = "add/group")
     public ResponseEntity<GroupModel> createGroup(@RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token,
-            @RequestBody CreateGroup groupData) throws InvalidTokenFormat, UserNotExistsException, MemberHasNoNicknameException {
+            @RequestBody CreateGroup groupData) throws InvalidTokenFormat, UserNotExistsException, MemberHasNoNicknameException, GroupHasNoNameException {
 
         // get user
         RegisteredUser user = this.getUserByToken(token);
@@ -158,12 +160,13 @@ public class GroupController {
      * @throws MemberAlreadyIsInGroup  -> lanzada si el miembro a añadir ya está e
      *                                 el grupo. SÓLO funciona si el
      *                                 miembro es {@link RegisteredUser}
+     * @throws GroupHasNoNameException
      */
     @PostMapping(value = "add/member")
     public ResponseEntity<String> addMemberToGroup(
             @RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token,
             @RequestBody(required = true) MemberGroup memberGroup) throws InvalidTokenFormat, UserNotExistsException,
-            MemberNotInGroup, MemberIsNotAdmin, GroupNotExistsException, MemberAlreadyIsInGroup {
+            MemberNotInGroup, MemberIsNotAdmin, GroupNotExistsException, MemberAlreadyIsInGroup, GroupHasNoNameException {
 
         // pillamos el usuario que mete esto
         RegisteredUser userCaller = this.getUserByToken(token);

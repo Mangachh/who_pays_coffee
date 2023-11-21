@@ -5,6 +5,7 @@ import java.util.List;
 import cbs.wantACoffe.entity.Group;
 import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.RegisteredUser;
+import cbs.wantACoffe.exceptions.GroupHasNoNameException;
 import cbs.wantACoffe.exceptions.GroupNotExistsException;
 
 /**
@@ -19,8 +20,9 @@ public interface IGroupService {
      * Añade un nuevo grupo 
      * @param group -> grupo a añadir
      * @return
+     * @throws GroupHasNoNameException
      */
-    Group saveGroup(final Group group);
+    Group saveGroup(final Group group) throws GroupHasNoNameException;
 
     /**
      * Elimina un grupo con todos sus integrantes
@@ -35,29 +37,7 @@ public interface IGroupService {
      * @throws GroupNotExistsException -> Lanzada si el grupo no existe
      */
     Group findGroupById(final Long id) throws GroupNotExistsException;
-
-    /**
-     * Encuentra todos los grupos de los que es miembro un usuario.
-     * @param id
-     * @return
-     */
-    List<Group> findAllByMemberId(final Long id);
-
-    /**
-     * Devuelve la lista de miembros de un grupo determinado
-     * 
-     * @return
-     */
-    List<Member> findAllGroupMembers();
     
-    
-    /**
-     * Añade un miembro al grupo
-     * TODO: no implementado
-     * @param user
-     * @return
-     */
-    Member addGroupUser(final Member user);
 
     /**
      * Devuelve todos los {@link RegisteredUser} de un grupo
@@ -75,7 +55,6 @@ public interface IGroupService {
      */
     void tryAddMemberToGroup(final Member member, final Group group);
 
-    boolean isUserInGroup();
 
     
 
