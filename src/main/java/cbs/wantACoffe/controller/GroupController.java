@@ -161,16 +161,20 @@ public class GroupController {
      *                                 el grupo. SÓLO funciona si el
      *                                 miembro es {@link RegisteredUser}
      * @throws GroupHasNoNameException
+     * @throws MemberHasNoNicknameException
      */
     @PostMapping(value = "add/member")
     public ResponseEntity<String> addMemberToGroup(
             @RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token,
             @RequestBody(required = true) MemberGroup memberGroup) throws InvalidTokenFormat, UserNotExistsException,
-            MemberNotInGroup, MemberIsNotAdmin, GroupNotExistsException, MemberAlreadyIsInGroup, GroupHasNoNameException {
+            MemberNotInGroup, MemberIsNotAdmin, GroupNotExistsException, MemberAlreadyIsInGroup, GroupHasNoNameException, MemberHasNoNicknameException {
 
         // pillamos el usuario que mete esto
         RegisteredUser userCaller = this.getUserByToken(token);
-
+        
+        if (memberGroup.getNickname() == null || memberGroup.getNickname().isBlank()) {
+            throw new MemberHasNoNicknameException();
+        }
         // miramos que exista y sea admin
         Member adminMember = this.memberService.findMemberByGroupIdAndRegUserId(memberGroup.getGroupId(),
                 userCaller.getUserId());
@@ -266,11 +270,8 @@ public class GroupController {
         }
 
         return ResponseEntity.ok().body(
-                g.getMembers().stream().map(m -> MemberGroup.builder()
-                        .groupId(g.getGroupId())
-                        .nickname(m.getNickname())
-                        .isAdmin(m.isAdmin())
-                        .build()).toList());
+            this.memberService.findAllMembersByGroupId(groupId)
+        );
     }
 
     /**

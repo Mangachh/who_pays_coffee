@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
 import cbs.wantACoffe.exceptions.GroupHasNoNameException;
+import cbs.wantACoffe.exceptions.GroupNotExistsException;
 import cbs.wantACoffe.exceptions.IncorrectPasswordException;
 import cbs.wantACoffe.exceptions.InvalidTokenFormat;
 import cbs.wantACoffe.exceptions.MemberAdminTypeUnknown;
@@ -96,9 +97,15 @@ public class RestExceptionHandler {
     }
 
      @ExceptionHandler(GroupHasNoNameException.class)
-    private ResponseEntity<ErrorMessage> groupHasNoNameException(GroupHasNoNameException e, WebRequest request) {
-        return this.createResponseEntity(HttpStatus.BAD_REQUEST, e.getMessage());
-    }
+     private ResponseEntity<ErrorMessage> groupHasNoNameException(GroupHasNoNameException e, WebRequest request) {
+         return this.createResponseEntity(HttpStatus.BAD_REQUEST, e.getMessage());
+     }
+    
+     @ExceptionHandler(GroupNotExistsException.class)
+     private ResponseEntity<ErrorMessage> groupNotExists(GroupNotExistsException e, WebRequest request) {
+         return this.createResponseEntity(HttpStatus.NOT_FOUND, e.getMessage());
+     }
+
     
 
     /**********************************/
