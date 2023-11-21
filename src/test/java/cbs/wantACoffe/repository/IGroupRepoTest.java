@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import cbs.wantACoffe.CoffeeApplication;
 import cbs.wantACoffe.CommonData;
+import cbs.wantACoffe.dto.group.IGroupInfo;
 import cbs.wantACoffe.entity.Group;
 import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.RegisteredUser;
@@ -181,10 +182,19 @@ public class IGroupRepoTest {
     void testFindAllByMembersIsNotAdmin() {
         List<Group> groups = this.groupRepo.findAllByMembersAndMembersIsAdmin(
                 testGroup.getMembers().get(notAdminIndex).getId(),
-            false);
+                false);
         assertEquals(1, groups.size());
         assertEquals(groups.get(0).getGroupName(), testGroup.getGroupName());
         assertEquals(groups.get(0).getGroupId(), testGroup.getGroupId());
+    }
+    
+    @Test
+    @Order(8)
+    void testFindAllGroupsAndCountMembers() {
+        List<IGroupInfo> groupsInfo = this.groupRepo.findAllGroupsAndCountMembers();
+        assertEquals(1, groupsInfo.size());
+        assertEquals(testGroup.getMembers().size(), groupsInfo.get(0).getNumMembers());
+        assertEquals(testGroup.getGroupName(), groupsInfo.get(0).getGroupName());
     }
     
 }
