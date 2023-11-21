@@ -25,14 +25,14 @@ public interface IGroupRepo extends JpaRepository<Group, Long> {
     List<Group> findAllByMembersRegUser(RegisteredUser user);
 
     @Query(
-            value= "SELECT g." + Group.COLUMN_ID_NAME + ", g." + Group.COLUMN_GROUP_NAME +
+            value= "SELECT g." + Group.COLUMN_ID_NAME + ", g." + Group.COLUMN_GROUP_NAME + ", g." + Group.COLUMN_OWNER_ID +
             " FROM " + Group.TABLE_NAME + " g" + 
             " LEFT JOIN " + Member.TABLE_NAME + " gm USING(" + Group.COLUMN_ID_NAME + ")" +
-                    " WHERE gm. " + Member.COLUMN_REG_USER_ID_NAME + " = :id " +
+                    " WHERE gm. " + Member.COLUMN_REG_USER_ID_NAME + " = :regUserId " +
                     " AND gm." + Member.COLUMN_IS_ADMIN_NAME + " = :isAdmin", 
             nativeQuery = true)
-    List<Group> findAllByMembersAndMembersIsAdminTrue(
-            @Param("id") long id,
+    List<Group> findAllByMembersAndMembersIsAdmin(
+            @Param("regUserId") long regUserId,
             @Param("isAdmin") boolean isAdmin);
             
     @Query(

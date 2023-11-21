@@ -39,8 +39,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = Group.TABLE_NAME, 
-        indexes = { @Index(name = "idx_group_group_name", columnList = "group_name"),
-                //@Index(name = "idx_group_group_owner", columnList = "group_owner_id")
+        indexes = { @Index(name = "idx_group_group_name", columnList = Group.COLUMN_GROUP_NAME),
+                    @Index(name = "idx_group_group_owner", columnList = Group.COLUMN_OWNER_ID)
         })
 public class Group {
     public final static String TABLE_NAME = "groups";
@@ -55,7 +55,7 @@ public class Group {
     @Column(name = COLUMN_ID_NAME)
     private Long groupId;
 
-    @Column(name = COLUMN_GROUP_NAME)
+    @Column(name = COLUMN_GROUP_NAME, nullable = false)
     private String groupName;
 
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REMOVE})

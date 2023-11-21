@@ -4,9 +4,11 @@ import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
@@ -15,6 +17,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +48,9 @@ public class IGroupRepoTest {
 
     private static Group testGroup;
 
+    private static int adminIndex;
+    private static int notAdminIndex;
+
     @BeforeAll
     static void getUsers() {
         members = CommonData.getRegUsersForGroupWithSuffix("_IGroupRepoTest");
@@ -67,6 +73,8 @@ public class IGroupRepoTest {
                 .nickname("Soy el primero")
                 .regUser(members.get(0))
                 .build());
+                
+        expected.setOwner(creator);
 
         boolean memberAdded = expected.tryAddMember(creator);
         Group result = groupRepo.save(expected);
@@ -84,13 +92,19 @@ public class IGroupRepoTest {
         assertEquals(creator.getNickname(), resultMember.getNickname());
         assertEquals(resultMember.getGroup().getGroupId(), result.getGroupId());
 
-        System.out.println("\n--------------------\n");
-        System.out.println(creator);
-        System.out.println("\n------------------------\n");
+        adminIndex = result.getMembers().size() - 1;
+    }
+
+    @Test
+    @Order(2)
+    void testCreateGroupNoName() {
+
+        Group group = new Group();        
+        assertThrows(DataIntegrityViolationException.class, () -> this.groupRepo.save(group));
     }
     
     @Test
-    @Order(2)
+    @Order(3)
     void testFindById() {
         Group expected = testGroup;
         Group result = this.groupRepo.findById(testGroup.getGroupId()).get();
@@ -100,18 +114,77 @@ public class IGroupRepoTest {
         assertEquals(expected.getGroupName(), result.getGroupName());
         assertEquals(expectedId, result.getGroupId());
     }
-
+    
+    @Test
+    @Order(4)
+    void testFindByIdNoGroup() {
+        Optional<Group> result = this.groupRepo.findById(521458L);
+        assertTrue(result.isEmpty());
+    }
+    
+    @Test
+    @Order(5)
     void testAddMemberToGroup() {
-        
-    }
+        RegisteredUser toAdd = members.get(1);
+        Optional<Group> g = this.groupRepo.findById(testGroup.getGroupId());
 
+        assertTrue(g.isPresent());
+        Member memberToAdd = Member.builder()
+                .nickname("Prueba exitosa")
+                .regUser(toAdd)
+                .build();
+
+        assertTrue(g.get().tryAddMember(memberToAdd));
+        assertTrue(g.get().getMembers().contains(memberToAdd));
+        g.get().tryAddMember(memberToAdd);
+
+        // save the group
+        testGroup = this.groupRepo.save(g.get());
+
+
+        Optional<Group> result = this.groupRepo.findById(testGroup.getGroupId());
+        assertTrue(result.isPresent());
+        assertEquals(g.get().getMembers().size(), result.get().getMembers().size());
+        assertEquals(g.get().getGroupId(), result.get().getGroupId());
+        assertEquals(g.get().getGroupName(), result.get().getGroupName());
+
+        notAdminIndex = result.get().getMembers().size() - 1;
+    }   
+    
     @Test
-    void testFindAllByMembersIsAdmin() {
-
-    }
-
-    @Test
+    @Order(6)
     void testFindAllByMembersRegUser() {
+        List<Group> groups = this.groupRepo.findAllByMembersRegUser(
+            testGroup.getMembers().get(0).getRegUser()
+        );
+        assertEquals(groups.size(), 1);
+        assertEquals(groups.get(adminIndex).getGroupName(), testGroup.getGroupName());
+        assertEquals(groups.get(0).getGroupId(), testGroup.getGroupId());
+    }
+
+
+    @Test
+    @Order(6)
+    void testFindAllByMembersIsAdmin() {
+        List<Group> groups = this.groupRepo.findAllByMembersAndMembersIsAdmin(
+                testGroup.getMembers().get(adminIndex).getId(),
+            true);
+        
+        assertEquals(1, groups.size());
+        assertEquals(groups.get(0).getGroupName(), testGroup.getGroupName());
+        assertEquals(groups.get(0).getGroupId(), testGroup.getGroupId());
 
     }
+    
+    @Test
+    @Order(7)
+    void testFindAllByMembersIsNotAdmin() {
+        List<Group> groups = this.groupRepo.findAllByMembersAndMembersIsAdmin(
+                testGroup.getMembers().get(notAdminIndex).getId(),
+            false);
+        assertEquals(1, groups.size());
+        assertEquals(groups.get(0).getGroupName(), testGroup.getGroupName());
+        assertEquals(groups.get(0).getGroupId(), testGroup.getGroupId());
+    }
+    
 }

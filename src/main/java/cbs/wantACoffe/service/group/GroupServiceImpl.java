@@ -53,7 +53,7 @@ public class GroupServiceImpl implements IGroupService {
 
     @Override
     public List<Group> findAllByRegUserIsAdmin(RegisteredUser user, boolean isAdmin) {
-        return this.repo.findAllByMembersAndMembersIsAdminTrue(user.getUserId(), isAdmin);
+        return this.repo.findAllByMembersAndMembersIsAdmin(user.getUserId(), isAdmin);
     }
     
     @Override
