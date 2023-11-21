@@ -51,6 +51,9 @@ public class AdminUserServiceImplIntegrationTest {
     @Autowired
     private IRegisteredUserRepo regUserRepo;
 
+    private static long defSizeGroups;
+    private static long defSizeRegUsers;
+
     @BeforeAll
     static void addAdmin() {
         admin = CommonData.getTestAdmin();
@@ -62,6 +65,11 @@ public class AdminUserServiceImplIntegrationTest {
     @Test
     @Order(1)
     void testFindByUsername() throws UserNotExistsException {
+
+        // ponemos los defaults aquí 
+        defSizeGroups = this.groupRepo.count();
+        defSizeRegUsers = this.regUserRepo.count();
+
         // add the user
         AdminUser toSave = CommonData.getTestAdmin();
         toSave.setPassword(encrypt.encryptPassword(toSave.getPassword()));
@@ -129,7 +137,7 @@ public class AdminUserServiceImplIntegrationTest {
         usersToAdd.stream().forEach(this.regUserRepo::save);
 
         List<IBasicUserInfo> users = this.service.findAllRegisteredUsers();
-        assertEquals(usersToAdd.size(), users.size());
+        assertEquals(usersToAdd.size() + defSizeRegUsers, users.size());
         int counter = 0;
 
         // comprobamos que existam, hacemos dos bucles, más sencillo
@@ -145,7 +153,7 @@ public class AdminUserServiceImplIntegrationTest {
             }
         }
 
-        assertEquals(users.size(), counter);
+        assertEquals(usersToAdd.size(), counter);
     }
     
     @Test
@@ -160,9 +168,16 @@ public class AdminUserServiceImplIntegrationTest {
         this.groupRepo.save(group);
 
         List<IGroupInfo> groupInfos = this.service.findAllGroupsAndCountMembers();
-        assertEquals(1, groupInfos.size());
-        assertEquals(1, groupInfos.get(0).getNumMembers());
-        assertEquals(group.getGroupName(), groupInfos.get(0).getGroupName());
+        assertEquals(1 + defSizeGroups, groupInfos.size());
+        // tengo que buscar el grupo que quiero
+        IGroupInfo result = null;
+        for (IGroupInfo info : groupInfos) {
+            if (info.getGroupName().equals(group.getGroupName())) {
+                result = info;
+            }
+        }
+        assertEquals(1, result.getNumMembers());
+        assertEquals(group.getGroupName(), result.getGroupName());
     }
     
     @Test
@@ -170,7 +185,7 @@ public class AdminUserServiceImplIntegrationTest {
     void testCountGroups() {
         // sólo hemos metido uno, en el de arriba
         Long countGroups = this.service.countGroups();
-        assertEquals(1, countGroups);
+        assertEquals(1 + defSizeGroups, countGroups);
     }
     
     @Test
@@ -178,7 +193,7 @@ public class AdminUserServiceImplIntegrationTest {
     void testCountRegisteredUsers() {
         int expected = CommonData.getRegUsersForGroupWithSuffix("").size();
         Long countRegUsers = this.service.countRegisteredUsers();
-        assertEquals(expected, countRegUsers);
+        assertEquals(expected + defSizeRegUsers, countRegUsers);
     }
     
 }
