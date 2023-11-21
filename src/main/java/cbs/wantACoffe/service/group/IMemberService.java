@@ -26,7 +26,7 @@ public interface IMemberService {
 
     
     @Deprecated
-    Member saveGroupMember(final RegisteredUser user, final String nickname, boolean isAdmin);
+    Member saveGroupMember(final RegisteredUser user, final String nickname, boolean isAdmin) throws MemberHasNoNicknameException;
 
     /**
      * Borra un {@link Member} de la base de datos a partir de su id
@@ -41,16 +41,7 @@ public interface IMemberService {
      * @throws MemberNotInGroup -> si el miembro no existe en el grupo
      */
     Member findMemberById(Long memberId) throws MemberNotInGroup;
-        
-    /**
-     * TODO: no sé hasta que punto lo necesito
-     * @param user
-     * @return
-     */
-    List<Group> findAllByRegUserIdAndIsAdminTrue(final RegisteredUser user);
-
-    List<Group> findAllByRegUserIdAndIsAdminFalse(final RegisteredUser user);
-    
+            
     /**
      * Encuentra un miembro de un {@link Group} determinado usando {@link Group#id} y su {@link Member#id}
      * @param groupId -> id del grupo

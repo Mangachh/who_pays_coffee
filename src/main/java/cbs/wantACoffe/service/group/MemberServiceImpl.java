@@ -24,14 +24,18 @@ public class MemberServiceImpl implements IMemberService {
 
     @Override
     public Member saveGroupMember(Member user) throws MemberHasNoNicknameException {
-        if (user.getNickname().isBlank()) {
+        if (user.getNickname() == null ||user.getNickname().isBlank()) {
             throw new MemberHasNoNicknameException();
         }
         return this.repo.save(user);
     }
 
     @Override
-    public Member saveGroupMember(RegisteredUser user, String nickname, boolean isAdmin) {
+    @Deprecated
+    public Member saveGroupMember(RegisteredUser user, String nickname, boolean isAdmin) throws MemberHasNoNicknameException {
+        if (nickname == null || nickname.isBlank()) {
+            throw new MemberHasNoNicknameException();
+        }
         Member m = Member.builder()
                 .nickname(nickname)
                 .regUser(user)
@@ -49,18 +53,7 @@ public class MemberServiceImpl implements IMemberService {
     @Override
     public Member findMemberById(Long memberId) throws MemberNotInGroup {
         return this.repo.findById(memberId).orElseThrow(MemberNotInGroup::new);
-    }
-    
-
-    @Override
-    public List<Group> findAllByRegUserIdAndIsAdminTrue(RegisteredUser user) {
-        return this.repo.findGroupByRegUserAndIsAdminTrue(user);
-    }
-
-    @Override
-    public List<Group> findAllByRegUserIdAndIsAdminFalse(RegisteredUser user) {
-        return this.repo.findGroupByRegUserAndIsAdminFalse(user);
-    }
+    }    
     
 
     @Override
