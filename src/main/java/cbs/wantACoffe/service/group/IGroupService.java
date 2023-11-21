@@ -55,7 +55,7 @@ public interface IGroupService {
      */
     void tryAddMemberToGroup(final Member member, final Group group);
 
-
+    // TODO: Recuerda que hemos metido el owner, así que nos quedaría buscar por owner y demás
     
 
 }
