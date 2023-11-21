@@ -24,7 +24,7 @@ import cbs.wantACoffe.exceptions.IncorrectPasswordException;
 import cbs.wantACoffe.exceptions.NullValueInUserDataException;
 import cbs.wantACoffe.exceptions.UserNotExistsException;
 import cbs.wantACoffe.exceptions.UsernameEmailAlreadyExistsException;
-import cbs.wantACoffe.repository.IRegisteredMemberRepo;
+import cbs.wantACoffe.repository.IRegisteredUserRepo;
 
 /**
  * Test unitario de {@link RegisteredUserService}
@@ -40,7 +40,7 @@ public class RegisteredUserServiceImplUnitTest {
     private RegisterdUserServiceImpl service;
 
     @MockBean
-    private IRegisteredMemberRepo repo;
+    private IRegisteredUserRepo repo;
 
     private static RegisteredUser testUser;
 

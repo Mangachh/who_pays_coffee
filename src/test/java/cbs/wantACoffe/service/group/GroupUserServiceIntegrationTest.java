@@ -22,7 +22,7 @@ import cbs.wantACoffe.entity.RegisteredUser;
 import cbs.wantACoffe.exceptions.MemberHasNoNicknameException;
 import cbs.wantACoffe.exceptions.NullValueInUserDataException;
 import cbs.wantACoffe.exceptions.UsernameEmailAlreadyExistsException;
-import cbs.wantACoffe.repository.IRegisteredMemberRepo;
+import cbs.wantACoffe.repository.IRegisteredUserRepo;
 
 @ActiveProfiles("h2_test")
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
@@ -34,7 +34,7 @@ public class GroupUserServiceIntegrationTest {
 
 
     @Autowired
-    private IRegisteredMemberRepo userRepo;
+    private IRegisteredUserRepo userRepo;
 
     private static List<RegisteredUser> users;
 

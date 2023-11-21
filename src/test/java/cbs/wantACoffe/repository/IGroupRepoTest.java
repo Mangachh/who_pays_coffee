@@ -42,7 +42,7 @@ public class IGroupRepoTest {
     private IMemberRepo memberRepo;
 
     @Autowired
-    private IRegisteredMemberRepo regUserRepo;
+    private IRegisteredUserRepo regUserRepo;
 
     private static List<RegisteredUser> members;
     

@@ -2,7 +2,10 @@ package cbs.wantACoffe.service.admin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -17,10 +20,17 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import cbs.wantACoffe.CommonData;
+import cbs.wantACoffe.dto.group.IGroupInfo;
+import cbs.wantACoffe.dto.user.IBasicUserInfo;
 import cbs.wantACoffe.entity.AdminUser;
+import cbs.wantACoffe.entity.Group;
+import cbs.wantACoffe.entity.Member;
+import cbs.wantACoffe.entity.RegisteredUser;
 import cbs.wantACoffe.exceptions.IncorrectPasswordException;
 import cbs.wantACoffe.exceptions.UserNotExistsException;
 import cbs.wantACoffe.repository.IAdminUserRepo;
+import cbs.wantACoffe.repository.IGroupRepo;
+import cbs.wantACoffe.repository.IRegisteredUserRepo;
 import cbs.wantACoffe.service.auth.IEncryptService;
 
 /**
@@ -41,6 +51,12 @@ public class AdminUserServiceImplUnitTest {
 
     @MockBean
     private IAdminUserRepo repo;
+
+    @MockBean
+    private IGroupRepo groupRepo;
+
+    @MockBean
+    private IRegisteredUserRepo userRepo;
 
     @BeforeAll
     static void addAdmin() {
@@ -120,8 +136,104 @@ public class AdminUserServiceImplUnitTest {
 
     }
 
-    @Test    
+    @Test
+    @Order(7)
     void testFindAllRegisteredUsers() {
-        //TODO
+        // metemos unos users
+        List<RegisteredUser> usersToAdd = CommonData
+                .getRegUsersForGroupWithSuffix("_AdminUserServiceImplIntegraionTest");
+
+        List<IBasicUserInfo> infos = new ArrayList<>();
+
+        for(RegisteredUser u : usersToAdd){
+            infos.add(new IBasicUserInfo() {
+                @Override
+                public String getEmail() {
+                    return u.getEmail();
+                }
+
+                @Override
+                public String getUsername(){
+                    return u.getUsername();
+                }
+            });
+        }
+        Mockito.when(this.userRepo.findAllBasicData())
+                .thenReturn(infos);
+        
+        List<IBasicUserInfo> users = this.service.findAllRegisteredUsers();
+
+    
+        assertEquals(usersToAdd.size(), users.size());
+        int counter = 0;
+
+        // comprobamos que existam, hacemos dos bucles, más sencillo
+        // a cada acierto se suma 1 al counter, de esta manera al cabar
+        // el counter debería ser igual a la lista de resultados
+        for (IBasicUserInfo info : users) {
+            for (RegisteredUser u : usersToAdd) {
+                if (u.getUsername().equals(info.getUsername()) &&
+                        u.getEmail().equals(info.getEmail())) {
+                    counter++;
+                    break;
+                }
+            }
+        }
+
+        assertEquals(users.size(), counter);
+    }
+    
+    @Test
+    @Order(8)
+    void findAllGroupsAndCountMembers() {
+        Group group = CommonData.getTestGroup();
+        Member member = Member.builder()
+                .nickname("Prueba AdminUserIOmpl")
+                .group(group)
+                .build();
+        assertTrue(group.tryAddMember(member));
+        List<IGroupInfo> infos = new ArrayList<>();
+        infos.add(new IGroupInfo() {
+
+            @Override
+            public String getGroupName() {
+                return group.getGroupName();
+            }
+
+            @Override
+            public Long getNumMembers() {
+                return (long)group.getMembers().size();
+            }            
+        });
+
+        Mockito.when(this.groupRepo.findAllGroupsAndCountMembers())
+                .thenReturn(infos);
+
+        List<IGroupInfo> result = this.service.findAllGroupsAndCountMembers();
+        assertEquals(1, result.size());
+        assertEquals(1, result.get(0).getNumMembers());
+        assertEquals(group.getGroupName(), result.get(0).getGroupName());
+    }
+    
+    @Test
+    @Order(9)
+    void testCountGroups() {
+        // sólo hemos metido uno, en el de arriba
+        Mockito.when(this.groupRepo.count())
+                .thenReturn(1L);
+        
+        Long countGroups = this.service.countGroups();
+        assertEquals(1, countGroups);
+    }
+    
+    
+    @Test
+    @Order(10)
+    void testCountRegisteredUsers() {
+        long expected = 52;
+        Mockito.when(this.userRepo.count())
+                .thenReturn(expected);
+        Long countRegUsers = this.service.countRegisteredUsers();
+        assertEquals(expected, countRegUsers);
     }
 }

@@ -8,7 +8,7 @@ import cbs.wantACoffe.exceptions.IncorrectPasswordException;
 import cbs.wantACoffe.exceptions.NullValueInUserDataException;
 import cbs.wantACoffe.exceptions.UserNotExistsException;
 import cbs.wantACoffe.exceptions.UsernameEmailAlreadyExistsException;
-import cbs.wantACoffe.repository.IRegisteredMemberRepo;
+import cbs.wantACoffe.repository.IRegisteredUserRepo;
 import cbs.wantACoffe.service.auth.IEncryptService;
 import lombok.RequiredArgsConstructor;
 
@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RegisterdUserServiceImpl implements IRegisteredUserService {
 
-    private final IRegisteredMemberRepo userRepo;
+    private final IRegisteredUserRepo userRepo;
 
     private final IEncryptService cryptService;
 
