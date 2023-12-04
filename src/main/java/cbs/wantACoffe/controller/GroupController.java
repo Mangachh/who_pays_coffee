@@ -254,6 +254,11 @@ public class GroupController {
                 g.getMembers().stream().map(m -> MemberGroup.builder()
                         .groupId(g.getGroupId())
                         .nickname(m.getNickname())
+                        .userId(m.getId())
+                        .username(
+                            m.getRegUser() == null ?
+                            null: m.getRegUser().getUsername()
+                        )
                         .isAdmin(m.isAdmin())
                         .build()).toList());
     }
