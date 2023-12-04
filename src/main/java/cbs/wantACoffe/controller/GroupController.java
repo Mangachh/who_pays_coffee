@@ -85,7 +85,11 @@ public class GroupController {
         // get user
         RegisteredUser user = this.getUserByToken(token);
         log.info("User {} wants to create a new group", user.getUsername());
-
+            
+        if (groupData.getGroupName() == null || groupData.getGroupName().isBlank()) {
+            throw new GroupHasNoNameException();
+        }
+        
         Member m = Member.builder()
                 .regUser(user)
                 .nickname(groupData.getMemberName())
