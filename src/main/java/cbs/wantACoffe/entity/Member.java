@@ -71,7 +71,7 @@ public class Member {
     @Column(name = COLUMN_IS_ADMIN_NAME)
     private boolean isAdmin;
 
-    @ManyToOne(targetEntity = Group.class, fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne(targetEntity = Group.class, fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
     @JoinColumn(name = COLUMN_GROUP_ID_NAME)
     private Group group;
 

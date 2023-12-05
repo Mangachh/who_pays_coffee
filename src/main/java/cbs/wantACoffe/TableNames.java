@@ -1,5 +1,6 @@
 package cbs.wantACoffe;
 
+@Deprecated
 public class TableNames {
     
     public static final String NAME_REGISTERED_USERS = "registered_users";

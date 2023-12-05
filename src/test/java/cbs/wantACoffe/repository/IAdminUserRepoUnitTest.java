@@ -3,24 +3,25 @@ package cbs.wantACoffe.repository;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import cbs.wantACoffe.CoffeeApplication;
 import cbs.wantACoffe.CommonData;
+import cbs.wantACoffe.dto.group.IGroupInfo;
+import cbs.wantACoffe.dto.user.IBasicUserInfo;
 import cbs.wantACoffe.entity.AdminUser;
+import cbs.wantACoffe.entity.RegisteredUser;
 
 /**
  * Test unitario par {@link IAdminUserRepo}
@@ -92,7 +93,15 @@ public class IAdminUserRepoUnitTest {
     @Test
     @Order(5)
     void testFindByIdIncorrect() {
-        Optional<AdminUser> result = this.repo.findById(admin.getUserId()+4);
+        Optional<AdminUser> result = this.repo.findById(admin.getUserId() + 4);
         assertTrue(result.isEmpty());
     }
+    
+   
+
+    /*List<IGroupInfo> findAllGroupsAndCountMembers();
+
+    Long countGroups();
+
+    Long countRegisteredUsers();*/
 }

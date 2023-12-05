@@ -31,7 +31,7 @@ import cbs.wantACoffe.entity.RegisteredUser;
 public class IRegisteredUserRepoTest {
 
     @Autowired
-    private IRegisteredMemberRepo repo;
+    private IRegisteredUserRepo repo;
 
     private static RegisteredUser testUser = CommonData.getTestUserWithSuffix("IRegisteredUserRepoTests");
    

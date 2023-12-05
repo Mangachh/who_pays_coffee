@@ -1,6 +1,14 @@
 package cbs.wantACoffe.service.group;
 
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -12,6 +20,8 @@ import cbs.wantACoffe.CommonData;
 import cbs.wantACoffe.entity.Group;
 import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.RegisteredUser;
+import cbs.wantACoffe.exceptions.GroupHasNoNameException;
+import cbs.wantACoffe.exceptions.GroupNotExistsException;
 import cbs.wantACoffe.exceptions.MemberHasNoNicknameException;
 import cbs.wantACoffe.exceptions.NullValueInUserDataException;
 import cbs.wantACoffe.exceptions.UsernameEmailAlreadyExistsException;
@@ -31,61 +41,76 @@ public class GroupServiceIntegrationTest {
     @Autowired
     private IMemberService meberService;
 
-    
+    private static Group testGroup;
+    private static List<RegisteredUser> testUsers;
+    private static Member testMember;
+
+    @BeforeAll
+    static void init() {
+        testGroup = CommonData.getTestGroup();
+        testUsers = CommonData.getRegUsersForGroupWithSuffix("_GroupServiceIntegrationTest");
+    }
 
     @Test
     @Order(1)
-    void testAddGroupUser() throws NullValueInUserDataException, UsernameEmailAlreadyExistsException, MemberHasNoNicknameException {
-        // create user
-        RegisteredUser regUser = CommonData.getTestUserWithSuffix("_GroupServiceIntegrationTest");
-        //register
-        RegisteredUser u = this.userService.saveNewUser(regUser);
-        Member m = Member.builder()
-            .nickname("Pepote el malote")
-            .regUser(u)
-                .build();
-                
-        Group g = Group.builder()
-        .groupName("Los chunguitos")
+    void testSaveGroup() throws MemberHasNoNicknameException, NullValueInUserDataException,
+            UsernameEmailAlreadyExistsException, GroupHasNoNameException {
+
+        RegisteredUser user = this.userService.saveNewUser(testUsers.get(0));
+
+        Member member = Member.builder()
+                .nickname("Pepote el malote")
+                .regUser(user)
                 .build();
 
-        g.getMembers().add(m);
-        this.meberService.saveGroupMember(m);
-        this.groupService.saveGroup(g);
+        testGroup.getMembers().add(member);
+        this.meberService.saveGroupMember(member);
+        testGroup.setOwner(member);
+        Group result = this.groupService.saveGroup(testGroup);
 
-        System.out.println("\n---------------------------\n");
-        System.out.println(g);
-        System.out.println("\n---------------------------\n");
-        
+        assertEquals(testGroup.getGroupName(), result.getGroupName());
+        assertEquals(testGroup.getGroupId(), result.getGroupId());
+
+        testGroup = result;
+        testMember = member;
     }
+    
+    @Test
+    @Order(2)
+    void testSaveGroupNoName() {
+        assertThrows(GroupHasNoNameException.class,
+                () -> this.groupService.saveGroup(new Group()));
+    }
+
+    @Test
+    @Order(3)
+    void testFindGroupById() throws GroupNotExistsException {
+        Group result = this.groupService.findGroupById(testGroup.getGroupId());
+        assertEquals(testGroup.getGroupName(), result.getGroupName());
+        assertEquals(testGroup.getGroupId(), result.getGroupId());
+    }
+
+    @Test
+    @Order(4)
+    void testFindGroupByIdNotExists() {
+        assertThrows(
+                GroupNotExistsException.class,
+                () -> this.groupService.findGroupById(45545454L));
+    }    
+     
 
     @Test
     void testDeleteGroup() {
-
+        this.groupService.deleteGroup(testGroup.getGroupId());
+        assertThrows(
+                GroupNotExistsException.class,
+                () -> this.groupService.findGroupById(testGroup.getGroupId()));
     }
 
-    @Test
-    void testFindAllGroupMembers() {
+   
+    
 
-    }
+   
 
-    @Test
-    void testFindGroupById() {
-
-    }
-
-    @Test
-    void testFindGroupByOwnerAndName() {
-
-    }
-
-    @Test
-    void testFindGroupOwner() {
-
-    }
-
-    @Test
-    void testSaveGroup() {
-
-    }
+   
 }

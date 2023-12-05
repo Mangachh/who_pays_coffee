@@ -12,14 +12,13 @@ import cbs.wantACoffe.exceptions.IncorrectPasswordException;
 import cbs.wantACoffe.exceptions.UserNotExistsException;
 import cbs.wantACoffe.repository.IAdminUserRepo;
 import cbs.wantACoffe.repository.IGroupRepo;
-import cbs.wantACoffe.repository.IRegisteredMemberRepo;
+import cbs.wantACoffe.repository.IRegisteredUserRepo;
 import cbs.wantACoffe.service.auth.IEncryptService;
 import lombok.RequiredArgsConstructor;
 
 /**
  * Implementación de servicio para {@link IAdminService}
  * 
- * TODO: ampliar conforme añadamos funcionalidades a {@link GroupController}
  * 
  * @author Lluís Cobos Aumatell
  * @version 0.5
@@ -30,12 +29,12 @@ public class AdminUserServiceImpl implements IAdminService{
 
     private final IAdminUserRepo adminRepo;
 
-    private final IRegisteredMemberRepo regUserRepo;
+    private final IRegisteredUserRepo regUserRepo;
 
     private final IGroupRepo groupRepo;
 
     private final IEncryptService cryptService;
-
+    
     @Override
     public AdminUser save(AdminUser admin) {
         admin.setPassword(

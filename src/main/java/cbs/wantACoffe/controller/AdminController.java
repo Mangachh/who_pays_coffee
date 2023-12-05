@@ -132,7 +132,7 @@ public class AdminController {
 
     /**
      * Devuelve a todos los usuarios registrados en la aplicación con datos básicos
-     * @return
+     * @return -> Lista de {@link IBasicUserInfo}
      */
     @GetMapping(value = "r/get/all/users")
     public ResponseEntity<List<IBasicUserInfo>> getAllUsers() {
@@ -141,18 +141,30 @@ public class AdminController {
         return ResponseEntity.ok().body(users);
     }
     
+    /**
+     * Devuelve el conteo de {@link RegisteredUser}
+     * @return -> número de usuarios
+     */
     @GetMapping(value = "r/count/users")
     public ResponseEntity<Long> getCountUsers() {
         log.info("Admin getting count of users");
         return ResponseEntity.ok().body(this.adminService.countRegisteredUsers());
     }
 
+    /**
+     * Devuele el conteo de {@link Group}
+     * @return -> número de grupos
+     */
     @GetMapping(value = "r/count/groups")
     public ResponseEntity<Long> getCountGroups() {
         log.info("Admin getting count of groups");
         return ResponseEntity.ok().body(this.adminService.countGroups());
     }
 
+    /**
+     * Devuelve todos los grupos dados de alta en la app
+     * @return -> Lista de {@link IGroupInfo}
+     */
     @GetMapping(value = "r/get/all/groups")
     public ResponseEntity<List<IGroupInfo>> getAllGroups() {
         return ResponseEntity.ok().body(this.adminService.findAllGroupsAndCountMembers());
