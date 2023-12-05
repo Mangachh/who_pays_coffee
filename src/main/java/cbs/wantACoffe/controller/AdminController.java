@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import cbs.wantACoffe.dto.AdminToken;
-import cbs.wantACoffe.dto.Token;
-import cbs.wantACoffe.dto.Token.TokenType;
 import cbs.wantACoffe.dto.group.IGroupInfo;
+import cbs.wantACoffe.dto.token.AdminToken;
+import cbs.wantACoffe.dto.token.Token;
+import cbs.wantACoffe.dto.token.Token.TokenType;
 import cbs.wantACoffe.dto.user.IBasicUserInfo;
 import cbs.wantACoffe.dto.user.LoginAdminUser;
 import cbs.wantACoffe.entity.AdminUser;
@@ -23,8 +23,6 @@ import cbs.wantACoffe.repository.IAdminUserRepo;
 import cbs.wantACoffe.service.admin.IAdminService;
 import cbs.wantACoffe.service.auth.IAuthService;
 import cbs.wantACoffe.service.auth.IEncryptService;
-import cbs.wantACoffe.service.group.IGroupService;
-import cbs.wantACoffe.service.user.IRegisteredUserService;
 import cbs.wantACoffe.util.AuthUtils;
 import jakarta.annotation.PostConstruct;
 

@@ -3,9 +3,8 @@ package cbs.wantACoffe;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import cbs.wantACoffe.dto.Token;
-import cbs.wantACoffe.dto.Token.TokenType;
+import cbs.wantACoffe.dto.token.Token;
+import cbs.wantACoffe.dto.token.Token.TokenType;
 import cbs.wantACoffe.entity.AdminUser;
 import cbs.wantACoffe.entity.Group;
 import cbs.wantACoffe.entity.RegisteredUser;

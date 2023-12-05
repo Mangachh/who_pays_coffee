@@ -7,8 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import cbs.wantACoffe.dto.Token;
-import cbs.wantACoffe.dto.Token.TokenType;
+import cbs.wantACoffe.dto.token.Token;
+import cbs.wantACoffe.dto.token.Token.TokenType;
 import cbs.wantACoffe.service.auth.IAuthService;
 import cbs.wantACoffe.util.AuthUtils;
 import jakarta.servlet.FilterChain;

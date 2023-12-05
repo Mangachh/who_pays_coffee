@@ -1,6 +1,6 @@
 package cbs.wantACoffe.dto.user;
 
-import cbs.wantACoffe.dto.Token;
+import cbs.wantACoffe.dto.token.Token;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

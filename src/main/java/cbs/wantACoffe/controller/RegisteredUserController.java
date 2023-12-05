@@ -3,8 +3,8 @@ package cbs.wantACoffe.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import cbs.wantACoffe.dto.Token;
-import cbs.wantACoffe.dto.Token.TokenType;
+import cbs.wantACoffe.dto.token.Token;
+import cbs.wantACoffe.dto.token.Token.TokenType;
 import cbs.wantACoffe.dto.user.RegisteredUserToken;
 import cbs.wantACoffe.dto.user.UserPassword;
 import cbs.wantACoffe.entity.RegisteredUser;

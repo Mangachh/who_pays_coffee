@@ -9,7 +9,6 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -18,8 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import cbs.wantACoffe.CommonData;
-import cbs.wantACoffe.dto.Token;
-import cbs.wantACoffe.dto.Token.TokenType;
+import cbs.wantACoffe.dto.token.Token;
+import cbs.wantACoffe.dto.token.Token.TokenType;
 import cbs.wantACoffe.entity.IUser;
 import cbs.wantACoffe.entity.RegisteredUser;
 

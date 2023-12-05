@@ -39,8 +39,6 @@ import cbs.wantACoffe.service.group.IMemberService;
 import cbs.wantACoffe.service.group.IGroupService;
 import cbs.wantACoffe.service.user.IRegisteredUserService;
 import cbs.wantACoffe.util.AuthUtils;
-import io.micrometer.core.ipc.http.HttpSender.Response;
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 
 @RestController

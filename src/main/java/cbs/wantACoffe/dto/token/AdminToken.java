@@ -1,4 +1,4 @@
-package cbs.wantACoffe.dto;
+package cbs.wantACoffe.dto.token;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

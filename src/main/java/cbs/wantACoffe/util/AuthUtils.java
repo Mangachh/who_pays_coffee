@@ -1,7 +1,7 @@
 package cbs.wantACoffe.util;
 
-import cbs.wantACoffe.dto.Token;
-import cbs.wantACoffe.dto.Token.TokenType;
+import cbs.wantACoffe.dto.token.Token;
+import cbs.wantACoffe.dto.token.Token.TokenType;
 import cbs.wantACoffe.exceptions.InvalidTokenFormat;
 
 /**

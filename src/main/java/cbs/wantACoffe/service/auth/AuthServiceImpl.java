@@ -8,8 +8,8 @@ import java.util.function.Predicate;
 
 import org.springframework.stereotype.Service;
 
-import cbs.wantACoffe.dto.Token;
-import cbs.wantACoffe.dto.Token.TokenType;
+import cbs.wantACoffe.dto.token.Token;
+import cbs.wantACoffe.dto.token.Token.TokenType;
 import cbs.wantACoffe.entity.IUser;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
