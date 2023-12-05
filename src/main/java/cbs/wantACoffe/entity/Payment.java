@@ -2,6 +2,11 @@ package cbs.wantACoffe.entity;
 
 import java.sql.Date;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -45,6 +50,8 @@ public class Payment {
     private Double amount;
 
     @Column(name = COLUMN_DATE_NAME)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+
     private Date paymentDate;
 
     @ManyToOne

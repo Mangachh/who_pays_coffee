@@ -6,7 +6,6 @@ import cbs.wantACoffe.entity.IUser;
 import cbs.wantACoffe.entity.RegisteredUser;
 import cbs.wantACoffe.exceptions.InvalidTokenFormat;
 import cbs.wantACoffe.exceptions.UserNotExistsException;
-import cbs.wantACoffe.util.AuthUtils;
 
 /**
  * Interfaz para el servicio de autentificación.
@@ -74,7 +73,7 @@ public interface IAuthService {
      * @throws InvalidTokenFormat     -> si el formato del token es incorrecto
      * @throws UserNotExistsException -> si el usuario no existe
      */
-    RegisteredUser getUserByToken(GroupController groupController, final String token) throws InvalidTokenFormat, UserNotExistsException;
+    RegisteredUser getUserByToken(final String token) throws InvalidTokenFormat, UserNotExistsException;
 
         
     

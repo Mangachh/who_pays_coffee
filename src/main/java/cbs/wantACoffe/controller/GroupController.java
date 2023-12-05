@@ -1,6 +1,5 @@
 package cbs.wantACoffe.controller;
 
-import static org.mockito.Mockito.inOrder;
 
 import java.util.List;
 
@@ -81,7 +80,7 @@ public class GroupController {
             @RequestBody CreateGroup groupData) throws InvalidTokenFormat, UserNotExistsException, MemberHasNoNicknameException, GroupHasNoNameException {
 
         // get user
-        RegisteredUser user = this.authService.getUserByToken(this, token);
+        RegisteredUser user = this.authService.getUserByToken(token);
         log.info("User {} wants to create a new group", user.getUsername());
             
         if (groupData.getGroupName() == null || groupData.getGroupName().isBlank()) {
@@ -130,7 +129,7 @@ public class GroupController {
             throw new MemberAdminTypeUnknown();
         }
 
-        RegisteredUser user = this.authService.getUserByToken(this, token);
+        RegisteredUser user = this.authService.getUserByToken(token);
         log.info("User {} tries to get all their groups", user.getUsername());
         List<Group> groups = switch (type) {
             case TYPE_ADMIN -> this.groupService.findAllByRegUserIsAdmin(user, true);
@@ -172,7 +171,7 @@ public class GroupController {
             MemberNotInGroup, MemberIsNotAdmin, GroupNotExistsException, MemberAlreadyIsInGroup, GroupHasNoNameException, MemberHasNoNicknameException {
 
         // pillamos el usuario que mete esto
-        RegisteredUser userCaller = this.authService.getUserByToken(this, token);
+        RegisteredUser userCaller = this.authService.getUserByToken(token);
         
         if (memberGroup.getNickname() == null || memberGroup.getNickname().isBlank()) {
             throw new MemberHasNoNicknameException();
@@ -261,7 +260,7 @@ public class GroupController {
             @PathVariable(name = "id", required = true) final Long groupId)
             throws InvalidTokenFormat, UserNotExistsException, GroupNotExistsException, MemberNotInGroup {
         // hacemos check de user...
-        RegisteredUser user = this.authService.getUserByToken(this, token);
+        RegisteredUser user = this.authService.getUserByToken(token);
 
         // Pillamos grupo
         Group g = this.groupService.findGroupById(groupId);
@@ -296,7 +295,7 @@ public class GroupController {
             MemberNotInGroup, MemberHasNoNicknameException {
 
         // get reguser that makes the request
-        RegisteredUser registeredUser = this.authService.getUserByToken(this, token);
+        RegisteredUser registeredUser = this.authService.getUserByToken(token);
 
         // get group to update the member
         Group group = this.groupService.findGroupById(memberGroup.getGroupId());
@@ -344,7 +343,7 @@ public class GroupController {
         @RequestBody(required = true) final MemberUpdateNickname memberGroup) throws InvalidTokenFormat, UserNotExistsException, GroupNotExistsException, MemberNotInGroup, MemberIsNotAdmin, MemberHasNoNicknameException
     {
         // pillamos requester
-        RegisteredUser registeredUser = this.authService.getUserByToken(this, token);
+        RegisteredUser registeredUser = this.authService.getUserByToken(token);
 
         // pillamos el grupo
         Group group = this.groupService.findGroupById(memberGroup.getGroupId());
@@ -387,7 +386,7 @@ public class GroupController {
         log.info("Trying to delete the member {} from group {}", memberDeleteId, groupId);
 
         // ok, pillamos reguser
-        RegisteredUser registeredUser = this.authService.getUserByToken(this, token);
+        RegisteredUser registeredUser = this.authService.getUserByToken(token);
 
         // pillamos el grupo
         Member memberToDelete = this.memberService.findMemberById(memberDeleteId);
