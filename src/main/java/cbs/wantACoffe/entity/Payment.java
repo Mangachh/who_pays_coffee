@@ -3,18 +3,14 @@ package cbs.wantACoffe.entity;
 import java.sql.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
-
-import com.fasterxml.jackson.annotation.JsonFilter;
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
@@ -28,7 +24,23 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = Payment.TABLE_NAME)
+@Table(name = Payment.TABLE_NAME,
+        indexes = {
+                // index de ID GRUPO
+                @Index(name = "idx_payment_group_id", columnList = Payment.COLUMN_GROUP_ID_NAME),
+                //index de ID GRUPO por FECHA
+                @Index(name = "idx_payment_group_id_date", columnList = Payment.COLUMN_GROUP_ID_NAME + ", "
+                        + Payment.COLUMN_DATE_NAME),
+                // index por FECHA
+                @Index(name = "idx_payment_date", columnList = Payment.COLUMN_DATE_NAME),
+                // index por ID MIEMBRO
+                @Index(name = "idx_payment_member_id", columnList = Payment.COLUMN_MEMBER_PAYED_ID_NAME),
+                // index por ID GRUPO y ID MIEMBRO 
+                @Index(name = "idx_payment_group_id_member_id", columnList = Payment.COLUMN_GROUP_ID_NAME + ", " +
+                        Payment.COLUMN_MEMBER_PAYED_ID_NAME)
+                // creo que con estos indexs vamos sobrados, no?
+    
+})
 public class Payment {
 
     public final static String TABLE_NAME = "payments";

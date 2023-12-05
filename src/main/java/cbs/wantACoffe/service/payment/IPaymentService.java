@@ -10,7 +10,7 @@ import cbs.wantACoffe.entity.Payment;
 @Service
 public interface IPaymentService {
     
-    // añadir pago
+    // añadir pago -> DONE
     Payment savePayment(final Payment toSave);
 
     // eliminar pago -> lo dejaré para el final
