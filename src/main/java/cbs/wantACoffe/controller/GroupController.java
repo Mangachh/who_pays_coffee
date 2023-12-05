@@ -58,7 +58,7 @@ public class GroupController {
     private final IMemberService memberService;
     private final IGroupService groupService;
     private final IAuthService authService;
-    private final IRegisteredUserService userService;
+    public final IRegisteredUserService userService;
 
     private static final String TYPE_ADMIN = "admin";
     private static final String TYPE_MEMBER = "member";
@@ -81,7 +81,7 @@ public class GroupController {
             @RequestBody CreateGroup groupData) throws InvalidTokenFormat, UserNotExistsException, MemberHasNoNicknameException, GroupHasNoNameException {
 
         // get user
-        RegisteredUser user = this.getUserByToken(token);
+        RegisteredUser user = this.authService.getUserByToken(this, token);
         log.info("User {} wants to create a new group", user.getUsername());
             
         if (groupData.getGroupName() == null || groupData.getGroupName().isBlank()) {
@@ -130,7 +130,7 @@ public class GroupController {
             throw new MemberAdminTypeUnknown();
         }
 
-        RegisteredUser user = this.getUserByToken(token);
+        RegisteredUser user = this.authService.getUserByToken(this, token);
         log.info("User {} tries to get all their groups", user.getUsername());
         List<Group> groups = switch (type) {
             case TYPE_ADMIN -> this.groupService.findAllByRegUserIsAdmin(user, true);
@@ -172,7 +172,7 @@ public class GroupController {
             MemberNotInGroup, MemberIsNotAdmin, GroupNotExistsException, MemberAlreadyIsInGroup, GroupHasNoNameException, MemberHasNoNicknameException {
 
         // pillamos el usuario que mete esto
-        RegisteredUser userCaller = this.getUserByToken(token);
+        RegisteredUser userCaller = this.authService.getUserByToken(this, token);
         
         if (memberGroup.getNickname() == null || memberGroup.getNickname().isBlank()) {
             throw new MemberHasNoNicknameException();
@@ -261,7 +261,7 @@ public class GroupController {
             @PathVariable(name = "id", required = true) final Long groupId)
             throws InvalidTokenFormat, UserNotExistsException, GroupNotExistsException, MemberNotInGroup {
         // hacemos check de user...
-        RegisteredUser user = this.getUserByToken(token);
+        RegisteredUser user = this.authService.getUserByToken(this, token);
 
         // Pillamos grupo
         Group g = this.groupService.findGroupById(groupId);
@@ -296,7 +296,7 @@ public class GroupController {
             MemberNotInGroup, MemberHasNoNicknameException {
 
         // get reguser that makes the request
-        RegisteredUser registeredUser = this.getUserByToken(token);
+        RegisteredUser registeredUser = this.authService.getUserByToken(this, token);
 
         // get group to update the member
         Group group = this.groupService.findGroupById(memberGroup.getGroupId());
@@ -344,7 +344,7 @@ public class GroupController {
         @RequestBody(required = true) final MemberUpdateNickname memberGroup) throws InvalidTokenFormat, UserNotExistsException, GroupNotExistsException, MemberNotInGroup, MemberIsNotAdmin, MemberHasNoNicknameException
     {
         // pillamos requester
-        RegisteredUser registeredUser = this.getUserByToken(token);
+        RegisteredUser registeredUser = this.authService.getUserByToken(this, token);
 
         // pillamos el grupo
         Group group = this.groupService.findGroupById(memberGroup.getGroupId());
@@ -387,7 +387,7 @@ public class GroupController {
         log.info("Trying to delete the member {} from group {}", memberDeleteId, groupId);
 
         // ok, pillamos reguser
-        RegisteredUser registeredUser = this.getUserByToken(token);
+        RegisteredUser registeredUser = this.authService.getUserByToken(this, token);
 
         // pillamos el grupo
         Member memberToDelete = this.memberService.findMemberById(memberDeleteId);
@@ -410,20 +410,5 @@ public class GroupController {
         return ResponseEntity.ok("Deleted");
 
         
-    }
-
-    /**
-     * Devuelve un {@link RegisteredUser} a partir del token.
-     * Primero llama al auth y mira que esté en sesión, luego busca al user en la
-     * base de datos
-     * 
-     * @param token -> token del usuario
-     * @return -> usuario en sesión
-     * @throws InvalidTokenFormat     -> si el formato del token es incorrecto
-     * @throws UserNotExistsException -> si el usuario no existe
-     */
-    private RegisteredUser getUserByToken(final String token) throws InvalidTokenFormat, UserNotExistsException {
-        Long id = this.authService.getUserIdByToken(AuthUtils.stringToToken(token));
-        return this.userService.findById(id);
     }
 }

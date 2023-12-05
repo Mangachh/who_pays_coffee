@@ -1,7 +1,12 @@
 package cbs.wantACoffe.service.auth;
+import cbs.wantACoffe.controller.GroupController;
 import cbs.wantACoffe.dto.token.Token;
 import cbs.wantACoffe.dto.token.Token.TokenType;
 import cbs.wantACoffe.entity.IUser;
+import cbs.wantACoffe.entity.RegisteredUser;
+import cbs.wantACoffe.exceptions.InvalidTokenFormat;
+import cbs.wantACoffe.exceptions.UserNotExistsException;
+import cbs.wantACoffe.util.AuthUtils;
 
 /**
  * Interfaz para el servicio de autentificación.
@@ -57,4 +62,20 @@ public interface IAuthService {
      * @return userId
      */
     Long getUserIdByToken(final Token token);
+
+    /**
+     * Devuelve un {@link RegisteredUser} a partir del token.
+     * Primero llama al auth y mira que esté en sesión, luego busca al user en la
+     * base de datos
+     * 
+     * @param groupController TODO
+     * @param token -> token del usuario
+     * @return -> usuario en sesión
+     * @throws InvalidTokenFormat     -> si el formato del token es incorrecto
+     * @throws UserNotExistsException -> si el usuario no existe
+     */
+    RegisteredUser getUserByToken(GroupController groupController, final String token) throws InvalidTokenFormat, UserNotExistsException;
+
+        
+    
 }

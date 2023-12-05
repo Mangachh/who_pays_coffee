@@ -8,9 +8,14 @@ import java.util.function.Predicate;
 
 import org.springframework.stereotype.Service;
 
+import cbs.wantACoffe.controller.GroupController;
 import cbs.wantACoffe.dto.token.Token;
 import cbs.wantACoffe.dto.token.Token.TokenType;
 import cbs.wantACoffe.entity.IUser;
+import cbs.wantACoffe.entity.RegisteredUser;
+import cbs.wantACoffe.exceptions.InvalidTokenFormat;
+import cbs.wantACoffe.exceptions.UserNotExistsException;
+import cbs.wantACoffe.util.AuthUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
@@ -88,5 +93,12 @@ public class AuthServiceImpl implements IAuthService {
         return this.usersInSession
                 .get(token.getType())
                 .get(token.getBody());
+    }
+
+    @Override
+    public RegisteredUser getUserByToken(GroupController groupController, String token)
+            throws InvalidTokenFormat, UserNotExistsException {
+        Long id = getUserIdByToken(AuthUtils.stringToToken(token));
+        return groupController.userService.findById(id);
     }
 }
