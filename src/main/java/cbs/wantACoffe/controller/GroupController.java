@@ -274,21 +274,8 @@ public class GroupController {
         }
 
         return ResponseEntity.ok().body(
-<<<<<<< HEAD
-                g.getMembers().stream().map(m -> MemberGroup.builder()
-                        .groupId(g.getGroupId())
-                        .nickname(m.getNickname())
-                        .userId(m.getId())
-                        .username(
-                            m.getRegUser() == null ?
-                            null: m.getRegUser().getUsername()
-                        )
-                        .isAdmin(m.isAdmin())
-                        .build()).toList());
-=======
             this.memberService.findAllMembersByGroupId(groupId)
         );
->>>>>>> group
     }
 
     /**
