@@ -1,8 +1,10 @@
 package cbs.wantACoffe.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import cbs.wantACoffe.TableNames;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -20,7 +23,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Builder.ObtainVia;
 
 /**
  * Clase para los miembros del grupo. Los miembros pueden estar registrados en la app
@@ -74,6 +76,14 @@ public class Member {
     @ManyToOne(targetEntity = Group.class, fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
     @JoinColumn(name = COLUMN_GROUP_ID_NAME)
     private Group group;
+
+    // no sé si hacerlo así o qué, pero bueno
+    @OneToMany(mappedBy = "member", 
+            fetch = FetchType.EAGER, 
+            cascade = { CascadeType.MERGE, CascadeType.REMOVE }
+    )
+    @Builder.Default
+    private List<Payment> payments = new ArrayList<>();
 
     public boolean isRegisteredUser() {
         return this.regUser != null;

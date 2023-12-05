@@ -1,3 +1,7 @@
 2023-11-21 16:50:36 jdbc[3]: exception
 org.h2.jdbc.JdbcSQLNonTransientException: El objeto ya está cerrado
 The object is already closed [90007-214]
+2023-12-05 10:09:31 jdbc[14]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "PAYMENTSM" no encontrada
+Table "PAYMENTSM" not found; SQL statement:
+select * from paymentsM [42102-214]
