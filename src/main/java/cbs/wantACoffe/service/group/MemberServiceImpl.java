@@ -1,6 +1,5 @@
 package cbs.wantACoffe.service.group;
 
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +18,13 @@ import cbs.wantACoffe.repository.IMemberRepo;
  */
 @Service
 public class MemberServiceImpl implements IMemberService {
-    
+
     @Autowired
     private IMemberRepo repo;
 
     @Override
     public Member saveGroupMember(Member user) throws MemberHasNoNicknameException {
-        if (user.getNickname() == null ||user.getNickname().isBlank()) {
+        if (user.getNickname() == null || user.getNickname().isBlank()) {
             throw new MemberHasNoNicknameException();
         }
         return this.repo.save(user);
@@ -33,7 +32,8 @@ public class MemberServiceImpl implements IMemberService {
 
     @Override
     @Deprecated
-    public Member saveGroupMember(RegisteredUser user, String nickname, boolean isAdmin) throws MemberHasNoNicknameException {
+    public Member saveGroupMember(RegisteredUser user, String nickname, boolean isAdmin)
+            throws MemberHasNoNicknameException {
         if (nickname == null || nickname.isBlank()) {
             throw new MemberHasNoNicknameException();
         }
@@ -50,45 +50,34 @@ public class MemberServiceImpl implements IMemberService {
         return this.repo.findMemberByGroupIdAndRegUserId(groupId, regUserId)
                 .orElseThrow(MemberNotInGroup::new);
     }
-    
+
     @Override
     public Member findMemberById(Long memberId) throws MemberNotInGroup {
         return this.repo.findById(memberId).orElseThrow(MemberNotInGroup::new);
-    }    
-    
+    }
 
     @Override
     public void deleteGroupMemberById(Long id) {
         this.repo.deleteById(id);
-    }       
+    }
 
     @Override
     public Member findMemberByGroupIdAndNickname(Long groupId, String nickname) throws MemberNotInGroup {
         return this.repo.findMemberByGroupIdAndNickname(groupId, nickname)
-                    .orElseThrow(MemberNotInGroup::new);
+                .orElseThrow(MemberNotInGroup::new);
     }
 
     @Override
     public List<MemberGroup> findAllMembersByGroupId(Long groupId) {
         List<Member> members = this.repo.findAllMembersByGroupGroupId(groupId);
-        return members.stream().map(m -> /*new MemberGroup(
-            groupId,
-            m.getNickname(),
-            if(),
-            m.isAdmin()*/
-            MemberGroup.builder()
-            .groupId(groupId)
-            .nickname(m.getNickname())
-            .username(m.getRegUser() == null? null : m.getRegUser().getUsername())
-            .build())
-            .toList();
-            
-        
+        return members.stream().map(m -> MemberGroup.builder()
+                .groupId(groupId)
+                .userId(m.getId())
+                .nickname(m.getNickname())
+                .username(m.getRegUser() == null ? null : m.getRegUser().getUsername())
+                .build())
+                .toList();
+
     }
-
-    
-
-
-    
 
 }

@@ -20,6 +20,7 @@ import lombok.Builder.Default;
 public class MemberGroup {
     
     private Long groupId;
+    private Long userId;
     private String nickname;
     private String username;
     
