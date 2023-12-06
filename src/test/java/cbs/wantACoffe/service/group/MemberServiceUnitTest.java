@@ -75,7 +75,7 @@ public class MemberServiceUnitTest {
         Member result = this.memberService.saveGroupMember(groupUser);
         assertEquals(groupUser, result);
         testMember = result;
-        testMember.setId(25L); // en integración l hace el repo
+        testMember.setMemberId(25L); // en integración l hace el repo
     }
 
     @Test
@@ -142,10 +142,10 @@ public class MemberServiceUnitTest {
         // funca ahora
         // así tenemos el id que queremos
         Member expected = testMember;
-        Mockito.when(this.memberRepo.findById(expected.getId()))
+        Mockito.when(this.memberRepo.findById(expected.getMemberId()))
                 .thenReturn(Optional.of(testMember));
 
-        Member result = this.memberService.findMemberById(expected.getId());
+        Member result = this.memberService.findMemberById(expected.getMemberId());
         assertEquals(expected.getNickname(), result.getNickname());
     }
 
@@ -177,7 +177,7 @@ public class MemberServiceUnitTest {
                 testMember.getNickname());
 
         assertNotNull(result);
-        assertEquals(expected.getId(), result.getId());
+        assertEquals(expected.getMemberId(), result.getMemberId());
         assertEquals(expected.getNickname(), result.getNickname());
         assertEquals(expected.getGroup().getGroupName(), result.getGroup().getGroupName());
     }

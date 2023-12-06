@@ -21,13 +21,14 @@ public interface IPaymentService {
     // usaremos una clase custom para eso, no? o no?
     List<Payment> getAllPaymentsByGroup(final Long groupId);
 
-    // lista de todos los pagos fecha_inicio - fecha_final
-    List<Payment> getAllPaymentsByInitEndDate(final Date startDate, final Date endDate);
+    // lista de todos los pagos fecha_inicio - fecha_final -> DONE
+    List<Payment> getAllPaymentsByGroup(final Long groupId, final Date startDate, final Date endDate);
 
-    // lista de todos los pagos de un miembro
-    List<Payment> getAllPaymentsByMember(final Member member);
+    // lista de todos los pagos de un miembro -> DONE
+    List<Payment> getAllPaymentsByMember(final Long memberId);
 
-    List<Payment> getAllPaymentsByMember(final Member member, final Date initDate, final Date endDate);
+    // lista de todos los pagos de un miembro fechas limitadas -> DONE
+    List<Payment> getAllPaymentsByMember(final Long memberId, final Date initDate, final Date endDate);
     
     // lista de todos los pagos fecha_inicio - fecha_final agrupados por usuario y sumados
 

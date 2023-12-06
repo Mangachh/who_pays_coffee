@@ -1,31 +1,3 @@
-2023-11-21 16:50:36 jdbc[3]: exception
+2023-12-06 09:55:18 jdbc[3]: exception
 org.h2.jdbc.JdbcSQLNonTransientException: El objeto ya está cerrado
 The object is already closed [90007-214]
-2023-12-05 10:09:31 jdbc[14]: exception
-org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "PAYMENTSM" no encontrada
-Table "PAYMENTSM" not found; SQL statement:
-select * from paymentsM [42102-214]
-2023-12-05 12:00:03 jdbc[14]: exception
-org.h2.jdbc.JdbcSQLSyntaxErrorException: Error de Sintaxis en sentencia SQL "[*]# update group_members set is_admin = false WHERE reg_user_id = 3"
-Syntax error in SQL statement "[*]# update group_members set is_admin = false WHERE reg_user_id = 3"; SQL statement:
-# update group_members set is_admin = false WHERE reg_user_id = 3 [42000-214]
-2023-12-05 12:00:25 jdbc[14]: exception
-org.h2.jdbc.JdbcSQLSyntaxErrorException: Error de Sintaxis en sentencia SQL "[*]#  update group_members set is_admin = false WHERE reg_user_id = 3"
-Syntax error in SQL statement "[*]#  update group_members set is_admin = false WHERE reg_user_id = 3"; SQL statement:
-#  update group_members set is_admin = false WHERE reg_user_id = 3 [42000-214]
-2023-12-05 12:00:44 jdbc[14]: exception
-org.h2.jdbc.JdbcSQLSyntaxErrorException: Error de Sintaxis en sentencia SQL "[*]#  update group_members set is_admin = false WHERE reg_user_id = 3"
-Syntax error in SQL statement "[*]#  update group_members set is_admin = false WHERE reg_user_id = 3"; SQL statement:
-#  update group_members set is_admin = false WHERE reg_user_id = 3 [42000-214]
-2023-12-05 12:00:49 jdbc[14]: exception
-org.h2.jdbc.JdbcSQLSyntaxErrorException: Error de Sintaxis en sentencia SQL "[*]#  update group_members set is_admin = false WHERE reg_user_id = 3"
-Syntax error in SQL statement "[*]#  update group_members set is_admin = false WHERE reg_user_id = 3"; SQL statement:
-#  update group_members set is_admin = false WHERE reg_user_id = 3 [42000-214]
-2023-12-05 12:01:33 jdbc[14]: exception
-org.h2.jdbc.JdbcSQLSyntaxErrorException: Error de Sintaxis en sentencia SQL "[*]#  update group_members set is_admin = false WHERE reg_user_id = 3"
-Syntax error in SQL statement "[*]#  update group_members set is_admin = false WHERE reg_user_id = 3"; SQL statement:
-#  update group_members set is_admin = false WHERE reg_user_id = 3 [42000-214]
-2023-12-05 12:02:09 jdbc[14]: exception
-org.h2.jdbc.JdbcSQLSyntaxErrorException: Error de Sintaxis en sentencia SQL "[*]# update group_members set is_admin = true WHERE reg_user_id = 3"
-Syntax error in SQL statement "[*]# update group_members set is_admin = true WHERE reg_user_id = 3"; SQL statement:
-# update group_members set is_admin = true WHERE reg_user_id = 3 [42000-214]

@@ -141,7 +141,7 @@ public class MemberServiceIntegrationTest {
         // así tenemos el id que queremos
         Member expected = testMember;
 
-        Member result = this.memberService.findMemberById(expected.getId());
+        Member result = this.memberService.findMemberById(expected.getMemberId());
         assertEquals(expected.getNickname(), result.getNickname());
     }
 
@@ -164,7 +164,7 @@ public class MemberServiceIntegrationTest {
                 testMember.getNickname());
 
         assertNotNull(result);
-        assertEquals(expected.getId(), result.getId());
+        assertEquals(expected.getMemberId(), result.getMemberId());
         assertEquals(expected.getNickname(), result.getNickname());
         assertEquals(expected.getGroup().getGroupName(), result.getGroup().getGroupName());
     }
@@ -189,10 +189,10 @@ public class MemberServiceIntegrationTest {
     @Order(11)
     void testDeleteGroumMemberById() {
         // oju! conforme metamos cosas esto dará errores...
-        this.memberService.deleteGroupMemberById(testMember.getId());
+        this.memberService.deleteGroupMemberById(testMember.getMemberId());
         // intentamos pillar miembro
         assertThrows(MemberNotInGroup.class,
-                () -> this.memberService.findMemberById(testMember.getId()));
+                () -> this.memberService.findMemberById(testMember.getMemberId()));
     }
 
 }

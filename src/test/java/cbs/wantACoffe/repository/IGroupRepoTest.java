@@ -89,7 +89,7 @@ public class IGroupRepoTest {
         Member resultMember = result.getMembers().get(0);
 
         assertEquals(creator.getRegUser(), resultMember.getRegUser());
-        assertEquals(creator.getId(), resultMember.getId());
+        assertEquals(creator.getMemberId(), resultMember.getMemberId());
         assertEquals(creator.getNickname(), resultMember.getNickname());
         assertEquals(resultMember.getGroup().getGroupId(), result.getGroupId());
 
@@ -168,7 +168,7 @@ public class IGroupRepoTest {
     @Order(6)
     void testFindAllByMembersIsAdmin() {
         List<Group> groups = this.groupRepo.findAllByMembersAndMembersIsAdmin(
-                testGroup.getMembers().get(adminIndex).getId(),
+                testGroup.getMembers().get(adminIndex).getMemberId(),
             true);
         
         assertEquals(1, groups.size());
@@ -181,7 +181,7 @@ public class IGroupRepoTest {
     @Order(7)
     void testFindAllByMembersIsNotAdmin() {
         List<Group> groups = this.groupRepo.findAllByMembersAndMembersIsAdmin(
-                testGroup.getMembers().get(notAdminIndex).getId(),
+                testGroup.getMembers().get(notAdminIndex).getMemberId(),
                 false);
         assertEquals(1, groups.size());
         assertEquals(groups.get(0).getGroupName(), testGroup.getGroupName());

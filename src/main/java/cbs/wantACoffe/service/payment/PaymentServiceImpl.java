@@ -22,31 +22,32 @@ public class PaymentServiceImpl implements IPaymentService {
     }
 
     @Override
-    public void deletePayment(Long paymentId) {
+    public void deletePayment(final Long paymentId) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'deletePayment'");
     }
 
     @Override
-    public List<Payment> getAllPaymentsByGroup(Long groupId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllPaymentsByGroup'");
+    public List<Payment> getAllPaymentsByGroup(final Long groupId, final Date startDate, final Date endDate) {
+        return this.repo.findAllByGroupGroupIdAndPaymentDateBetweenOrderByPaymentDateAsc(groupId, startDate, endDate);
     }
 
     @Override
-    public List<Payment> getAllPaymentsByInitEndDate(Date startDate, Date endDate) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllPaymentsByInitEndDate'");
+    public List<Payment> getAllPaymentsByGroup(final Long groupId) {
+        return this.repo.findAllByGroupGroupIdOrderByPaymentDateAsc(groupId);
+    }
+
+
+    @Override
+    public List<Payment> getAllPaymentsByMember(Long memberId) {
+        return this.repo.findAllByMemberMemberIdOrderByPaymentDateAsc(memberId);
     }
 
     @Override
-    public List<Payment> getAllPaymentsByMember(Member member) {
-        return this.repo.findAllByMember(member);
+    public List<Payment> getAllPaymentsByMember(Long memberId, Date initDate, Date endDate) {
+        return this.repo.findAllByMemberMemberIdAndPaymentDateBetweenOrderByPaymentDateAsc(memberId, initDate, endDate);
     }
 
-    @Override
-    public List<Payment> getAllPaymentsByMember(Member member, Date initDate, Date endDate) {
-        return this.repo.findAllByMemberAndPaymentDateBetween(member, initDate, endDate);
-    }
+    
     
 }

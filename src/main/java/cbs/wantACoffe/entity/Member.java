@@ -60,7 +60,7 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "member_id_generator")
     @SequenceGenerator(sequenceName = "MemberId", name = "member_id_generator", allocationSize = 1)
     @Column(name = COLUMN_ID_NAME) 
-    private Long id;
+    private Long memberId;
 
     @Column(name = COLUMN_NICKNAME_NAME)
     private String nickname;
