@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import cbs.wantACoffe.dto.payment.PaymentsByUser;
-import cbs.wantACoffe.dto.payment.PaymentsByUser.SimplePaymentData;
 import cbs.wantACoffe.dto.payment.PaymentData;
 import cbs.wantACoffe.dto.payment.PaymentModel;
 import cbs.wantACoffe.entity.Member;
@@ -202,6 +201,12 @@ public class PaymentController {
 
     // pagos totales por persona: (fechas determinadas también)
     // return -> Total_amount, nickname, is_member, date
+
+    /* suma de pagos por usuario
+    * suma de pagos por usuario entre fechas X e Y
+    * suma de pagos de cada usuario
+    * suma de pagos de cada usuario entre fechas X e y
+    */
 
     private Member getMemberByToken(final Long groupId, final String token)
             throws MemberNotInGroup, InvalidTokenFormat, UserNotExistsException {

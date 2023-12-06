@@ -16,6 +16,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PreRemove;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -80,13 +81,20 @@ public class Member {
     // no sé si hacerlo así o qué, pero bueno
     @OneToMany(mappedBy = "member", 
             fetch = FetchType.EAGER, 
-            cascade = { CascadeType.MERGE, CascadeType.REMOVE }
+            cascade = { CascadeType.MERGE }
     )
     @Builder.Default
     private List<Payment> payments = new ArrayList<>();
 
     public boolean isRegisteredUser() {
         return this.regUser != null;
+    }
+
+    @PreRemove
+    private void PreRemove() {
+        for (Payment p : this.payments) {
+            p.setMember(null);
+        }
     }
 
 }
