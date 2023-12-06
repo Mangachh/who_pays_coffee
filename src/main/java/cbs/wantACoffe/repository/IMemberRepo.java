@@ -20,34 +20,24 @@ import cbs.wantACoffe.entity.RegisteredUser;
  */
 @Repository
 public interface IMemberRepo extends JpaRepository<Member, Long> {
-    
+
     List<Group> findGroupByRegUserAndIsAdminTrue(final RegisteredUser user);
-    
+
     List<Group> findGroupByRegUserAndIsAdminFalse(final RegisteredUser user);
 
-    @Query
-    (
-        value="SELECT * FROM " + Member.TABLE_NAME + 
-              " WHERE " + Member.COLUMN_GROUP_ID_NAME + " =:groupId " +
-              "AND " + Member.COLUMN_REG_USER_ID_NAME + " = :userId",
-        nativeQuery = true
-    )
+    @Query(value = "SELECT * FROM " + Member.TABLE_NAME +
+            " WHERE " + Member.COLUMN_GROUP_ID_NAME + " =:groupId " +
+            "AND " + Member.COLUMN_REG_USER_ID_NAME + " = :userId", nativeQuery = true)
     Optional<Member> findMemberByGroupIdAndRegUserId(
-        @Param("groupId") final Long groupId,
+            @Param("groupId") final Long groupId,
             @Param("userId") final Long userId);
-        
-    @Query
-    (
-        value="SELECT * FROM " + Member.TABLE_NAME + 
-              " WHERE " + Member.COLUMN_GROUP_ID_NAME + " =:groupId " +
-              "AND " + Member.COLUMN_NICKNAME_NAME + " = :nickname",
-        nativeQuery = true
-    )
+
+    @Query(value = "SELECT * FROM " + Member.TABLE_NAME +
+            " WHERE " + Member.COLUMN_GROUP_ID_NAME + " =:groupId " +
+            "AND " + Member.COLUMN_NICKNAME_NAME + " = :nickname", nativeQuery = true)
     Optional<Member> findMemberByGroupIdAndNickname(
-        @Param("groupId") final Long groupId,
+            @Param("groupId") final Long groupId,
             @Param("nickname") final String nickname);
-    
-    
-    
+
     List<Member> findAllMembersByGroupGroupId(long id);
 }

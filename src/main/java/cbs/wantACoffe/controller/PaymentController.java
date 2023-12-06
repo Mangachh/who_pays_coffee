@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import cbs.wantACoffe.dto.payment.PaymentsByUser;
+import cbs.wantACoffe.dto.payment.IPaymentTotal;
 import cbs.wantACoffe.dto.payment.PaymentData;
 import cbs.wantACoffe.dto.payment.PaymentModel;
 import cbs.wantACoffe.entity.Member;
@@ -188,15 +190,46 @@ public class PaymentController {
         }
 
         final List<PaymentData> paymentRes = payments.stream().map(
-                pay -> 
-                        PaymentData.builder()
-                                .nickname(pay.getMemberName())
-                                .amount(pay.getAmount())
-                                .date(pay.getPaymentDate())
-                                .isMember(pay.isMemberActive())
+                pay -> PaymentData.builder()
+                        .nickname(pay.getMemberName())
+                        .amount(pay.getAmount())
+                        .date(pay.getPaymentDate())
+                        .isMember(pay.isMemberActive())
                         .build())
                 .toList();
         return ResponseEntity.ok(paymentRes);
+    }
+    
+    @GetMapping("get/totals/by/group")
+    public ResponseEntity<List<IPaymentTotal>> getTotalPaymentes(
+         @RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token,
+            @RequestParam(name = "groupId") Long groupId,
+            @RequestParam(name = "initDate", required = false) Date initDate,
+            @RequestParam(name = "endDate", required = false) Date endDate) throws MemberNotInGroup, InvalidTokenFormat, UserNotExistsException {
+        
+        log.info("User trying to get payments by group");
+        // get the requester member
+        Member requesterMember = this.getMemberByToken(groupId, token);
+
+        log.info("Checking if user is in group");
+        // check if member in group, again, better to be sure than sorry
+        if (requesterMember.getGroup().getGroupId() != groupId) {
+            throw new MemberNotInGroup();
+        }
+
+        // TODO: podemos crear un super método y tal?
+        List<IPaymentTotal> payments = null;
+        if (initDate == null || endDate == null) {
+            log.info("No dates, so looking for all the payments");
+            payments = this.paymentService.getAlIPaymentTotals(groupId);
+        } else {
+            log.info("Dates found. Looking for payments between dates");
+            payments = this.paymentService.getAlIPaymentTotals(groupId, initDate, endDate);
+        }
+
+
+        return ResponseEntity.ok().body(payments);
+        
     }
 
     // pagos totales por persona: (fechas determinadas también)

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import cbs.wantACoffe.dto.payment.IPaymentTotal;
 import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.Payment;
 
@@ -29,10 +30,14 @@ public interface IPaymentService {
 
     // lista de todos los pagos de un miembro fechas limitadas -> DONE
     List<Payment> getAllPaymentsByMember(final Long memberId, final Date initDate, final Date endDate);
+
+    // lista de los totales de cada usuario -> DONE
+    List<IPaymentTotal> getAlIPaymentTotals(final Long groupId);
+
+    // lista de los totales de cada usuario fecha_inicio - fecha_final
+    List<IPaymentTotal> getAlIPaymentTotals(final Long groupId, final Date initDate, final Date endDate);
+
+    // lista de los totales de un usuario
     
     // lista de todos los pagos fecha_inicio - fecha_final agrupados por usuario y sumados
-
-    // lista de todos los pagos por usuario X
-
-    // totales por cada usuario?
 }

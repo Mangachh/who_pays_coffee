@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import cbs.wantACoffe.TableNames;
 import cbs.wantACoffe.dto.group.IGroupInfo;
 import cbs.wantACoffe.entity.Group;
 import cbs.wantACoffe.entity.Member;

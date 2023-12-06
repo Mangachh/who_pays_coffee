@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import cbs.wantACoffe.dto.payment.IPaymentTotal;
 import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.Payment;
 import cbs.wantACoffe.repository.IPaymentRepo;
@@ -46,6 +47,16 @@ public class PaymentServiceImpl implements IPaymentService {
     @Override
     public List<Payment> getAllPaymentsByMember(Long memberId, Date initDate, Date endDate) {
         return this.repo.findAllByMemberMemberIdAndPaymentDateBetweenOrderByPaymentDateAsc(memberId, initDate, endDate);
+    }
+
+    @Override
+    public List<IPaymentTotal> getAlIPaymentTotals(Long groupId) {
+        return this.repo.findAllTotalsByGroup(groupId);
+    }
+
+    @Override
+    public List<IPaymentTotal> getAlIPaymentTotals(Long groupId, Date initDate, Date endDate) {
+        return this.repo.findAllTotalsByGroupBetweenDates(groupId, initDate, endDate);
     }
 
     
