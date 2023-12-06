@@ -43,5 +43,10 @@ public class PaymentServiceImpl implements IPaymentService {
     public List<Payment> getAllPaymentsByMember(Member member) {
         return this.repo.findAllByMember(member);
     }
+
+    @Override
+    public List<Payment> getAllPaymentsByMember(Member member, Date initDate, Date endDate) {
+        return this.repo.findAllByMemberAndPaymentDateBetween(member, initDate, endDate);
+    }
     
 }

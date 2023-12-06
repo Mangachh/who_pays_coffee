@@ -141,7 +141,7 @@ public class PaymentController {
             log.info("No dates, so looking for all the payments");
             payments = this.paymentService.getAllPaymentsByMember(payedMember);
         } else {
-            payments = null; // no haría falta, pero bueno
+            payments = this.paymentService.getAllPaymentsByMember(payedMember, initDate, endDate);
         }
 
         // transformo a clase

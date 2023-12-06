@@ -26,6 +26,8 @@ public interface IPaymentService {
 
     // lista de todos los pagos de un miembro
     List<Payment> getAllPaymentsByMember(final Member member);
+
+    List<Payment> getAllPaymentsByMember(final Member member, final Date initDate, final Date endDate);
     
     // lista de todos los pagos fecha_inicio - fecha_final agrupados por usuario y sumados
 
