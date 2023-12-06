@@ -137,10 +137,11 @@ public class PaymentController {
 
         // si no hay fechas, probamos con este
         final List<Payment> payments;
-        if (initDate == null) {
+        if (initDate == null ||endDate == null) {
             log.info("No dates, so looking for all the payments");
             payments = this.paymentService.getAllPaymentsByMember(payedMember.getMemberId());
         } else {
+            log.info("Dates found. Looking for payments between dates");
             payments = this.paymentService.getAllPaymentsByMember(payedMember.getMemberId(), initDate, endDate);
         }
 
@@ -168,18 +169,22 @@ public class PaymentController {
             @RequestParam(name = "endDate", required = false) Date endDate)
             throws MemberNotInGroup, InvalidTokenFormat, UserNotExistsException {
 
+        log.info("User trying to get payments by group");
         // get the requester member
         Member requesterMember = this.getMemberByToken(groupId, token);
 
+        log.info("Checking if user is in group");
         // check if member in group, again, better to be sure
         if (requesterMember.getGroup().getGroupId() != groupId) {
             throw new MemberNotInGroup();
         }
 
         final List<Payment> payments;
-        if (initDate == null) {
+        if (initDate == null || endDate == null) {
+            log.info("No dates, so looking for all the payments");
             payments = this.paymentService.getAllPaymentsByGroup(groupId);
         } else {
+            log.info("Dates found. Looking for payments between dates");
             payments = this.paymentService.getAllPaymentsByGroup(groupId, initDate, endDate);
         }
 
