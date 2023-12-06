@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.Payment;
 import cbs.wantACoffe.repository.IPaymentRepo;
 
@@ -36,6 +37,11 @@ public class PaymentServiceImpl implements IPaymentService {
     public List<Payment> getAllPaymentsByInitEndDate(Date startDate, Date endDate) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getAllPaymentsByInitEndDate'");
+    }
+
+    @Override
+    public List<Payment> getAllPaymentsByMember(Member member) {
+        return this.repo.findAllByMember(member);
     }
     
 }

@@ -1,11 +1,15 @@
 package cbs.wantACoffe.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.Payment;
 
 @Repository
-public interface IPaymentRepo extends JpaRepository<Payment, Long>{
+public interface IPaymentRepo extends JpaRepository<Payment, Long> {
     
+    List<Payment> findAllByMember(final Member member);
 }
