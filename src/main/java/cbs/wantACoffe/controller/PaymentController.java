@@ -237,8 +237,6 @@ public class PaymentController {
 
     /* suma de pagos por usuario
     * suma de pagos por usuario entre fechas X e Y
-    * suma de pagos de cada usuario
-    * suma de pagos de cada usuario entre fechas X e y
     */
 
     private Member getMemberByToken(final Long groupId, final String token)
