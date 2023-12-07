@@ -138,7 +138,7 @@ public class PaymentController {
 
         // si no hay fechas, probamos con este
         final List<Payment> payments;
-        if (initDate == null ||endDate == null) {
+        if (initDate == null || endDate == null) {
             log.info("No dates, so looking for all the payments");
             payments = this.paymentService.getAllPaymentsByMember(payedMember.getMemberId());
         } else {
@@ -199,14 +199,15 @@ public class PaymentController {
                 .toList();
         return ResponseEntity.ok(paymentRes);
     }
-    
+
     @GetMapping("get/totals/by/group")
     public ResponseEntity<List<IPaymentTotal>> getTotalPaymentes(
-         @RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token,
+            @RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token,
             @RequestParam(name = "groupId") Long groupId,
             @RequestParam(name = "initDate", required = false) Date initDate,
-            @RequestParam(name = "endDate", required = false) Date endDate) throws MemberNotInGroup, InvalidTokenFormat, UserNotExistsException {
-        
+            @RequestParam(name = "endDate", required = false) Date endDate)
+            throws MemberNotInGroup, InvalidTokenFormat, UserNotExistsException {
+
         log.info("User trying to get payments by group");
         // get the requester member
         Member requesterMember = this.getMemberByToken(groupId, token);
@@ -221,23 +222,49 @@ public class PaymentController {
         List<IPaymentTotal> payments = null;
         if (initDate == null || endDate == null) {
             log.info("No dates, so looking for all the payments");
-            payments = this.paymentService.getAlIPaymentTotals(groupId);
+            payments = this.paymentService.getAllPaymentTotals(groupId);
         } else {
             log.info("Dates found. Looking for payments between dates");
-            payments = this.paymentService.getAlIPaymentTotals(groupId, initDate, endDate);
+            payments = this.paymentService.getAllPaymentTotals(groupId, initDate, endDate);
         }
 
-
         return ResponseEntity.ok().body(payments);
-        
+
     }
 
-    // pagos totales por persona: (fechas determinadas también)
-    // return -> Total_amount, nickname, is_member, date
+    @GetMapping("get/totals/by/member")
+    public ResponseEntity<List<IPaymentTotal>> getPaymentsByMember(
+            @RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token,
+            @RequestParam(name = "groupId") Long groupId,
+            @RequestParam(name = "memberNickname") String memberNickname,
+            @RequestParam(name = "initDate", required = false) Date initDate,
+            @RequestParam(name = "endDate", required = false) Date endDate)
+            throws MemberNotInGroup, InvalidTokenFormat, UserNotExistsException {
 
-    /* suma de pagos por usuario
-    * suma de pagos por usuario entre fechas X e Y
-    */
+        log.info("User trying to get payments by group");
+        // get the requester member
+        Member requesterMember = this.getMemberByToken(groupId, token);
+
+        log.info("Checking if user is in group");
+        // check if member in group, again, better to be sure than sorry
+        if (requesterMember.getGroup().getGroupId() != groupId) {
+            throw new MemberNotInGroup();
+        }
+
+        // TODO: podemos crear un super método y tal?
+        List<IPaymentTotal> payments = null;
+        if (initDate == null || endDate == null) {
+            log.info("No dates, so looking for all the payments");
+            payments = this.paymentService.getMemberPaymentTotals(groupId, memberNickname);
+        } else {
+            log.info("Dates found. Looking for payments between dates");
+            payments = this.paymentService.getMemberPaymentTotals(groupId, memberNickname, initDate, endDate);
+        }
+
+        return ResponseEntity.ok().body(payments);
+
+    }
+
 
     private Member getMemberByToken(final Long groupId, final String token)
             throws MemberNotInGroup, InvalidTokenFormat, UserNotExistsException {

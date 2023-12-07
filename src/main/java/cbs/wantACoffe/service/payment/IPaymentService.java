@@ -32,12 +32,14 @@ public interface IPaymentService {
     List<Payment> getAllPaymentsByMember(final Long memberId, final Date initDate, final Date endDate);
 
     // lista de los totales de cada usuario -> DONE
-    List<IPaymentTotal> getAlIPaymentTotals(final Long groupId);
+    List<IPaymentTotal> getAllPaymentTotals(final Long groupId);
 
     // lista de los totales de cada usuario fecha_inicio - fecha_final
-    List<IPaymentTotal> getAlIPaymentTotals(final Long groupId, final Date initDate, final Date endDate);
+    List<IPaymentTotal> getAllPaymentTotals(final Long groupId, final Date initDate, final Date endDate);
 
     // lista de los totales de un usuario
-    
+    List<IPaymentTotal> getMemberPaymentTotals(final Long groupId, final String memberNickname);
+
     // lista de todos los pagos fecha_inicio - fecha_final agrupados por usuario y sumados
+    List<IPaymentTotal> getMemberPaymentTotals(final Long groupId, final String memberNickname, final Date initDate, final Date endDate);
 }

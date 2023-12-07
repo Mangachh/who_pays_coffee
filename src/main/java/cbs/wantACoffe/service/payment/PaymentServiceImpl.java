@@ -50,13 +50,23 @@ public class PaymentServiceImpl implements IPaymentService {
     }
 
     @Override
-    public List<IPaymentTotal> getAlIPaymentTotals(Long groupId) {
+    public List<IPaymentTotal> getAllPaymentTotals(Long groupId) {
         return this.repo.findAllTotalsByGroup(groupId);
     }
 
     @Override
-    public List<IPaymentTotal> getAlIPaymentTotals(Long groupId, Date initDate, Date endDate) {
+    public List<IPaymentTotal> getAllPaymentTotals(Long groupId, Date initDate, Date endDate) {
         return this.repo.findAllTotalsByGroupBetweenDates(groupId, initDate, endDate);
+    }
+
+    @Override
+    public List<IPaymentTotal> getMemberPaymentTotals(final Long groupId, final String memberNickname) {
+        return this.repo.findTotalsByMemberAndGroup(groupId, memberNickname);
+    }
+
+    @Override
+    public List<IPaymentTotal> getMemberPaymentTotals(Long groupId, final String memberNickname, Date initDate, Date endDate) {
+        return this.repo.findTotalsByMemberAndGroupBetweenDates(groupId, memberNickname, initDate, endDate);
     }
 
     
