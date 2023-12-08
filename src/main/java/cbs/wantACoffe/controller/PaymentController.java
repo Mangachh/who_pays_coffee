@@ -71,7 +71,7 @@ public class PaymentController {
         // comprobamos que el miembro de pago esté en el grupo donde queremos meter pago
         // nunca está de más
         log.info("Checking if user '{}' who inserts the payment is in the selected group", userPayed.getUserId());
-        if (memberPayed.getGroup().getGroupId() != paymentData.getGroupId()) {
+        if (memberPayed.getGroup().getGroupId().equals(paymentData.getGroupId()) == false) {
             throw new MemberNotInGroup();
         }
 
@@ -79,7 +79,7 @@ public class PaymentController {
         // O SU id no es igual al id que queremos meter
         log.info("Checking if user '{}' who inserts the payment is admin of the group", userPayed.getUserId());
         if (memberRequester.isAdmin() == false &&
-                memberRequester.getMemberId() != memberPayed.getMemberId()) {
+                memberRequester.getMemberId().equals(memberPayed.getMemberId())) {
             throw new MemberIsNotAdmin();
         }
 
