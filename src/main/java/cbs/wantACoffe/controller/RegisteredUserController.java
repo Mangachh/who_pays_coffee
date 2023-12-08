@@ -156,38 +156,27 @@ public class RegisteredUserController {
 
             // comprobamos los miembros que son regUser. SI la lista es 0, implica que
             // nadie es regUser y, por lo tanto borramos el grupo
-            /*
-             * List<Member> membersRegUser = g.getMembers().stream()
-             * .filter(m -> m.isRegisteredUser() && m.getRegUser().getUserId() !=
-             * userId).toList();
-             */
-            Member newOwner;
-            for (Member m : g.getMembers()) {
-                if (m.isRegisteredUser() && m.getRegUser().getUserId() != userId) {
-                    newOwner = m;
-                    break;
-                }
-            }
 
-            /*
-             * if (membersRegUser.size() == 0) {
-             * this.groupService.deleteGroup(g.getGroupId());
-             * continue;
-             * }
-             */
+            List<Member> membersRegUser = g.getMembers().stream()
+                    .filter(m -> m.isRegisteredUser() && m.getRegUser().getUserId().equals(userId) == false).toList();
+
+            if (membersRegUser.size() == 0) {
+                this.groupService.deleteGroup(g.getGroupId());
+                continue;
+            }
 
             // si llegamos aquí, buscamos al primer admin que encontremos O al primer
             // usuario
-            /*
-             * Member member = membersRegUser.stream().filter(
-             * m -> m.isAdmin() == true).findFirst().orElse(
-             * membersRegUser.get(0));
-             * 
-             * // convertimos al miembro en admin, just in case
-             * member.setAdmin(true);
-             * g.setOwner(member);
-             * this.groupService.saveGroup(g);
-             */
+
+            Member member = membersRegUser.stream().filter(
+                    m -> m.isAdmin() == true).findFirst().orElse(
+                            membersRegUser.get(0));
+
+            // convertimos al miembro en admin, just in case
+            member.setAdmin(true);
+            g.setOwner(member);
+            this.groupService.saveGroup(g);
+
         }
 
         // remove from database
