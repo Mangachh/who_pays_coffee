@@ -88,7 +88,7 @@ public class IGroupRepoTest {
         // check member, a mano para qeu no de stackover
         Member resultMember = result.getMembers().get(0);
 
-        assertEquals(creator.getRegUser(), resultMember.getRegUser());
+        assertEquals(creator.getRegUser().getUserId(), resultMember.getRegUser().getUserId());
         assertEquals(creator.getMemberId(), resultMember.getMemberId());
         assertEquals(creator.getNickname(), resultMember.getNickname());
         assertEquals(resultMember.getGroup().getGroupId(), result.getGroupId());

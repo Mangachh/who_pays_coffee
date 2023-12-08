@@ -120,7 +120,7 @@ public class MemberServiceIntegrationTest {
                 testMember.getRegUser().getUserId());
 
         assertNotNull(m);
-        assertEquals(user, m.getRegUser());
+        assertEquals(user.getUserId(), m.getRegUser().getUserId());
     }
 
     @Test
