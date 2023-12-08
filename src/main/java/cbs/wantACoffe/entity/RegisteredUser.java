@@ -1,11 +1,16 @@
 package cbs.wantACoffe.entity;
 
-import cbs.wantACoffe.TableNames;
+import java.util.ArrayList;
+import java.util.List;
+
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PreRemove;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -63,5 +68,20 @@ public class RegisteredUser implements IUser{
      * Password del usuario
      */
     private String password;
+
+    // pasamos esto a bidirectional a ver
+    @OneToMany(mappedBy = "regUser")
+    @Builder.Default
+    private List<Member> memberGroups = new ArrayList<>();
+
+    /*
+     * De momento nulleamos esto...
+     */
+    @PreRemove
+    private void PreRemove() {
+            for (Member m : memberGroups) {
+                m.setRegUser(null);
+        }
+    }
     
 }

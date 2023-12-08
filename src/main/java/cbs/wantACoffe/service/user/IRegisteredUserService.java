@@ -46,7 +46,7 @@ public interface IRegisteredUserService {
      * @return -> el usuario
      * @throws UserNotExistsException -> si el usuario no existe se lanza
      */
-    RegisteredUser findByUsername(String username) throws UserNotExistsException;
+    RegisteredUser getByUsername(String username) throws UserNotExistsException;
 
     /**
      * Busca un usuario a partir del campo <b>email</b>.
@@ -56,7 +56,7 @@ public interface IRegisteredUserService {
      * @return -> usuario 
      * @throws UserNotExistsException -> si el usuario no existe, se lanza
      */
-    RegisteredUser findByEmail(String email) throws UserNotExistsException;
+    RegisteredUser getByEmail(String email) throws UserNotExistsException;
 
     /**
      * Busca un usuario a partir del campo <b>id</>
@@ -66,7 +66,7 @@ public interface IRegisteredUserService {
      * @return -> usuario
      * @throws UserNotExistsException -> si el usuaro no existe, se lanza
      */
-    RegisteredUser findById(Long id) throws UserNotExistsException;
+    RegisteredUser getById(Long id) throws UserNotExistsException;
 
     /**
      * Busca un usuario a partir de su <b>username</>; si existe
@@ -81,7 +81,7 @@ public interface IRegisteredUserService {
      *                                       base de datos no corresponde con el pasado por
      *                                       parametro.
      */
-    RegisteredUser findByEmailAndCheckPass(final String username, final String password)
+    RegisteredUser getByEmailAndCheckPass(final String username, final String password)
             throws UserNotExistsException, IncorrectPasswordException;
     
 

@@ -41,7 +41,7 @@ public interface IMemberService {
      * @return -> {@link Member}
      * @throws MemberNotInGroup -> si el miembro no existe en el grupo
      */
-    Member findMemberById(Long memberId) throws MemberNotInGroup;
+    Member getMemberById(Long memberId) throws MemberNotInGroup;
             
     /**
      * Encuentra un miembro de un {@link Group} determinado usando {@link Group#id} y su {@link Member#id}
@@ -50,7 +50,7 @@ public interface IMemberService {
      * @return -> miembro
      * @throws MemberNotInGroup -> si el miembro no existe
      */
-    Member findMemberByGroupIdAndRegUserId(final Long groupId, final Long memberId) throws MemberNotInGroup;
+    Member getMemberByGroupIdAndRegUserId(final Long groupId, final Long memberId) throws MemberNotInGroup;
 
 
     /**
@@ -60,7 +60,7 @@ public interface IMemberService {
      * @return -> miembro
      * @throws MemberNotInGroup -> si el miembro no existe
      */
-    Member findMemberByGroupIdAndNickname(final Long groupId, final String nickname) throws MemberNotInGroup;
+    Member getMemberByGroupIdAndNickname(final Long groupId, final String nickname) throws MemberNotInGroup;
 
-    List<MemberGroup> findAllMembersByGroupId(final Long groupId);
+    List<MemberGroup> getAllMembersByGroupId(final Long groupId);
 }

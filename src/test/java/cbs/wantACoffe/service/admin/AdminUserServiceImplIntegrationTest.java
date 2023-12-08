@@ -74,7 +74,7 @@ public class AdminUserServiceImplIntegrationTest {
         AdminUser toSave = CommonData.getTestAdmin();
         toSave.setPassword(encrypt.encryptPassword(toSave.getPassword()));
         this.adminRepo.save(toSave);
-        AdminUser result = this.service.findByUsername(admin.getUsername());
+        AdminUser result = this.service.getByUsername(admin.getUsername());
         assertEquals(admin.getUsername(), result.getUsername());
 
         // seteamos la id
@@ -87,13 +87,13 @@ public class AdminUserServiceImplIntegrationTest {
     void testFindByUsernameNotCorrect() {
         String badName = "asdasda";        
         assertThrows(UserNotExistsException.class,
-                () -> this.service.findByUsername(badName));
+                () -> this.service.getByUsername(badName));
     }
     
     @Test
     @Order(3)
     void testFindById() throws UserNotExistsException {        
-        AdminUser result = this.service.findById(admin.getUserId());
+        AdminUser result = this.service.getById(admin.getUserId());
         assertEquals(admin.getUsername(), result.getUsername());
     }
     
@@ -102,14 +102,14 @@ public class AdminUserServiceImplIntegrationTest {
     void testFindByIdNotCorrect() throws UserNotExistsException {
         
         assertThrows(UserNotExistsException.class,
-        () -> this.service.findById(admin.getUserId() + 200));
+        () -> this.service.getById(admin.getUserId() + 200));
     }
 
     @Test
     @Order(5)
     void testFindByUsernameAndCheckPass() throws UserNotExistsException, IncorrectPasswordException {
 
-        AdminUser result = this.service.findByUsernameAndCheckPass(admin.getUsername(), admin.getPassword());
+        AdminUser result = this.service.getByUsernameAndCheckPass(admin.getUsername(), admin.getPassword());
         assertEquals(admin.getUsername(), result.getUsername());
 
     }
@@ -123,7 +123,7 @@ public class AdminUserServiceImplIntegrationTest {
         expected.setPassword("No encriptao");
 
         assertThrows(IncorrectPasswordException.class,
-                () -> this.service.findByUsernameAndCheckPass(admin.getUsername(), "My new password ajaja"));
+                () -> this.service.getByUsernameAndCheckPass(admin.getUsername(), "My new password ajaja"));
 
     }
 
@@ -136,7 +136,7 @@ public class AdminUserServiceImplIntegrationTest {
 
         usersToAdd.stream().forEach(this.regUserRepo::save);
 
-        List<IBasicUserInfo> users = this.service.findAllRegisteredUsers();
+        List<IBasicUserInfo> users = this.service.getAllRegisteredUsers();
         assertEquals(usersToAdd.size() + defSizeRegUsers, users.size());
         int counter = 0;
 
@@ -167,7 +167,7 @@ public class AdminUserServiceImplIntegrationTest {
         assertTrue(group.tryAddMember(member));
         this.groupRepo.save(group);
 
-        List<IGroupInfo> groupInfos = this.service.findAllGroupsAndCountMembers();
+        List<IGroupInfo> groupInfos = this.service.getAllGroupsAndCountMembers();
         assertEquals(1 + defSizeGroups, groupInfos.size());
         // tengo que buscar el grupo que quiero
         IGroupInfo result = null;

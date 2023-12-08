@@ -90,7 +90,7 @@ public class GroupServiceUnitTest {
         Mockito.when(this.groupRepo.findById(testGroup.getGroupId()))
                 .thenReturn(Optional.of(testGroup));
 
-        Group result = this.groupService.findGroupById(testGroup.getGroupId());
+        Group result = this.groupService.getGroupById(testGroup.getGroupId());
         assertEquals(testGroup.getGroupName(), result.getGroupName());
         assertEquals(testGroup.getGroupId(), result.getGroupId());
     }
@@ -103,7 +103,7 @@ public class GroupServiceUnitTest {
                 .thenReturn(Optional.empty());
         assertThrows(
                 GroupNotExistsException.class,
-                () -> this.groupService.findGroupById(id));
+                () -> this.groupService.getGroupById(id));
     }    
      
 

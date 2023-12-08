@@ -113,7 +113,7 @@ public class MemberServiceUnitTest {
                 testMember.getRegUser().getUserId()))
                 .thenReturn(Optional.of(testMember));
 
-        Member m = this.memberService.findMemberByGroupIdAndRegUserId(
+        Member m = this.memberService.getMemberByGroupIdAndRegUserId(
                 testGroup.getGroupId(),
                 testMember.getRegUser().getUserId());
 
@@ -130,7 +130,7 @@ public class MemberServiceUnitTest {
                 testMember.getRegUser().getUserId()))
                 .thenReturn(Optional.empty());
 
-        assertThrows(MemberNotInGroup.class, () -> this.memberService.findMemberByGroupIdAndRegUserId(
+        assertThrows(MemberNotInGroup.class, () -> this.memberService.getMemberByGroupIdAndRegUserId(
                 testGroup.getGroupId(),
                 testMember.getRegUser().getUserId()));
     }
@@ -145,7 +145,7 @@ public class MemberServiceUnitTest {
         Mockito.when(this.memberRepo.findById(expected.getMemberId()))
                 .thenReturn(Optional.of(testMember));
 
-        Member result = this.memberService.findMemberById(expected.getMemberId());
+        Member result = this.memberService.getMemberById(expected.getMemberId());
         assertEquals(expected.getNickname(), result.getNickname());
     }
 
@@ -159,7 +159,7 @@ public class MemberServiceUnitTest {
         Mockito.when(this.memberRepo.findById(id))
                 .thenReturn(Optional.empty());
         assertThrows(MemberNotInGroup.class,
-                () -> this.memberService.findMemberById(id));
+                () -> this.memberService.getMemberById(id));
     }
 
     @Test
@@ -172,7 +172,7 @@ public class MemberServiceUnitTest {
                 testMember.getNickname()))
                 .thenReturn(Optional.of(testMember));
 
-        Member result = this.memberService.findMemberByGroupIdAndNickname(
+        Member result = this.memberService.getMemberByGroupIdAndNickname(
                 testGroup.getGroupId(),
                 testMember.getNickname());
 
@@ -193,7 +193,7 @@ public class MemberServiceUnitTest {
                 .thenReturn(Optional.empty());
 
         assertThrows(MemberNotInGroup.class,
-                () -> this.memberService.findMemberByGroupIdAndNickname(
+                () -> this.memberService.getMemberByGroupIdAndNickname(
                         testGroup.getGroupId(),
                         nickname));
     }

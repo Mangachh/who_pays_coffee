@@ -28,7 +28,7 @@ public interface IAdminService {
      * @return -> {@link AdminUser}
      * @throws UserNotExistsException -> si no existe
      */
-    AdminUser findById(Long id) throws UserNotExistsException;
+    AdminUser getById(Long id) throws UserNotExistsException;
     
     /**
      * Encuentra un {@link AdminUser} a partir de su username si existe en la base de datos
@@ -36,7 +36,7 @@ public interface IAdminService {
      * @return -> {@link AdminUser}
      * @throws UserNotExistsException -> lanzada si no existe
      */
-    AdminUser findByUsername(String username) throws UserNotExistsException;
+    AdminUser getByUsername(String username) throws UserNotExistsException;
 
     /**
      * Encuentra un {@link AdminUser} a partir de su username y checquea que el password sea correcto
@@ -46,7 +46,7 @@ public interface IAdminService {
      * @throws UserNotExistsException -> si no existe el usuario
      * @throws IncorrectPasswordException -> si el password es incorrecto
      */
-    AdminUser findByUsernameAndCheckPass(String username, String password)
+    AdminUser getByUsernameAndCheckPass(String username, String password)
             throws UserNotExistsException, IncorrectPasswordException;
     
     /**
@@ -54,14 +54,14 @@ public interface IAdminService {
      * {@link IBasicUserInfo}. Si no hay usuarios, devuelve una lista vacia
      * @return -> Lista de {@link IBasicUserInfo}
      */
-    List<IBasicUserInfo> findAllRegisteredUsers();
+    List<IBasicUserInfo> getAllRegisteredUsers();
 
     /**
      * Devuelve una lista con todos los grupos usando
      * {@link IGroupInfo}
      * @return -> Lista de {@link IGroupInfo}
      */
-    List<IGroupInfo> findAllGroupsAndCountMembers();
+    List<IGroupInfo> getAllGroupsAndCountMembers();
 
     /**
      * Contea la totalidad de {@link Group}

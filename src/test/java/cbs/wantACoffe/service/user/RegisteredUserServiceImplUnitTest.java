@@ -160,7 +160,7 @@ public class RegisteredUserServiceImplUnitTest {
             Mockito.when(repo.findById(testUser.getUserId()))
                             .thenReturn(Optional.of(testUser));
 
-            RegisteredUser result = this.service.findById(testUser.getUserId());
+            RegisteredUser result = this.service.getById(testUser.getUserId());
             assertNotNull(result);
             this.checkUserWithTest(result);
     }
@@ -177,7 +177,7 @@ public class RegisteredUserServiceImplUnitTest {
                             .thenReturn(Optional.empty());
 
             assertThrows(UserNotExistsException.class,
-                            () -> this.service.findById(id));
+                            () -> this.service.getById(id));
     }
 
     /**
@@ -190,7 +190,7 @@ public class RegisteredUserServiceImplUnitTest {
             Mockito.when(this.repo.findByEmail(testUser.getEmail()))
                             .thenReturn(Optional.of(testUser));
 
-            RegisteredUser u = this.service.findByEmail(testUser.getEmail());
+            RegisteredUser u = this.service.getByEmail(testUser.getEmail());
             assertNotNull(u);
             this.checkUserWithTest(u);
     }
@@ -206,7 +206,7 @@ public class RegisteredUserServiceImplUnitTest {
                             .thenReturn(Optional.empty());
 
             assertThrows(UserNotExistsException.class,
-                            () -> this.service.findByEmail(testUser.getEmail()));
+                            () -> this.service.getByEmail(testUser.getEmail()));
     }
 
     /**
@@ -219,7 +219,7 @@ public class RegisteredUserServiceImplUnitTest {
             Mockito.when(this.repo.findByUsername(testUser.getUsername()))
                             .thenReturn(Optional.of(testUser));
 
-            RegisteredUser u = this.service.findByUsername(testUser.getUsername());
+            RegisteredUser u = this.service.getByUsername(testUser.getUsername());
             assertNotNull(u);
             this.checkUserWithTest(u);
     }
@@ -235,7 +235,7 @@ public class RegisteredUserServiceImplUnitTest {
                             .thenReturn(Optional.empty());
 
             assertThrows(UserNotExistsException.class,
-                            () -> this.service.findByUsername(testUser.getUsername()));
+                            () -> this.service.getByUsername(testUser.getUsername()));
 
     }
 
@@ -259,7 +259,7 @@ public class RegisteredUserServiceImplUnitTest {
             Mockito.when(this.repo.findByEmail(testUser.getEmail()))
                             .thenReturn(Optional.of(cryptoUser));
 
-            RegisteredUser u = this.service.findByEmailAndCheckPass(testUser.getEmail(), password);
+            RegisteredUser u = this.service.getByEmailAndCheckPass(testUser.getEmail(), password);
             assertNotNull(u);
             this.checkUserWithTest(u);
     }
@@ -276,7 +276,7 @@ public class RegisteredUserServiceImplUnitTest {
                             .thenReturn(Optional.empty());
 
             assertThrows(UserNotExistsException.class,
-                            () -> this.service.findByEmailAndCheckPass(testUser.getEmail(),
+                            () -> this.service.getByEmailAndCheckPass(testUser.getEmail(),
                                             testUser.getPassword()));
 
     }
@@ -296,7 +296,7 @@ public class RegisteredUserServiceImplUnitTest {
                 .thenReturn(Optional.empty());
 
         assertThrows(UserNotExistsException.class,
-                () -> this.service.findByEmailAndCheckPass(username, password));
+                () -> this.service.getByEmailAndCheckPass(username, password));
 
     }
 

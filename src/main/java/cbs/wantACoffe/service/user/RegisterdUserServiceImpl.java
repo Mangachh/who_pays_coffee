@@ -57,15 +57,15 @@ public class RegisterdUserServiceImpl implements IRegisteredUserService {
 
     // Find
     @Override
-    public RegisteredUser findByUsername(String username) throws UserNotExistsException {
+    public RegisteredUser getByUsername(String username) throws UserNotExistsException {
         return this.userRepo.findByUsername(username)
             .orElseThrow(() -> new UserNotExistsException());
     }
 
     @Override
-    public RegisteredUser findByEmailAndCheckPass(final String email, final String pass)
+    public RegisteredUser getByEmailAndCheckPass(final String email, final String pass)
             throws UserNotExistsException, IncorrectPasswordException {
-        RegisteredUser u = this.findByEmail(email);
+        RegisteredUser u = this.getByEmail(email);
         if (this.cryptService.isSamePassword(pass, u.getPassword())) {
             return u;
         }
@@ -74,12 +74,12 @@ public class RegisterdUserServiceImpl implements IRegisteredUserService {
     }
 
     @Override
-    public RegisteredUser findByEmail(String email) throws UserNotExistsException {
+    public RegisteredUser getByEmail(String email) throws UserNotExistsException {
         return this.userRepo.findByEmail(email).orElseThrow(UserNotExistsException::new);
     }
 
     @Override
-    public RegisteredUser findById(Long id) throws UserNotExistsException {
+    public RegisteredUser getById(Long id) throws UserNotExistsException {
         return this.userRepo.findById(id).orElseThrow(UserNotExistsException::new);
     }
 

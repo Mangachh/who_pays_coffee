@@ -24,6 +24,5 @@ public class MemberGroup {
     private String nickname;
     private String username;
     
-    @Default
-    private boolean isAdmin = false;
+    private Boolean isAdmin;
 }

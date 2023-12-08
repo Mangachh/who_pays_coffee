@@ -103,6 +103,6 @@ public class AuthServiceImpl implements IAuthService {
     public RegisteredUser getUserByToken(String token)
             throws InvalidTokenFormat, UserNotExistsException {
         Long id = getUserIdByToken(AuthUtils.stringToToken(token));
-        return this.userService.findById(id);
+        return this.userService.getById(id);
     }
 }

@@ -43,23 +43,28 @@ public class GroupServiceImpl implements IGroupService {
     }
     
     @Override
-    public Group findGroupById(Long id) throws GroupNotExistsException {
+    public Group getGroupById(Long id) throws GroupNotExistsException {
         return this.repo.findById(id).orElseThrow(() -> new GroupNotExistsException());
     }
     
     @Override
-    public List<Group> findAllByRegUser(RegisteredUser user) {
+    public List<Group> getAllByRegUser(RegisteredUser user) {
         return this.repo.findAllByMembersRegUser(user);
     }
 
     @Override
-    public List<Group> findAllByRegUserIsAdmin(RegisteredUser user, boolean isAdmin) {
+    public List<Group> getAllByRegUserIsAdmin(RegisteredUser user, boolean isAdmin) {
         return this.repo.findAllByMembersAndMembersIsAdmin(user.getUserId(), isAdmin);
     }
     
     @Override
     public void deleteGroup(long id) {
         this.repo.deleteById(id);
+    }
+
+    @Override
+    public List<Group> getAllByOwner(Long regUserId) {
+        return this.repo.findByRegUserOwner(regUserId);
     }
 
     

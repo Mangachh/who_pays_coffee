@@ -46,13 +46,13 @@ public class MemberServiceImpl implements IMemberService {
     }
 
     @Override
-    public Member findMemberByGroupIdAndRegUserId(Long groupId, Long regUserId) throws MemberNotInGroup {
+    public Member getMemberByGroupIdAndRegUserId(Long groupId, Long regUserId) throws MemberNotInGroup {
         return this.repo.findMemberByGroupIdAndRegUserId(groupId, regUserId)
                 .orElseThrow(MemberNotInGroup::new);
     }
 
     @Override
-    public Member findMemberById(Long memberId) throws MemberNotInGroup {
+    public Member getMemberById(Long memberId) throws MemberNotInGroup {
         return this.repo.findById(memberId).orElseThrow(MemberNotInGroup::new);
     }
 
@@ -62,19 +62,20 @@ public class MemberServiceImpl implements IMemberService {
     }
 
     @Override
-    public Member findMemberByGroupIdAndNickname(Long groupId, String nickname) throws MemberNotInGroup {
+    public Member getMemberByGroupIdAndNickname(Long groupId, String nickname) throws MemberNotInGroup {
         return this.repo.findMemberByGroupIdAndNickname(groupId, nickname)
                 .orElseThrow(MemberNotInGroup::new);
     }
 
     @Override
-    public List<MemberGroup> findAllMembersByGroupId(Long groupId) {
+    public List<MemberGroup> getAllMembersByGroupId(Long groupId) {
         List<Member> members = this.repo.findAllMembersByGroupGroupId(groupId);
         return members.stream().map(m -> MemberGroup.builder()
                 .groupId(groupId)
                 .userId(m.getMemberId())
                 .nickname(m.getNickname())
                 .username(m.getRegUser() == null ? null : m.getRegUser().getUsername())
+                .isAdmin(m.isAdmin())
                 .build())
                 .toList();
 

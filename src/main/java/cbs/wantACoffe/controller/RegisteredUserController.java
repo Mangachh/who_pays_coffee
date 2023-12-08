@@ -7,15 +7,21 @@ import cbs.wantACoffe.dto.token.Token;
 import cbs.wantACoffe.dto.token.Token.TokenType;
 import cbs.wantACoffe.dto.user.RegisteredUserToken;
 import cbs.wantACoffe.dto.user.UserPassword;
+import cbs.wantACoffe.entity.Group;
+import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.RegisteredUser;
 import cbs.wantACoffe.exceptions.IncorrectPasswordException;
 import cbs.wantACoffe.exceptions.NullValueInUserDataException;
 import cbs.wantACoffe.exceptions.UserNotExistsException;
 import cbs.wantACoffe.exceptions.UsernameEmailAlreadyExistsException;
 import cbs.wantACoffe.service.auth.IAuthService;
+import cbs.wantACoffe.service.group.IGroupService;
 import cbs.wantACoffe.service.user.IRegisteredUserService;
 import cbs.wantACoffe.util.AuthUtils;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,21 +50,25 @@ import org.springframework.web.bind.annotation.RequestHeader;
 @RequestMapping("coffee/api/auth")
 @RequiredArgsConstructor
 public class RegisteredUserController {
-    
+
     private final IRegisteredUserService userService;
+    private final IGroupService groupService;
+
     private final IAuthService authService;
     private final Logger log = LoggerFactory.getLogger(RegisteredUserController.class);
 
     /**
      * Añade a un usuario a la base de datos, genera un token de identificación
-     *  y mete al token y al usuario en la sesión actual.
+     * y mete al token y al usuario en la sesión actual.
      * 
      * @param user -> {@link RegisteredUser} a añadir
      * @return -> {@link RegisteredUserToken}
-     * @throws NullValueInUserDataException -> salta si los datos no están completos
-     * @throws UsernameEmailAlreadyExistsException -> salta si el username/email ya existen en la bbdd
+     * @throws NullValueInUserDataException        -> salta si los datos no están
+     *                                             completos
+     * @throws UsernameEmailAlreadyExistsException -> salta si el username/email ya
+     *                                             existen en la bbdd
      */
-    @PostMapping("p/register")    
+    @PostMapping("p/register")
     public ResponseEntity<RegisteredUserToken> registerUser(@RequestBody RegisteredUser user)
             throws NullValueInUserDataException, UsernameEmailAlreadyExistsException {
         RegisteredUser u = this.userService.saveNewUser(user);
@@ -71,19 +81,22 @@ public class RegisteredUserController {
     }
 
     /**
-     * Hace login de un usuario si este está en la base de datos, genera un token 
+     * Hace login de un usuario si este está en la base de datos, genera un token
      * para el usuario y lo mete en la sesión actual
+     * 
      * @param mail -> nombre del usuario para logear
      * @param pass -> password del usuario
      * @return -> {@link RegisteredUserToken}
-     * @throws UserNotExistsException -> se lanza si no existe el user
-     * @throws IncorrectPasswordException -> se lanza si el password no coincide con el de la bbdd
+     * @throws UserNotExistsException     -> se lanza si no existe el user
+     * @throws IncorrectPasswordException -> se lanza si el password no coincide con
+     *                                    el de la bbdd
      */
     @PostMapping("p/login")
-    public ResponseEntity<RegisteredUserToken> loginUser(@RequestBody RegisteredUser loginUser) throws UserNotExistsException, IncorrectPasswordException {
+    public ResponseEntity<RegisteredUserToken> loginUser(@RequestBody RegisteredUser loginUser)
+            throws UserNotExistsException, IncorrectPasswordException {
 
         log.info("Email {} wants to log {}", loginUser);
-        RegisteredUser user = this.userService.findByEmailAndCheckPass(loginUser.getEmail(), loginUser.getPassword());
+        RegisteredUser user = this.userService.getByEmailAndCheckPass(loginUser.getEmail(), loginUser.getPassword());
         log.info("Trying to log {}", user.getEmail());
         Token token = this.authService.generateToken(user, TokenType.USER);
         log.info("Token generated {} for user {}", token, user.getEmail());
@@ -94,12 +107,14 @@ public class RegisteredUserController {
 
     /**
      * Quita al usuario y al token de la sesión actual.
+     * 
      * @param token -> token a quitar
      * @return -> mensaje
      * @throws Exception
      */
     @PostMapping("logout")
-    public ResponseEntity<String> logoutUser(@RequestHeader(AuthUtils.HEADER_AUTH_TXT) final String header) throws Exception{
+    public ResponseEntity<String> logoutUser(@RequestHeader(AuthUtils.HEADER_AUTH_TXT) final String header)
+            throws Exception {
         Token token = AuthUtils.stringToToken(header);
         long userId = this.authService.getUserIdByToken(token);
         log.info("Login out user with id {}: ", userId);
@@ -112,9 +127,10 @@ public class RegisteredUserController {
      * Quita al usuario y al token de la sesión actual
      * y borra al usuario de la base de datos.
      * <p>
-     * Utilizamos el token que está almacenado en el header para que 
+     * Utilizamos el token que está almacenado en el header para que
      * sólo se pueda borrar un usuario que está logeado. De esta manera
      * evitamos que cualquier usuario pueda borrar a otro usuario.
+     * 
      * @param header -> header con el token de usuario<
      * @return -> mensaje
      * @throws Exception
@@ -122,12 +138,61 @@ public class RegisteredUserController {
     @DeleteMapping("delete")
     public ResponseEntity<String> deleteUser(@RequestHeader(AuthUtils.HEADER_AUTH_TXT) final String header)
             throws Exception {
-        //String token = AuthUtils.extractTokenFromHeader(header);
+        // String token = AuthUtils.extractTokenFromHeader(header);
         Token token = AuthUtils.stringToToken(header);
         Long userId = this.authService.getUserIdByToken(token);
         log.info("Deleting user with id {}", userId);
+
+        // pillamos todos los grupos de lo que es miembro-owner?
+        List<Group> allOwner = this.groupService.getAllByOwner(userId);
+
+        // TODO: esto lo haremos como listener en algún lugar
+        for (Group g : allOwner) {
+            // oju, fijo que da error en algo...
+            if (g.getMembers().size() == 1) {
+                this.groupService.deleteGroup(g.getGroupId());
+                continue;
+            }
+
+            // comprobamos los miembros que son regUser. SI la lista es 0, implica que
+            // nadie es regUser y, por lo tanto borramos el grupo
+            /*
+             * List<Member> membersRegUser = g.getMembers().stream()
+             * .filter(m -> m.isRegisteredUser() && m.getRegUser().getUserId() !=
+             * userId).toList();
+             */
+            Member newOwner;
+            for (Member m : g.getMembers()) {
+                if (m.isRegisteredUser() && m.getRegUser().getUserId() != userId) {
+                    newOwner = m;
+                    break;
+                }
+            }
+
+            /*
+             * if (membersRegUser.size() == 0) {
+             * this.groupService.deleteGroup(g.getGroupId());
+             * continue;
+             * }
+             */
+
+            // si llegamos aquí, buscamos al primer admin que encontremos O al primer
+            // usuario
+            /*
+             * Member member = membersRegUser.stream().filter(
+             * m -> m.isAdmin() == true).findFirst().orElse(
+             * membersRegUser.get(0));
+             * 
+             * // convertimos al miembro en admin, just in case
+             * member.setAdmin(true);
+             * g.setOwner(member);
+             * this.groupService.saveGroup(g);
+             */
+        }
+
         // remove from database
         this.userService.deleteUserById(userId);
+
         // remove session
         this.authService.removeTokenFromSession(token);
         log.info("Removing token {} from session");
@@ -136,29 +201,30 @@ public class RegisteredUserController {
     }
 
     /**
-     * Modificación del password. NO comprueba si es el mimso password 
+     * Modificación del password. NO comprueba si es el mimso password
      * que el anterior
-     * @param header -> token de sesión
+     * 
+     * @param header  -> token de sesión
      * @param newPass -> nuevo password
      * @return
-     * @throws NullValueInUserDataException -> Si el password está vacío, se lanza esto.
+     * @throws NullValueInUserDataException -> Si el password está vacío, se lanza
+     *                                      esto.
      */
     @PutMapping("modPassword")
-    public ResponseEntity<String> modifyPassword(@RequestHeader(
-                AuthUtils.HEADER_AUTH_TXT) final String header,
+    public ResponseEntity<String> modifyPassword(@RequestHeader(AuthUtils.HEADER_AUTH_TXT) final String header,
             @RequestBody final UserPassword newPass) throws Exception {
-        
+
         if (newPass == null || newPass.getPassword().isEmpty()) {
             throw new NullValueInUserDataException();
         }
-        
+
         Token token = AuthUtils.stringToToken(header);
         Long userId = this.authService.getUserIdByToken(token);
-        RegisteredUser u = this.userService.findById(userId);
+        RegisteredUser u = this.userService.getById(userId);
         u.setPassword(newPass.getPassword());
         this.userService.saveNewUser(u);
         return ResponseEntity.ok().body("New Password accepted");
 
     }
-                
+
 }

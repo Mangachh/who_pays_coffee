@@ -115,7 +115,7 @@ public class MemberServiceIntegrationTest {
     void testFindMemberByGroupIdAndRegUserId() throws MemberNotInGroup {
         RegisteredUser user = users.get(0);
 
-        Member m = this.memberService.findMemberByGroupIdAndRegUserId(
+        Member m = this.memberService.getMemberByGroupIdAndRegUserId(
                 testGroup.getGroupId(),
                 testMember.getRegUser().getUserId());
 
@@ -129,7 +129,7 @@ public class MemberServiceIntegrationTest {
         RegisteredUser user = users.get(0);
 
         assertThrows(MemberNotInGroup.class,
-                () -> this.memberService.findMemberByGroupIdAndRegUserId(testGroup.getGroupId(), 2548L));
+                () -> this.memberService.getMemberByGroupIdAndRegUserId(testGroup.getGroupId(), 2548L));
 
     }
 
@@ -141,7 +141,7 @@ public class MemberServiceIntegrationTest {
         // así tenemos el id que queremos
         Member expected = testMember;
 
-        Member result = this.memberService.findMemberById(expected.getMemberId());
+        Member result = this.memberService.getMemberById(expected.getMemberId());
         assertEquals(expected.getNickname(), result.getNickname());
     }
 
@@ -152,14 +152,14 @@ public class MemberServiceIntegrationTest {
         // antes, funca ahora
         // así tenemos el id que queremos
         assertThrows(MemberNotInGroup.class,
-                () -> this.memberService.findMemberById(8547778L));
+                () -> this.memberService.getMemberById(8547778L));
     }
 
     @Test
     @Order(8)
     void testFindMemberByGroupNameAndNickname() throws MemberNotInGroup {
         Member expected = testMember;
-        Member result = this.memberService.findMemberByGroupIdAndNickname(
+        Member result = this.memberService.getMemberByGroupIdAndNickname(
                 testGroup.getGroupId(),
                 testMember.getNickname());
 
@@ -173,7 +173,7 @@ public class MemberServiceIntegrationTest {
     @Order(9)
     void testFindMemberByGroupNameAndNicknameNotInGroup() throws MemberNotInGroup {
         assertThrows(MemberNotInGroup.class,
-                () -> this.memberService.findMemberByGroupIdAndNickname(
+                () -> this.memberService.getMemberByGroupIdAndNickname(
                         testGroup.getGroupId(),
                         "asdasdasdasdasdasdads"));
     }
@@ -181,7 +181,7 @@ public class MemberServiceIntegrationTest {
     @Test
     @Order(10)
     void testFindAllMembersByGroupId() {
-        List<MemberGroup> members = this.memberService.findAllMembersByGroupId(testGroup.getGroupId());
+        List<MemberGroup> members = this.memberService.getAllMembersByGroupId(testGroup.getGroupId());
         assertTrue(true);
     }
 
@@ -192,7 +192,7 @@ public class MemberServiceIntegrationTest {
         this.memberService.deleteGroupMemberById(testMember.getMemberId());
         // intentamos pillar miembro
         assertThrows(MemberNotInGroup.class,
-                () -> this.memberService.findMemberById(testMember.getMemberId()));
+                () -> this.memberService.getMemberById(testMember.getMemberId()));
     }
 
 }

@@ -71,7 +71,7 @@ public class AdminUserServiceImplUnitTest {
         Mockito.when(repo.findByUsername(admin.getUsername()))
                 .thenReturn(Optional.of(admin));
 
-        AdminUser result = this.service.findByUsername(admin.getUsername());
+        AdminUser result = this.service.getByUsername(admin.getUsername());
         assertEquals(admin, result);
     }
 
@@ -83,7 +83,7 @@ public class AdminUserServiceImplUnitTest {
                 .thenReturn(Optional.empty());
 
         assertThrows(UserNotExistsException.class,
-                () -> this.service.findByUsername(admin.getUsername()));
+                () -> this.service.getByUsername(admin.getUsername()));
     }
     
     @Test
@@ -92,7 +92,7 @@ public class AdminUserServiceImplUnitTest {
         Mockito.when(repo.findById(admin.getUserId()))
                 .thenReturn(Optional.of(admin));
 
-        AdminUser result = this.service.findById(admin.getUserId());
+        AdminUser result = this.service.getById(admin.getUserId());
         assertEquals(admin, result);
     }
     
@@ -103,7 +103,7 @@ public class AdminUserServiceImplUnitTest {
                 .thenReturn(Optional.empty());
         
         assertThrows(UserNotExistsException.class,
-        () -> this.service.findById(admin.getUserId()));
+        () -> this.service.getById(admin.getUserId()));
     }
 
     @Test
@@ -116,7 +116,7 @@ public class AdminUserServiceImplUnitTest {
         Mockito.when(this.repo.findByUsername(expected.getUsername()))
                 .thenReturn(Optional.of(expected));
 
-        AdminUser result = this.service.findByUsernameAndCheckPass(expected.getUsername(), admin.getPassword());
+        AdminUser result = this.service.getByUsernameAndCheckPass(expected.getUsername(), admin.getPassword());
         assertEquals(expected, result);
 
     }
@@ -132,7 +132,7 @@ public class AdminUserServiceImplUnitTest {
                 .thenReturn(Optional.of(expected));
 
         assertThrows(IncorrectPasswordException.class, 
-        () -> this.service.findByUsernameAndCheckPass(expected.getUsername(), admin.getPassword()));
+        () -> this.service.getByUsernameAndCheckPass(expected.getUsername(), admin.getPassword()));
 
     }
 
@@ -161,7 +161,7 @@ public class AdminUserServiceImplUnitTest {
         Mockito.when(this.userRepo.findAllBasicData())
                 .thenReturn(infos);
         
-        List<IBasicUserInfo> users = this.service.findAllRegisteredUsers();
+        List<IBasicUserInfo> users = this.service.getAllRegisteredUsers();
 
     
         assertEquals(usersToAdd.size(), users.size());
@@ -209,7 +209,7 @@ public class AdminUserServiceImplUnitTest {
         Mockito.when(this.groupRepo.findAllGroupsAndCountMembers())
                 .thenReturn(infos);
 
-        List<IGroupInfo> result = this.service.findAllGroupsAndCountMembers();
+        List<IGroupInfo> result = this.service.getAllGroupsAndCountMembers();
         assertEquals(1, result.size());
         assertEquals(1, result.get(0).getNumMembers());
         assertEquals(group.getGroupName(), result.get(0).getGroupName());

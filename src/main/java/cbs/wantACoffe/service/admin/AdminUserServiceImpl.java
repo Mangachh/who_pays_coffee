@@ -46,17 +46,17 @@ public class AdminUserServiceImpl implements IAdminService{
     }
 
     @Override
-    public AdminUser findByUsername(String username) throws UserNotExistsException {
+    public AdminUser getByUsername(String username) throws UserNotExistsException {
         return adminRepo.findByUsername(username).orElseThrow(() -> new UserNotExistsException());
     }
 
      @Override
-    public AdminUser findById(Long id) throws UserNotExistsException {
+    public AdminUser getById(Long id) throws UserNotExistsException {
         return adminRepo.findById(id).orElseThrow(() -> new UserNotExistsException());
     }
 
     @Override
-    public AdminUser findByUsernameAndCheckPass(String username, String password) throws UserNotExistsException, IncorrectPasswordException {
+    public AdminUser getByUsernameAndCheckPass(String username, String password) throws UserNotExistsException, IncorrectPasswordException {
         AdminUser admin = this.adminRepo.findByUsername(username).orElseThrow(UserNotExistsException::new);
         // check pass
         if(cryptService.isSamePassword(password, admin.getPassword())){
@@ -67,7 +67,7 @@ public class AdminUserServiceImpl implements IAdminService{
     }
 
     @Override
-    public List<IBasicUserInfo> findAllRegisteredUsers() {
+    public List<IBasicUserInfo> getAllRegisteredUsers() {
         
 
         return this.regUserRepo.findAllBasicData();
@@ -84,7 +84,7 @@ public class AdminUserServiceImpl implements IAdminService{
     }
 
     @Override
-    public List<IGroupInfo> findAllGroupsAndCountMembers() {
+    public List<IGroupInfo> getAllGroupsAndCountMembers() {
         return this.groupRepo.findAllGroupsAndCountMembers();
     }
 

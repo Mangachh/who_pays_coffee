@@ -36,7 +36,7 @@ public interface IGroupService {
      * @return -> grupo
      * @throws GroupNotExistsException -> Lanzada si el grupo no existe
      */
-    Group findGroupById(final Long id) throws GroupNotExistsException;
+    Group getGroupById(final Long id) throws GroupNotExistsException;
     
 
     /**
@@ -44,18 +44,34 @@ public interface IGroupService {
      * @param user
      * @return
      */
-    List<Group> findAllByRegUser(final RegisteredUser user);
+    List<Group> getAllByRegUser(final RegisteredUser user);
 
-    List<Group> findAllByRegUserIsAdmin(final RegisteredUser user, boolean isAdmin);
+
+    /**
+     * Devuelve todos los {@link RegisteredUser} de un grupo de los cuales
+     * es admin o no
+     * @param user
+     * @param isAdmin -> si queremos sacar SÍ admin, ponemos true,
+     *                   si queremos donde NO admin, ponemos false
+     * @return
+     */
+    List<Group> getAllByRegUserIsAdmin(final RegisteredUser user, boolean isAdmin);
+
+
+    /**
+     * Devuelve todos los {@link RegisteredUser} de un grupo de los cuales
+     * es dueño
+     * @param user
+     * @return
+     */
+    List<Group> getAllByOwner(final Long regUserId);
+
 
     /**
      * Intenta añadir un miembro al grupo
      * @param member
      * @param group
      */
-    void tryAddMemberToGroup(final Member member, final Group group);
-
-    // TODO: Recuerda que hemos metido el owner, así que nos quedaría buscar por owner y demás
-    
+    void tryAddMemberToGroup(final Member member, final Group group);   
 
 }

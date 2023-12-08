@@ -133,7 +133,7 @@ public class RegisteredUserServiceImplIntegrationTest {
     @Test
     @Order(7)
     void testFindById() throws UserNotExistsException {
-        RegisteredUser result = this.userService.findById(testUser.getUserId());
+        RegisteredUser result = this.userService.getById(testUser.getUserId());
         assertNotNull(result);
         this.compareTestUserWithResult(result);
     }
@@ -145,7 +145,7 @@ public class RegisteredUserServiceImplIntegrationTest {
     @Order(8)
     void testFindByIdNoExists() throws UserNotExistsException {
         assertThrows(UserNotExistsException.class,
-                () -> this.userService.findById(548L));
+                () -> this.userService.getById(548L));
     }
 
     /**
@@ -154,7 +154,7 @@ public class RegisteredUserServiceImplIntegrationTest {
     @Test
     @Order(9)
     void testFindByEmail() throws UserNotExistsException {
-        RegisteredUser result = this.userService.findByEmail(testUser.getEmail());
+        RegisteredUser result = this.userService.getByEmail(testUser.getEmail());
         assertNotNull(result);
         this.compareTestUserWithResult(result);
     }
@@ -167,7 +167,7 @@ public class RegisteredUserServiceImplIntegrationTest {
     @Order(10)
     void testFindByEmailNoExists() {
         assertThrows(UserNotExistsException.class,
-                () -> this.userService.findByEmail("ESTE_CORRE_NO_EXISTE"));
+                () -> this.userService.getByEmail("ESTE_CORRE_NO_EXISTE"));
     }
 
     /**
@@ -178,7 +178,7 @@ public class RegisteredUserServiceImplIntegrationTest {
     @Deprecated
     void testFindByUsernamel() throws UserNotExistsException {
 
-        RegisteredUser result = this.userService.findByUsername(testUser.getUsername());
+        RegisteredUser result = this.userService.getByUsername(testUser.getUsername());
         assertNotNull(result);
         this.compareTestUserWithResult(result);
     }
@@ -191,7 +191,7 @@ public class RegisteredUserServiceImplIntegrationTest {
     @Order(12)
     void testFindByUsernameNoExists() {
         assertThrows(UserNotExistsException.class,
-                () -> this.userService.findByEmail("NOMBRE_DESCONOCIOD"));
+                () -> this.userService.getByEmail("NOMBRE_DESCONOCIOD"));
     }
 
     /**
@@ -203,7 +203,7 @@ public class RegisteredUserServiceImplIntegrationTest {
     void testFindByEmailAndCheckPass() throws UserNotExistsException, IncorrectPasswordException {
         RegisteredUser toSave = CommonData.getTestUserWithSuffix("_RegisteredUserServiceImplIntegrationTest");
         System.out.println("\n--------------------------------\n" + toSave.getPassword());
-        RegisteredUser result = this.userService.findByEmailAndCheckPass(
+        RegisteredUser result = this.userService.getByEmailAndCheckPass(
                 toSave.getEmail(),
                 toSave.getPassword());
 
@@ -219,7 +219,7 @@ public class RegisteredUserServiceImplIntegrationTest {
     @Order(14)
     void testFindByEmaiAndCheckPassIncorrectPass() {
         assertThrows(IncorrectPasswordException.class,
-                () -> this.userService.findByEmailAndCheckPass(testUser.getEmail(), "PASSWORD MALO!"));
+                () -> this.userService.getByEmailAndCheckPass(testUser.getEmail(), "PASSWORD MALO!"));
     }
 
     /**
@@ -230,7 +230,7 @@ public class RegisteredUserServiceImplIntegrationTest {
     @Order(15)
     void testFindByEmailAndCheckPassNoUser() {
         assertThrows(UserNotExistsException.class,
-            () -> this.userService.findByEmailAndCheckPass("NO EXISTO!!!", testUser.getEmail()));
+            () -> this.userService.getByEmailAndCheckPass("NO EXISTO!!!", testUser.getEmail()));
     }
 
 
@@ -242,14 +242,14 @@ public class RegisteredUserServiceImplIntegrationTest {
     void testDeleteUserById() throws UserNotExistsException {
         Long id = testUser.getUserId();
         // comprobamos que el usuario existe pillándolo
-        RegisteredUser exists = this.userService.findById(id);
+        RegisteredUser exists = this.userService.getById(id);
         assertNotNull(exists);
         // ahora borramos
         this.userService.deleteUserById(exists.getUserId());
         //al querer pillar de nuevo el user, debería dar excepción
 
         assertThrows(UserNotExistsException.class,
-                () -> this.userService.findById(id));
+                () -> this.userService.getById(id));
     }
 
     /**
@@ -262,14 +262,14 @@ public class RegisteredUserServiceImplIntegrationTest {
         this.userService.saveNewUser(testUser);
 
         // comprobamos que el usuario existe pillándolo
-        RegisteredUser exists = this.userService.findById(testUser.getUserId());
+        RegisteredUser exists = this.userService.getById(testUser.getUserId());
         assertNotNull(exists);
 
         // ahora borramos
         this.userService.deleteUserById(exists.getUserId());
         //al querer pillar de nuevo el user, debería dar excepción
         assertThrows(UserNotExistsException.class,
-                () -> this.userService.findById(exists.getUserId()));
+                () -> this.userService.getById(exists.getUserId()));
     }
 
 

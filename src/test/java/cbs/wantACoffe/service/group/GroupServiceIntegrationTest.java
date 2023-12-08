@@ -85,7 +85,7 @@ public class GroupServiceIntegrationTest {
     @Test
     @Order(3)
     void testFindGroupById() throws GroupNotExistsException {
-        Group result = this.groupService.findGroupById(testGroup.getGroupId());
+        Group result = this.groupService.getGroupById(testGroup.getGroupId());
         assertEquals(testGroup.getGroupName(), result.getGroupName());
         assertEquals(testGroup.getGroupId(), result.getGroupId());
     }
@@ -95,7 +95,7 @@ public class GroupServiceIntegrationTest {
     void testFindGroupByIdNotExists() {
         assertThrows(
                 GroupNotExistsException.class,
-                () -> this.groupService.findGroupById(45545454L));
+                () -> this.groupService.getGroupById(45545454L));
     }    
      
 
@@ -104,7 +104,7 @@ public class GroupServiceIntegrationTest {
         this.groupService.deleteGroup(testGroup.getGroupId());
         assertThrows(
                 GroupNotExistsException.class,
-                () -> this.groupService.findGroupById(testGroup.getGroupId()));
+                () -> this.groupService.getGroupById(testGroup.getGroupId()));
     }
 
    

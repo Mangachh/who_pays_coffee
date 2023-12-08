@@ -132,9 +132,9 @@ public class GroupController {
         RegisteredUser user = this.authService.getUserByToken(token);
         log.info("User {} tries to get all their groups", user.getUsername());
         List<Group> groups = switch (type) {
-            case TYPE_ADMIN -> this.groupService.findAllByRegUserIsAdmin(user, true);
-            case TYPE_MEMBER -> this.groupService.findAllByRegUserIsAdmin(user, false);
-            case TYPE_ALL -> this.groupService.findAllByRegUser(user);
+            case TYPE_ADMIN -> this.groupService.getAllByRegUserIsAdmin(user, true);
+            case TYPE_MEMBER -> this.groupService.getAllByRegUserIsAdmin(user, false);
+            case TYPE_ALL -> this.groupService.getAllByRegUser(user);
             default -> throw new MemberAdminTypeUnknown();
         };
 
@@ -177,7 +177,7 @@ public class GroupController {
             throw new MemberHasNoNicknameException();
         }
         // miramos que exista y sea admin
-        Member adminMember = this.memberService.findMemberByGroupIdAndRegUserId(memberGroup.getGroupId(),
+        Member adminMember = this.memberService.getMemberByGroupIdAndRegUserId(memberGroup.getGroupId(),
                 userCaller.getUserId());
 
         if (adminMember.isAdmin() == false) {
@@ -187,14 +187,14 @@ public class GroupController {
         // mmm esto no me gusta... pero lo dejamos así.
         RegisteredUser newUser;
         try {
-            newUser = this.userService.findByUsername(memberGroup.getUsername());
+            newUser = this.userService.getByUsername(memberGroup.getUsername());
             log.info("The new user is a registered_member by name {}", newUser.getUsername());
         } catch (UserNotExistsException e) {
             newUser = null;
             log.info("The new user is not a registered user");
         }
 
-        Group group = this.groupService.findGroupById(memberGroup.getGroupId());
+        Group group = this.groupService.getGroupById(memberGroup.getGroupId());
         Member newMember = Member.builder()
                 .nickname(memberGroup.getNickname())
                 .group(group)
@@ -231,8 +231,8 @@ public class GroupController {
             throws InvalidTokenFormat, MemberNotInGroup, MemberIsNotAdmin, GroupNotExistsException {
 
         Long userId = this.authService.getUserIdByToken(AuthUtils.stringToToken(token));
-        Member member = this.memberService.findMemberByGroupIdAndRegUserId(groupId, userId);
-        Group group = this.groupService.findGroupById(groupId);
+        Member member = this.memberService.getMemberByGroupIdAndRegUserId(groupId, userId);
+        Group group = this.groupService.getGroupById(groupId);
         
         if (group.getOwner() != member) {
             throw new MemberIsNotAdmin(); //TODO: change exception
@@ -263,7 +263,7 @@ public class GroupController {
         RegisteredUser user = this.authService.getUserByToken(token);
 
         // Pillamos grupo
-        Group g = this.groupService.findGroupById(groupId);
+        Group g = this.groupService.getGroupById(groupId);
 
         // siempre está bien hacer un check
         if (g.getMembers().stream().anyMatch(m -> m.getRegUser() == user) == false) {
@@ -271,7 +271,7 @@ public class GroupController {
         }
 
         return ResponseEntity.ok().body(
-            this.memberService.findAllMembersByGroupId(groupId)
+            this.memberService.getAllMembersByGroupId(groupId)
         );
     }
 
@@ -298,7 +298,7 @@ public class GroupController {
         RegisteredUser registeredUser = this.authService.getUserByToken(token);
 
         // get group to update the member
-        Group group = this.groupService.findGroupById(memberGroup.getGroupId());
+        Group group = this.groupService.getGroupById(memberGroup.getGroupId());
 
         // if the requester is the same as the wanted change
 
@@ -316,7 +316,7 @@ public class GroupController {
                 .orElseThrow(MemberNotInGroup::new);
 
         // get its registereduser
-        RegisteredUser userToMember = this.userService.findByUsername(memberGroup.getUsername());
+        RegisteredUser userToMember = this.userService.getByUsername(memberGroup.getUsername());
 
         memberToUpdate.setRegUser(userToMember);
 
@@ -346,10 +346,10 @@ public class GroupController {
         RegisteredUser registeredUser = this.authService.getUserByToken(token);
 
         // pillamos el grupo
-        Group group = this.groupService.findGroupById(memberGroup.getGroupId());
+        Group group = this.groupService.getGroupById(memberGroup.getGroupId());
 
         // pillamos al miembro que queremos cambiar el nickname
-        Member toUpdate = this.memberService.findMemberByGroupIdAndNickname(
+        Member toUpdate = this.memberService.getMemberByGroupIdAndNickname(
                 memberGroup.getGroupId(),
                 memberGroup.getOldNickname());
 
@@ -389,14 +389,14 @@ public class GroupController {
         RegisteredUser registeredUser = this.authService.getUserByToken(token);
 
         // pillamos el grupo
-        Member memberToDelete = this.memberService.findMemberById(memberDeleteId);
+        Member memberToDelete = this.memberService.getMemberById(memberDeleteId);
 
         Member executor = memberToDelete;
 
         // si el reguser no es el mimso que el que queremos deletear
         if (memberToDelete.getRegUser() != registeredUser) {
             log.info("Member to delete {} doesn't belong to the reguser {}. Finding executor", memberDeleteId, registeredUser.getUserId());
-            executor = this.memberService.findMemberByGroupIdAndRegUserId(groupId, registeredUser.getUserId());
+            executor = this.memberService.getMemberByGroupIdAndRegUserId(groupId, registeredUser.getUserId());
             log.info("Executor found");
             if (executor.isAdmin() == false) {
                 throw new MemberIsNotAdmin();

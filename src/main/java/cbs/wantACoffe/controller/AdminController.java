@@ -86,7 +86,7 @@ public class AdminController {
      */
     @PostMapping(value="p/login")
     public ResponseEntity<AdminToken> loginAdmin (@RequestBody LoginAdminUser admin) throws UserNotExistsException, IncorrectPasswordException {
-        AdminUser adminUser = this.adminService.findByUsernameAndCheckPass(admin.getUsername(), 
+        AdminUser adminUser = this.adminService.getByUsernameAndCheckPass(admin.getUsername(), 
         admin.getPassword());
 
         Token t = this.auth.generateToken(adminUser, TokenType.ADMIN);
@@ -135,7 +135,7 @@ public class AdminController {
     @GetMapping(value = "r/get/all/users")
     public ResponseEntity<List<IBasicUserInfo>> getAllUsers() {
         log.info("Admin getting all users");
-        List<IBasicUserInfo> users = this.adminService.findAllRegisteredUsers();
+        List<IBasicUserInfo> users = this.adminService.getAllRegisteredUsers();
         return ResponseEntity.ok().body(users);
     }
     
@@ -165,6 +165,6 @@ public class AdminController {
      */
     @GetMapping(value = "r/get/all/groups")
     public ResponseEntity<List<IGroupInfo>> getAllGroups() {
-        return ResponseEntity.ok().body(this.adminService.findAllGroupsAndCountMembers());
+        return ResponseEntity.ok().body(this.adminService.getAllGroupsAndCountMembers());
     }
 }

@@ -59,14 +59,14 @@ public class PaymentController {
         RegisteredUser userPayed = this.authService.getUserByToken(token);
 
         // a partir de este usuario, pillamos su membresía en el grupo determinado
-        Member memberRequester = this.memberService.findMemberByGroupIdAndRegUserId(
+        Member memberRequester = this.memberService.getMemberByGroupIdAndRegUserId(
                 paymentData.getGroupId(),
                 userPayed.getUserId());
 
         // y pillamos el miembro que paga, NO tiene porque ser el mismo miembro,
         // es decir, yo como X puedo poner que Y es el que paga, así yo soy
         // memberRequester y meto el pago de memberPayed
-        Member memberPayed = this.memberService.findMemberById(paymentData.getMemberId());
+        Member memberPayed = this.memberService.getMemberById(paymentData.getMemberId());
 
         // comprobamos que el miembro de pago esté en el grupo donde queremos meter pago
         // nunca está de más
@@ -124,7 +124,7 @@ public class PaymentController {
 
         log.info("Getting member whose pays want to know");
         // pillamos el miembro de quien queremos saber los pagos
-        Member payedMember = this.memberService.findMemberById(userId);
+        Member payedMember = this.memberService.getMemberById(userId);
 
         // comprobamos que el grupo del miembro es el mismo que el grupo del requester y
         // el que sale en el json
@@ -269,7 +269,7 @@ public class PaymentController {
     private Member getMemberByToken(final Long groupId, final String token)
             throws MemberNotInGroup, InvalidTokenFormat, UserNotExistsException {
 
-        return this.memberService.findMemberByGroupIdAndRegUserId(
+        return this.memberService.getMemberByGroupIdAndRegUserId(
                 groupId,
                 this.authService.getUserByToken(token).getUserId());
     }

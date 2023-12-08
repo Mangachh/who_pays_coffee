@@ -3,6 +3,9 @@ package cbs.wantACoffe.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.CascadeType;
@@ -66,7 +69,7 @@ public class Member {
     @Column(name = COLUMN_NICKNAME_NAME)
     private String nickname;
 
-    @ManyToOne(targetEntity = RegisteredUser.class)
+    @ManyToOne(targetEntity = RegisteredUser.class, fetch = FetchType.EAGER)
     @JsonBackReference
     @JoinColumn(name = COLUMN_REG_USER_ID_NAME)
     private RegisteredUser regUser;
@@ -92,6 +95,7 @@ public class Member {
 
     @PreRemove
     private void PreRemove() {
+        // nulleamos el reguser de los payments
         for (Payment p : this.payments) {
             p.setMember(null);
         }
