@@ -36,7 +36,7 @@ import cbs.wantACoffe.util.AuthUtils;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("coffee/api/payments")
+@RequestMapping("/api/payments")
 @RequiredArgsConstructor
 public class PaymentController {
 

@@ -47,7 +47,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
  * @version 1.0
  */
 @RestController
-@RequestMapping("coffee/api/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class RegisteredUserController {
 

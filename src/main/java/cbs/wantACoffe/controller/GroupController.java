@@ -41,7 +41,7 @@ import cbs.wantACoffe.util.AuthUtils;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("coffee/api/groups")
+@RequestMapping("/api/groups")
 @RequiredArgsConstructor
 /**
  * Controlador para la creación de grupos y la gestión de los miembros.

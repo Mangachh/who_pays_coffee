@@ -39,7 +39,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
  * @version 1.0
  */
 @RestController
-@RequestMapping("coffee/api/admin")
+@RequestMapping("/api/admin")
 public class AdminController {
 
     @Autowired

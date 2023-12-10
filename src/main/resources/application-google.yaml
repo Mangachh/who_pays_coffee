@@ -1,8 +1,18 @@
+server:
+    servlet:
+        context-path: /coffee
+
+
 spring:
-    datasource:
-        username:
-        password:
-        url:
+    datasource: 
+        username: cbs
+        password: pepote
+        driver-class-name: org.postgresql.Driver
+        url: jdbc:postgresql:///postgres
+        hikari:
+            data-source-properties:
+                socketFactory: com.google.cloud.sql.postgres.SocketFactory
+                cloudSqlInstance: coffee-mug-0606:europe-southwest1:coffeeapp
     jpa:
         hibernate:
             ddl-auto: update

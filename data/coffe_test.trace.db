@@ -2146,3 +2146,7 @@ Caused by: org.h2.mvstore.MVStoreException: The file is locked: D:/coding/java/c
 	at org.h2.mvstore.FileStore.open(FileStore.java:128)
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:452)
 	... 161 more
+2023-12-08 16:36:18 jdbc[14]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "MEMBERS" no encontrada
+Table "MEMBERS" not found; SQL statement:
+select * from members [42102-214]
