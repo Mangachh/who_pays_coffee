@@ -26,7 +26,8 @@ public class PaymentsByUser {
 
     @Data
     @AllArgsConstructor
-    public class SimplePaymentData{ // esto será su propia clase, pero lo dejo por aquí así
+    public class SimplePaymentData { // esto será su propia clase, pero lo dejo por aquí así
+        private Long paymentId;
         private Double amount;
         private Date paymentDate;
     }

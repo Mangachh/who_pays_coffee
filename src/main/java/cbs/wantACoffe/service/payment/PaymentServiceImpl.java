@@ -23,8 +23,7 @@ public class PaymentServiceImpl implements IPaymentService {
 
     @Override
     public void deletePayment(final Long paymentId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deletePayment'");
+        this.repo.deleteById(paymentId);
     }
 
     @Override

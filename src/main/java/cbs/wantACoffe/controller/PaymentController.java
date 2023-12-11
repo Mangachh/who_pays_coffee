@@ -6,6 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -158,7 +159,6 @@ public class PaymentController {
         // oju! este es el miembro que hace petición y, por lo tanto, usamos el token de
         // logeo.
         Member requestMember = this.getMemberByToken(groupId, token);
-        log.info("{} member wants to know the payments", requestMember.getNickname());
 
         // pillamos el miembro de quien queremos saber los pagos
         Member payedMember = this.memberService.getMemberById(userId);
@@ -191,22 +191,25 @@ public class PaymentController {
         // mmmmmm, quizás en el service?
         PaymentsByUser paymentByUser = PaymentsByUser.builder().nickname(payedMember.getNickname()).build();
         paymentByUser.setPaymentData(payments.stream()
-                .map(payment -> paymentByUser.new SimplePaymentData(payment.getAmount(), payment.getPaymentDate()))
+                .map(payment -> paymentByUser.new SimplePaymentData(
+                        payment.getId(),
+                        payment.getAmount(),
+                        payment.getPaymentDate()))
                 .toList());
 
         return ResponseEntity.ok(paymentByUser);
     }
 
-    
     /**
-     * Devuelve todos y cada uno de los pagos hechos en el grupo ordenados por fecha.
+     * Devuelve todos y cada uno de los pagos hechos en el grupo ordenados por
+     * fecha.
      * 
      * 
-     * @param token -> token de sesión
-     * @param groupId -> id del grupo
+     * @param token    -> token de sesión
+     * @param groupId  -> id del grupo
      * @param initDate -> opcional. Fecha de inicio de los pagos
-     * @param endDate -> opcional. Fecha final de los pagos
-     * @return -> lista de pagos 
+     * @param endDate  -> opcional. Fecha final de los pagos
+     * @return -> lista de pagos
      * @throws MemberNotInGroup
      * @throws InvalidTokenFormat
      * @throws UserNotExistsException
@@ -221,13 +224,6 @@ public class PaymentController {
 
         // get the requester member
         Member requesterMember = this.getMemberByToken(groupId, token);
-        log.info("Member {} trying to get all payments from the group", requesterMember.getNickname());
-
-        log.info("Checking if member {} is in group {}", requesterMember.getNickname(), groupId);
-        // check if member in group, again, better to be sure
-        if (requesterMember.getGroup().getGroupId() != groupId) {
-            throw new MemberNotInGroup();
-        }
 
         final List<Payment> payments;
         if (initDate == null || endDate == null) {
@@ -242,6 +238,7 @@ public class PaymentController {
         // o devolver esto en ul repo
         final List<PaymentData> paymentRes = payments.stream().map(
                 pay -> PaymentData.builder()
+                        .paymentId(pay.getId())
                         .nickname(pay.getMemberName())
                         .amount(pay.getAmount())
                         .date(pay.getPaymentDate())
@@ -254,10 +251,10 @@ public class PaymentController {
     /**
      * Devuelve el total de pagos de cada usuario. OJU! es el total y ya.
      * 
-     * @param token -> token de sesión
-     * @param groupId -> grupo donde están los pagos
+     * @param token    -> token de sesión
+     * @param groupId  -> grupo donde están los pagos
      * @param initDate -> opcional. fecha inicio pagos
-     * @param endDate -> opcional. fecha final pagos
+     * @param endDate  -> opcional. fecha final pagos
      * @return
      * @throws MemberNotInGroup
      * @throws InvalidTokenFormat
@@ -273,15 +270,7 @@ public class PaymentController {
 
         // get the requester member
         Member requesterMember = this.getMemberByToken(groupId, token);
-        log.info("Member {} trying to get payments by group", requesterMember.getNickname());
 
-        log.info("Checking if member {} is in group", requesterMember.getNickname());
-        // check if member in group, again, better to be sure than sorry
-        if (requesterMember.getGroup().getGroupId() != groupId) {
-            throw new MemberNotInGroup();
-        }
-
-        // TODO: podemos crear un super método y tal?
         List<IPaymentTotal> payments = null;
         if (initDate == null || endDate == null) {
             log.info("No dates, so looking for all the payments");
@@ -296,55 +285,39 @@ public class PaymentController {
     }
 
     /**
-     * TODO: quitar? Este ya lo tenemos
-     * @param token
-     * @param groupId
-     * @param memberNickname
-     * @param initDate
-     * @param endDate
+     * Elimina un pago de un grupo determinado con un id determinado
+     * @param token -> token de usuario
+     * @param groupId -> grupo en el que se quita el pago
+     * @param paymentId -> id del pago
      * @return
      * @throws MemberNotInGroup
      * @throws InvalidTokenFormat
      * @throws UserNotExistsException
      */
-    @GetMapping("get/totals/by/member")
-    public ResponseEntity<List<IPaymentTotal>> getPaymentsByMember(
+    @DeleteMapping("delete")
+    public ResponseEntity<String> deletePayment(
             @RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token,
             @RequestParam(name = "groupId") Long groupId,
-            @RequestParam(name = "memberNickname") String memberNickname,
-            @RequestParam(name = "initDate", required = false) Date initDate,
-            @RequestParam(name = "endDate", required = false) Date endDate)
+            @RequestParam(name = "paymentId") Long paymentId)
             throws MemberNotInGroup, InvalidTokenFormat, UserNotExistsException {
-
-        log.info("User trying to get payments by group");
         // get the requester member
         Member requesterMember = this.getMemberByToken(groupId, token);
 
-        log.info("Checking if user is in group");
-        // check if member in group, again, better to be sure than sorry
-        if (requesterMember.getGroup().getGroupId() != groupId) {
-            throw new MemberNotInGroup();
+        if (requesterMember.isAdmin()) {
+            this.paymentService.deletePayment(paymentId);
         }
 
-        List<IPaymentTotal> payments = null;
-        if (initDate == null || endDate == null) {
-            log.info("No dates, so looking for all the payments");
-            payments = this.paymentService.getMemberPaymentTotals(groupId, memberNickname);
-        } else {
-            log.info("Dates found. Looking for payments between dates");
-            payments = this.paymentService.getMemberPaymentTotals(groupId, memberNickname, initDate, endDate);
-        }
-
-        return ResponseEntity.ok().body(payments);
-
+        return ResponseEntity.ok("Done");
     }
 
+    
     /**
      * Pilla un miembro de un grupo a partir del token.
+     * También comprueba si el miembro pertence al grupo determinado
      * De esta manera simplificamos un poco las cosas.
      * 
      * @param groupId -> grupo al que pertenece el miembro
-     * @param token -> token de sesión
+     * @param token   -> token de sesión
      * @return
      * @throws MemberNotInGroup
      * @throws InvalidTokenFormat
@@ -353,9 +326,17 @@ public class PaymentController {
     private Member getMemberByToken(final Long groupId, final String token)
             throws MemberNotInGroup, InvalidTokenFormat, UserNotExistsException {
 
-        return this.memberService.getMemberByGroupIdAndRegUserId(
+        Member member = this.memberService.getMemberByGroupIdAndRegUserId(
                 groupId,
                 this.authService.getUserByToken(token).getUserId());
+        log.info("Member {} trying to get payments by group", member.getNickname());
+
+        log.info("Checking if member {} is in group", member.getNickname());
+        // check if member in group, again, better to be sure than sorry
+        if (member.getGroup().getGroupId() != groupId) {
+            throw new MemberNotInGroup();
+        }
+        return member;
     }
 
 }

@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentData {
+    private long paymentId;
     private String nickname;
     private Double amount;
     private Date date;

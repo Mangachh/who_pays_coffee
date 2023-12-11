@@ -1,3 +1,7 @@
+server:
+    servlet:
+        context-path: /coffee
+
 spring:
     datasource:
         url: jdbc:h2:file:./data/coffe_test

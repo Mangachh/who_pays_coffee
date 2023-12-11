@@ -33,7 +33,7 @@ public class AuthFilter extends OncePerRequestFilter {
     /**
      * Endpoints that don't need permissions
      */
-    private final String[] WHITE_LIST = { "/coffee/api/auth/p/", "/console", "/coffee/api/admin/p" };
+    private final String[] WHITE_LIST = { "/coffee/api/auth/p/", "/coffee/console", "/coffee/api/admin/p" };
     private final String ENTER_MESSAGE_WHITE = "Accessing to a Whitelist endpoint";
 
     private final String[] ADMIN_LIST = { "/coffee/api/admin/r" };
