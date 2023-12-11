@@ -21,7 +21,6 @@ import cbs.wantACoffe.util.AuthUtils;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import cbs.wantACoffe.TableNames;
 import cbs.wantACoffe.dto.user.IBasicUserInfo;
 import cbs.wantACoffe.entity.RegisteredUser;
 

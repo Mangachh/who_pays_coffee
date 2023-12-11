@@ -50,7 +50,7 @@ import lombok.RequiredArgsConstructor;
  * hacerlo todo en el mismo controlador
  * 
  * @author Lluís Cobos Aumatell
- * @version 0.2
+ * @version 1.0
  */
 public class GroupController {
 

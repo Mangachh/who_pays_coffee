@@ -9,6 +9,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Clase que usamos para meter los pagos en el controlador
+ * 
+ * @author Lluís Cobos Aumatell
+ * @version 1.0
+ */
 @Data
 @Builder
 @NoArgsConstructor

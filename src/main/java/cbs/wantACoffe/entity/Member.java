@@ -3,9 +3,6 @@ package cbs.wantACoffe.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.CascadeType;
@@ -93,6 +90,11 @@ public class Member {
         return this.regUser != null;
     }
 
+    /**
+     * Método llamado antes de hacer un remove de la entidad.
+     * Lo que hacemos es nullear la referencia de la clase {@link #Payments}
+     * porque aunque eliminemos al usuario, el pago se queda
+     */
     @PreRemove
     private void PreRemove() {
         // nulleamos el reguser de los payments

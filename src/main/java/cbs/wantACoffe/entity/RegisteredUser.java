@@ -20,6 +20,9 @@ import lombok.NoArgsConstructor;
 
 /**
  * Entidad de usuario
+ * 
+ * @author Lluís Cobos
+ * @version 1.0
 */
 @Entity
 @NoArgsConstructor

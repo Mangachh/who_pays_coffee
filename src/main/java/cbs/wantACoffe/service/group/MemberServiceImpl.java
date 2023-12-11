@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cbs.wantACoffe.dto.MemberGroup;
-import cbs.wantACoffe.entity.Group;
 import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.RegisteredUser;
 import cbs.wantACoffe.exceptions.MemberHasNoNicknameException;

@@ -1,6 +1,5 @@
 package cbs.wantACoffe.entity;
 
-import cbs.wantACoffe.TableNames;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

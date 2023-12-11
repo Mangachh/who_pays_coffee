@@ -1,5 +1,4 @@
 package cbs.wantACoffe.service.auth;
-import cbs.wantACoffe.controller.GroupController;
 import cbs.wantACoffe.dto.token.Token;
 import cbs.wantACoffe.dto.token.Token.TokenType;
 import cbs.wantACoffe.entity.IUser;

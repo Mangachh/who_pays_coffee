@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cbs.wantACoffe.dto.payment.IPaymentTotal;
-import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.Payment;
 import cbs.wantACoffe.repository.IPaymentRepo;
 

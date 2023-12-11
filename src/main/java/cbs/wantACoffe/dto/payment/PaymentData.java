@@ -7,6 +7,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Clase que usamos para devolver los datos de pago.
+ * 
+ * @author Lluís Cobos Aumatell
+ * @version 1.0
+ */
 @Data
 @Builder
 @NoArgsConstructor

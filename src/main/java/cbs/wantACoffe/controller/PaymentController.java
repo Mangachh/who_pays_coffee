@@ -1,12 +1,10 @@
 package cbs.wantACoffe.controller;
 
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -29,7 +27,6 @@ import cbs.wantACoffe.exceptions.MemberIsNotAdmin;
 import cbs.wantACoffe.exceptions.MemberNotInGroup;
 import cbs.wantACoffe.exceptions.UserNotExistsException;
 import cbs.wantACoffe.service.auth.IAuthService;
-import cbs.wantACoffe.service.group.IGroupService;
 import cbs.wantACoffe.service.group.IMemberService;
 import cbs.wantACoffe.service.payment.IPaymentService;
 import cbs.wantACoffe.util.AuthUtils;
@@ -38,15 +35,35 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/payments")
 @RequiredArgsConstructor
+/**
+ * Controlador de los pagos.
+ * 
+ * @author Lluís Cobos Aumatell
+ * @version 1.0
+ */
 public class PaymentController {
 
     private final IAuthService authService;
     private final IPaymentService paymentService;
-    private final IGroupService groupService;
     private final IMemberService memberService;
 
     private final Logger log = LoggerFactory.getLogger(PaymentController.class);
 
+    /**
+     * Añade un pago a la base de datos. El requester TIENE que pertenecer al grupo
+     * en el que se mete el pago y ADEMÁS ó es admin y puede meter el pago de
+     * cualquier
+     * usuario Ó mete su propio pago.
+     * Un member no admin no puede meter un pago que no es el suyo
+     * 
+     * @param token       -> token de sesión
+     * @param paymentData -> {@link #PaymentModel} datos de pago
+     * @return -> string con mensaje
+     * @throws InvalidTokenFormat
+     * @throws UserNotExistsException
+     * @throws MemberNotInGroup
+     * @throws MemberIsNotAdmin
+     */
     @PutMapping("add")
     public ResponseEntity<String> addPayment(
             @RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token,
@@ -54,9 +71,10 @@ public class PaymentController {
             throws InvalidTokenFormat, UserNotExistsException, MemberNotInGroup, MemberIsNotAdmin {
 
         // user who makes the payment
-        log.info("User trying to make a payment");
+
         // Bien, este es el usuario que mete el pago en la app
         RegisteredUser userPayed = this.authService.getUserByToken(token);
+        log.info("User {} trying to make a payment", userPayed.getUsername());
 
         // a partir de este usuario, pillamos su membresía en el grupo determinado
         Member memberRequester = this.memberService.getMemberByGroupIdAndRegUserId(
@@ -70,7 +88,7 @@ public class PaymentController {
 
         // comprobamos que el miembro de pago esté en el grupo donde queremos meter pago
         // nunca está de más
-        log.info("Checking if user '{}' who inserts the payment is in the selected group", userPayed.getUserId());
+        log.info("Checking if member '{}' who inserts the payment is in the selected group", userPayed.getUserId());
         if (memberPayed.getGroup().getGroupId().equals(paymentData.getGroupId()) == false) {
             throw new MemberNotInGroup();
         }
@@ -83,7 +101,7 @@ public class PaymentController {
             throw new MemberIsNotAdmin();
         }
 
-        log.info("User '{}' is saving a payment", userPayed.getUserId());
+        log.info("Member '{}' is saving a payment", userPayed.getUserId());
         // guardamos
         this.paymentService.savePayment(
                 Payment.builder()
@@ -98,6 +116,26 @@ public class PaymentController {
         return ResponseEntity.ok("Payment done");
     }
 
+    /**
+     * Pilla todos los pagos hechos por un miembro determinado
+     * en un grupo determinado.
+     * La verdad, el id de grupo nos lo podríamos saltar, aún así
+     * está bien ponerlo porque de esta manera tenemos un chequeo más
+     * y, por ejemplo, si quien quiere pillar los pagos NO pertenece al grupo,
+     * por mucho que el miembro "userId" sí lo haga, no los devuelve.
+     * Es una buena manera de proteger os datos
+     * 
+     * @param token    -> token de sesión
+     * @param userId   -> id
+     * @param groupId  -> id del grupo donde está el requester
+     * @param initDate -> opcional. Fecha de inicio de los pagos.
+     * @param endDate  -> opcional. Fecha final de los pagos
+     * @return -> lista de pagos
+     * @throws UserNotExistsException
+     * @throws GroupNotExistsException
+     * @throws InvalidTokenFormat
+     * @throws MemberNotInGroup
+     */
     @GetMapping("get/by/user")
     public ResponseEntity<PaymentsByUser> getUserPayments(
             @RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token,
@@ -116,22 +154,25 @@ public class PaymentController {
             throw new GroupNotExistsException(); // lo mimsmo, dejamos esta
         }
 
-        log.info("Getting requester member");
         // pillamos el miembro que hace la petición
         // oju! este es el miembro que hace petición y, por lo tanto, usamos el token de
         // logeo.
         Member requestMember = this.getMemberByToken(groupId, token);
+        log.info("{} member wants to know the payments", requestMember.getNickname());
 
-        log.info("Getting member whose pays want to know");
         // pillamos el miembro de quien queremos saber los pagos
         Member payedMember = this.memberService.getMemberById(userId);
+        log.info("{} member wants to know the payments from {}",
+                requestMember.getNickname(),
+                payedMember.getNickname());
 
         // comprobamos que el grupo del miembro es el mismo que el grupo del requester y
         // el que sale en el json
         // quizás no sea necesario, pero de esta manera me ahorro bugs de que cualquiera
         // pueda ver
         // los otros grupos cambiando partes del código
-        log.info("Checking if requesterMember is in the same group as the payedMember");
+        log.info("Checking if requesterMember {} is in the same group as the payedMember {}",
+                requestMember.getNickname(), payedMember.getNickname());
         if (payedMember.getGroup() != requestMember.getGroup()) {
             throw new MemberNotInGroup();
         }
@@ -147,10 +188,7 @@ public class PaymentController {
         }
 
         // transformo a clase
-        // pagos de usuario X
-        // get <- id_user, id_del usuario... podemos usar el mismo para las fechas y tal
-        // (fetén)
-        // return -> Nickname, [Amount, Date]
+        // mmmmmm, quizás en el service?
         PaymentsByUser paymentByUser = PaymentsByUser.builder().nickname(payedMember.getNickname()).build();
         paymentByUser.setPaymentData(payments.stream()
                 .map(payment -> paymentByUser.new SimplePaymentData(payment.getAmount(), payment.getPaymentDate()))
@@ -159,9 +197,20 @@ public class PaymentController {
         return ResponseEntity.ok(paymentByUser);
     }
 
-    // pagos de todo el mundo: (fechas determinadas también)
-    // return -> Amount, Date, nickname, is_member
-
+    
+    /**
+     * Devuelve todos y cada uno de los pagos hechos en el grupo ordenados por fecha.
+     * 
+     * 
+     * @param token -> token de sesión
+     * @param groupId -> id del grupo
+     * @param initDate -> opcional. Fecha de inicio de los pagos
+     * @param endDate -> opcional. Fecha final de los pagos
+     * @return -> lista de pagos 
+     * @throws MemberNotInGroup
+     * @throws InvalidTokenFormat
+     * @throws UserNotExistsException
+     */
     @GetMapping("get/by/group")
     public ResponseEntity<List<PaymentData>> getGroupPayments(
             @RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token,
@@ -170,11 +219,11 @@ public class PaymentController {
             @RequestParam(name = "endDate", required = false) Date endDate)
             throws MemberNotInGroup, InvalidTokenFormat, UserNotExistsException {
 
-        log.info("User trying to get payments by group");
         // get the requester member
         Member requesterMember = this.getMemberByToken(groupId, token);
+        log.info("Member {} trying to get all payments from the group", requesterMember.getNickname());
 
-        log.info("Checking if user is in group");
+        log.info("Checking if member {} is in group {}", requesterMember.getNickname(), groupId);
         // check if member in group, again, better to be sure
         if (requesterMember.getGroup().getGroupId() != groupId) {
             throw new MemberNotInGroup();
@@ -189,6 +238,8 @@ public class PaymentController {
             payments = this.paymentService.getAllPaymentsByGroup(groupId, initDate, endDate);
         }
 
+        // lo mismo no sé si meterlo aquí o en el service
+        // o devolver esto en ul repo
         final List<PaymentData> paymentRes = payments.stream().map(
                 pay -> PaymentData.builder()
                         .nickname(pay.getMemberName())
@@ -200,19 +251,31 @@ public class PaymentController {
         return ResponseEntity.ok(paymentRes);
     }
 
+    /**
+     * Devuelve el total de pagos de cada usuario. OJU! es el total y ya.
+     * 
+     * @param token -> token de sesión
+     * @param groupId -> grupo donde están los pagos
+     * @param initDate -> opcional. fecha inicio pagos
+     * @param endDate -> opcional. fecha final pagos
+     * @return
+     * @throws MemberNotInGroup
+     * @throws InvalidTokenFormat
+     * @throws UserNotExistsException
+     */
     @GetMapping("get/totals/by/group")
-    public ResponseEntity<List<IPaymentTotal>> getTotalPaymentes(
+    public ResponseEntity<List<IPaymentTotal>> getTotalPayments(
             @RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token,
             @RequestParam(name = "groupId") Long groupId,
             @RequestParam(name = "initDate", required = false) Date initDate,
             @RequestParam(name = "endDate", required = false) Date endDate)
             throws MemberNotInGroup, InvalidTokenFormat, UserNotExistsException {
 
-        log.info("User trying to get payments by group");
         // get the requester member
         Member requesterMember = this.getMemberByToken(groupId, token);
+        log.info("Member {} trying to get payments by group", requesterMember.getNickname());
 
-        log.info("Checking if user is in group");
+        log.info("Checking if member {} is in group", requesterMember.getNickname());
         // check if member in group, again, better to be sure than sorry
         if (requesterMember.getGroup().getGroupId() != groupId) {
             throw new MemberNotInGroup();
@@ -232,6 +295,18 @@ public class PaymentController {
 
     }
 
+    /**
+     * TODO: quitar? Este ya lo tenemos
+     * @param token
+     * @param groupId
+     * @param memberNickname
+     * @param initDate
+     * @param endDate
+     * @return
+     * @throws MemberNotInGroup
+     * @throws InvalidTokenFormat
+     * @throws UserNotExistsException
+     */
     @GetMapping("get/totals/by/member")
     public ResponseEntity<List<IPaymentTotal>> getPaymentsByMember(
             @RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token,
@@ -251,7 +326,6 @@ public class PaymentController {
             throw new MemberNotInGroup();
         }
 
-        // TODO: podemos crear un super método y tal?
         List<IPaymentTotal> payments = null;
         if (initDate == null || endDate == null) {
             log.info("No dates, so looking for all the payments");
@@ -265,7 +339,17 @@ public class PaymentController {
 
     }
 
-
+    /**
+     * Pilla un miembro de un grupo a partir del token.
+     * De esta manera simplificamos un poco las cosas.
+     * 
+     * @param groupId -> grupo al que pertenece el miembro
+     * @param token -> token de sesión
+     * @return
+     * @throws MemberNotInGroup
+     * @throws InvalidTokenFormat
+     * @throws UserNotExistsException
+     */
     private Member getMemberByToken(final Long groupId, final String token)
             throws MemberNotInGroup, InvalidTokenFormat, UserNotExistsException {
 

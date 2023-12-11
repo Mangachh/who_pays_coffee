@@ -19,6 +19,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entidad para los pagos.
+ * 
+ * @author Lluís Cobos Aumatell
+ * @version 1.0
+ */
 @Entity
 @Data
 @Builder

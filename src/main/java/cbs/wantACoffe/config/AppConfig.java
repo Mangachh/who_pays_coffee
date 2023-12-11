@@ -1,8 +1,5 @@
 package cbs.wantACoffe.config;
 
-import java.sql.SQLException;
-
-import org.springframework.boot.autoconfigure.integration.IntegrationProperties.RSocket.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
