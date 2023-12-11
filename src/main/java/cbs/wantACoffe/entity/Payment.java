@@ -64,10 +64,10 @@ public class Payment {
     @Column(name = COLUMN_ID_NAME) 
     private Long id;
 
-    @Column(name = COLUMN_AMOUNT_NAME)
+    @Column(name = COLUMN_AMOUNT_NAME, nullable = false)
     private Double amount;
 
-    @Column(name = COLUMN_DATE_NAME)
+    @Column(name = COLUMN_DATE_NAME, nullable = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
 
     private Date paymentDate;

@@ -16,13 +16,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import cbs.wantACoffe.CoffeeApplication;
 import cbs.wantACoffe.CommonData;
 import cbs.wantACoffe.dto.group.IGroupInfo;
 import cbs.wantACoffe.entity.Group;
