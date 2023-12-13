@@ -2,15 +2,20 @@ package cbs.wantACoffe;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import cbs.wantACoffe.dto.token.Token;
 import cbs.wantACoffe.dto.token.Token.TokenType;
 import cbs.wantACoffe.entity.AdminUser;
 import cbs.wantACoffe.entity.Group;
+import cbs.wantACoffe.entity.Member;
+import cbs.wantACoffe.entity.Payment;
 import cbs.wantACoffe.entity.RegisteredUser;
 
-public class CommonData {   
+public class CommonData {
     
+    public static Random rand = new Random();
+
     public static RegisteredUser getTestUserWithSuffix(final String sufix) {
         return RegisteredUser.builder()
                 .userId(100L)
@@ -53,8 +58,9 @@ public class CommonData {
                 .userId(100L)
                 .username("Test Admin")
                 .password("1234")
-                .build();        
+                .build();
     }
+    
     
     public static Token getToken() {
         return new Token(TokenType.USER, "N2IwOTcyODUtZjNjMS0zMGM3LWI3NmYtNmQ0ZTdmZGI4ZDZk");

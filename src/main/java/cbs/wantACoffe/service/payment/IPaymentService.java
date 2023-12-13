@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 
 import cbs.wantACoffe.dto.payment.IPaymentTotal;
 import cbs.wantACoffe.entity.Payment;
+import cbs.wantACoffe.exceptions.PaymentHasNoAmountException;
+import cbs.wantACoffe.exceptions.PaymentHasNoDateException;
+import cbs.wantACoffe.exceptions.PaymentHasNoGroupException;
 
 /**
  * Interfaz de servicio de los pagos
@@ -21,8 +24,11 @@ public interface IPaymentService {
      * Añade un pago
      * @param toSave -> pago que guardar
      * @return
+     * @throws PaymentHasNoAmountException
+     * @throws PaymentHasNoDateException
+     * @throws PaymentHasNoGroupException
      */
-    Payment savePayment(final Payment toSave);
+    Payment savePayment(final Payment toSave) throws PaymentHasNoAmountException, PaymentHasNoDateException, PaymentHasNoGroupException;
 
     /**
      * Elimina un pago de la base de datos

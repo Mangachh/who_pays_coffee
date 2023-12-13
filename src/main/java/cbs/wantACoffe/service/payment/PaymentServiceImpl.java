@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 
 import cbs.wantACoffe.dto.payment.IPaymentTotal;
 import cbs.wantACoffe.entity.Payment;
+import cbs.wantACoffe.exceptions.PaymentHasNoAmountException;
+import cbs.wantACoffe.exceptions.PaymentHasNoDateException;
+import cbs.wantACoffe.exceptions.PaymentHasNoGroupException;
 import cbs.wantACoffe.repository.IPaymentRepo;
 
 @Service
@@ -17,7 +20,23 @@ public class PaymentServiceImpl implements IPaymentService {
     private IPaymentRepo repo;
 
     @Override
-    public Payment savePayment(final Payment toSave) {
+    public Payment savePayment(final Payment toSave) throws PaymentHasNoAmountException, PaymentHasNoDateException, PaymentHasNoGroupException {
+
+        // no amount exception
+        if (toSave.getAmount() == null ||toSave.getAmount() <= 0) {
+            throw new PaymentHasNoAmountException();
+        }
+
+        // no date exception
+        if (toSave.getPaymentDate() == null) {
+            throw new PaymentHasNoDateException();
+        }
+
+        // no group exception
+        if (toSave.getGroup() == null) {
+            throw new PaymentHasNoGroupException();
+        }
+        
         return this.repo.save(toSave);
     }
 

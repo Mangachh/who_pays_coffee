@@ -26,6 +26,9 @@ import cbs.wantACoffe.exceptions.GroupNotExistsException;
 import cbs.wantACoffe.exceptions.InvalidTokenFormat;
 import cbs.wantACoffe.exceptions.MemberIsNotAdmin;
 import cbs.wantACoffe.exceptions.MemberNotInGroup;
+import cbs.wantACoffe.exceptions.PaymentHasNoAmountException;
+import cbs.wantACoffe.exceptions.PaymentHasNoDateException;
+import cbs.wantACoffe.exceptions.PaymentHasNoGroupException;
 import cbs.wantACoffe.exceptions.UserNotExistsException;
 import cbs.wantACoffe.service.auth.IAuthService;
 import cbs.wantACoffe.service.group.IMemberService;
@@ -64,12 +67,15 @@ public class PaymentController {
      * @throws UserNotExistsException
      * @throws MemberNotInGroup
      * @throws MemberIsNotAdmin
+     * @throws PaymentHasNoAmountException
+     * @throws PaymentHasNoGroupException
+     * @throws PaymentHasNoDateException
      */
     @PutMapping("add")
     public ResponseEntity<String> addPayment(
             @RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token,
             @RequestBody PaymentModel paymentData)
-            throws InvalidTokenFormat, UserNotExistsException, MemberNotInGroup, MemberIsNotAdmin {
+            throws InvalidTokenFormat, UserNotExistsException, MemberNotInGroup, MemberIsNotAdmin, PaymentHasNoAmountException, PaymentHasNoDateException, PaymentHasNoGroupException {
 
         // user who makes the payment
 

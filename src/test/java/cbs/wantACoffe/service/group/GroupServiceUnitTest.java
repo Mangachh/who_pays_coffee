@@ -28,7 +28,6 @@ import cbs.wantACoffe.exceptions.MemberHasNoNicknameException;
 import cbs.wantACoffe.exceptions.NullValueInUserDataException;
 import cbs.wantACoffe.exceptions.UsernameEmailAlreadyExistsException;
 import cbs.wantACoffe.repository.IGroupRepo;
-import cbs.wantACoffe.service.user.IRegisteredUserService;
 
 @ActiveProfiles("h2_test")
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
