@@ -334,19 +334,21 @@ public class PaymentServiceImplUnitTest {
     }
 
     @Test
+    @Order(12)
     void testGetMemberPaymentTotals() {
         // copy paste de lo otro, no es lo más limpio pero funca igual
         List<IPaymentTotal> expected = new ArrayList<>();
+        final String nickname = testMembers.get(ADMIN_INDEX).getNickname();
 
         double sum = testPayments.stream().collect(
                 Collectors.summingDouble(p -> p.getMember().getNickname()
-                        .equals(testMembers.get(ADMIN_INDEX).getNickname()) ? p.getAmount() : 0));
+                        .equals(nickname) ? p.getAmount() : 0));
 
         expected.add(new IPaymentTotal() {
 
             @Override
             public String getNickname() {
-                return testMembers.get(ADMIN_INDEX).getNickname();
+                return nickname;
             }
 
             @Override
@@ -361,30 +363,32 @@ public class PaymentServiceImplUnitTest {
 
         });
 
-        Mockito.when(this.payRepo.findAllTotalsByGroupBetweenDates(testGroup.getGroupId(), INIT_DATE, END_DATE))
+        Mockito.when(this.payRepo.findTotalsByMemberAndGroup(testGroup.getGroupId(), nickname))
                 .thenReturn(expected);
 
-        List<IPaymentTotal> result = this.payService.getAllPaymentTotals(testGroup.getGroupId(), INIT_DATE, END_DATE);
+        List<IPaymentTotal> result = this.payService.getMemberPaymentTotals(testGroup.getGroupId(), nickname);
 
         assertEquals(expected, result);
 
     }
 
     @Test
+    @Order(13)
     void testGetMemberPaymentTotalsFixedDate() {
         List<IPaymentTotal> expected = new ArrayList<>();
+        final String nickname = testMembers.get(ADMIN_INDEX).getNickname();
 
         double sum = testPayments.stream().collect(
                 Collectors.summingDouble(
                         p -> this.isDateBetween(p.getPaymentDate(), INIT_DATE, END_DATE) &&
                         p.getMember().getNickname()
-                        .equals(testMembers.get(ADMIN_INDEX).getNickname()) ? p.getAmount() : 0));
+                        .equals(nickname) ? p.getAmount() : 0));
 
         expected.add(new IPaymentTotal() {
 
             @Override
             public String getNickname() {
-                return testMembers.get(ADMIN_INDEX).getNickname();
+                return nickname;
             }
 
             @Override
@@ -399,10 +403,10 @@ public class PaymentServiceImplUnitTest {
 
         });
 
-        Mockito.when(this.payRepo.findAllTotalsByGroupBetweenDates(testGroup.getGroupId(), INIT_DATE, END_DATE))
+        Mockito.when(this.payRepo.findTotalsByMemberAndGroupBetweenDates(testGroup.getGroupId(), nickname, INIT_DATE, END_DATE))
                 .thenReturn(expected);
 
-        List<IPaymentTotal> result = this.payService.getAllPaymentTotals(testGroup.getGroupId(), INIT_DATE, END_DATE);
+        List<IPaymentTotal> result = this.payService.getMemberPaymentTotals(testGroup.getGroupId(), nickname, INIT_DATE, END_DATE);
 
         assertEquals(expected, result);
     }

@@ -67,7 +67,6 @@ public interface IPaymentRepo extends JpaRepository<Payment, Long> {
                         @Param("memberNickname") String memberNickname);
 
         /**
-         * @deprecated
          * @param groupId
          * @param memberNickname
          * @param initDate
