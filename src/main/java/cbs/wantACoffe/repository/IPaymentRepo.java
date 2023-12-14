@@ -66,6 +66,14 @@ public interface IPaymentRepo extends JpaRepository<Payment, Long> {
                         @Param("groupId") Long groupId,
                         @Param("memberNickname") String memberNickname);
 
+        /**
+         * @deprecated
+         * @param groupId
+         * @param memberNickname
+         * @param initDate
+         * @param endDate
+         * @return
+         */
         @Query(value = "SELECT " + Payment.COLUMN_MEMBER_PAYED_NAME_NAME + " AS nickname, " + "SUM("
                         + Payment.COLUMN_AMOUNT_NAME + ") AS \"totalAmount\", "
                         + Payment.COLUMN_MEMBER_PAYED_ID_NAME + " AS memberId" +
