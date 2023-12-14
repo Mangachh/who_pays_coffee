@@ -19,6 +19,9 @@ import cbs.wantACoffe.exceptions.MemberHasNoNicknameException;
 import cbs.wantACoffe.exceptions.MemberIsNotAdmin;
 import cbs.wantACoffe.exceptions.MemberNotInGroup;
 import cbs.wantACoffe.exceptions.NullValueInUserDataException;
+import cbs.wantACoffe.exceptions.PaymentHasNoAmountException;
+import cbs.wantACoffe.exceptions.PaymentHasNoDateException;
+import cbs.wantACoffe.exceptions.PaymentHasNoGroupException;
 import cbs.wantACoffe.exceptions.UserNotExistsException;
 import cbs.wantACoffe.exceptions.UsernameEmailAlreadyExistsException;
 
@@ -107,7 +110,28 @@ public class RestExceptionHandler {
      }
 
     
+     /**********************************/
+    /*           PAYMENT             */
+    /********************************/
 
+    @ExceptionHandler(PaymentHasNoAmountException.class)
+    private ResponseEntity<ErrorMessage> paymentHasNoAmountException(PaymentHasNoAmountException e,
+            WebRequest request) {
+        return this.createResponseEntity(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+     
+    @ExceptionHandler(PaymentHasNoDateException.class)
+    private ResponseEntity<ErrorMessage> paymentHasNoDateException(PaymentHasNoDateException e, WebRequest request) {
+        return this.createResponseEntity(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler(PaymentHasNoGroupException.class)
+    private ResponseEntity<ErrorMessage> paymentHasNoGroupException(PaymentHasNoGroupException e, WebRequest request) {
+        return this.createResponseEntity(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+    
+   
+    
     /**********************************/
     /*           AUTH                */
     /********************************/

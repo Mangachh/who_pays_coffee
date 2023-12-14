@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import cbs.wantACoffe.dto.payment.PaymentsByUser;
+import cbs.wantACoffe.dto.payment.SimplePaymentData;
 import cbs.wantACoffe.dto.payment.IPaymentTotal;
 import cbs.wantACoffe.dto.payment.PaymentData;
 import cbs.wantACoffe.dto.payment.PaymentModel;
@@ -197,7 +198,7 @@ public class PaymentController {
         // mmmmmm, quizás en el service?
         PaymentsByUser paymentByUser = PaymentsByUser.builder().nickname(payedMember.getNickname()).build();
         paymentByUser.setPaymentData(payments.stream()
-                .map(payment -> paymentByUser.new SimplePaymentData(
+                .map(payment -> new SimplePaymentData(
                         payment.getId(),
                         payment.getAmount(),
                         payment.getPaymentDate()))

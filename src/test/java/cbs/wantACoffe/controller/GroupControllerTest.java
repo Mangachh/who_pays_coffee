@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Order;
@@ -47,7 +48,7 @@ public class GroupControllerTest {
         private TestRestTemplate restTemplate;
 
         private static final String IP = "http://localhost";
-        private static final String API = "/api";
+        private static final String API = "/coffee/api";
         private static String address;
         private static HttpHeaders header;
         private static RegisteredUser user;
@@ -279,7 +280,7 @@ public class GroupControllerTest {
         @Test
         @Order(10)
         void testGetAllMembersFromGroup() throws URISyntaxException {
-                URI uri = new URI(API + "/groups/get/members/group/" + String.valueOf(groupId));
+                URI uri = new URI(address + "/groups/get/members/group/" + String.valueOf(groupId));
                 Map<String, String> headerMap = new HashMap<>();
                 headerMap.put("Authorization", header.get("Authorization").get(0));
                 RequestEntity<Void> request = RequestEntity.get(uri).headers(header).build();
@@ -295,7 +296,7 @@ public class GroupControllerTest {
         @Test
         @Order(10)
         void testGetAllMembersFromGroupNoGroup() throws URISyntaxException {
-                URI uri = new URI(API + "/groups/get/members/group/" + String.valueOf(2555487L));
+                URI uri = new URI(address + "/groups/get/members/group/" + String.valueOf(2555487L));
                 Map<String, String> headerMap = new HashMap<>();
                 headerMap.put("Authorization", header.get("Authorization").get(0));
                 RequestEntity<Void> request = RequestEntity.get(uri).headers(header).build();

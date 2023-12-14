@@ -21,14 +21,8 @@ import lombok.NoArgsConstructor;
 public class PaymentsByUser {
     
     private String nickname;
+
     @Builder.Default
     private List<SimplePaymentData> paymentData = new ArrayList<>();
-
-    @Data
-    @AllArgsConstructor
-    public class SimplePaymentData { // esto será su propia clase, pero lo dejo por aquí así
-        private Long paymentId;
-        private Double amount;
-        private Date paymentDate;
-    }
+    
 }
