@@ -29,7 +29,7 @@ public interface IGroupRepo extends JpaRepository<Group, Long> {
                         " LEFT JOIN " + Member.TABLE_NAME + " gm USING(" + Group.COLUMN_ID_NAME + ")" +
                         " WHERE gm. " + Member.COLUMN_REG_USER_ID_NAME + " = :regUserId " +
                         " AND gm." + Member.COLUMN_IS_ADMIN_NAME + " = :isAdmin", nativeQuery = true)
-        List<Group> findAllByMembersAndMembersIsAdmin(
+        List<Group> findAllByRegUserAndMembersIsAdmin(
                         @Param("regUserId") long regUserId,
                         @Param("isAdmin") boolean isAdmin);
 
