@@ -3,7 +3,6 @@ package cbs.wantACoffe.service.group;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -21,7 +20,6 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import cbs.wantACoffe.CommonData;
 import cbs.wantACoffe.entity.Group;
 import cbs.wantACoffe.entity.Member;
-import cbs.wantACoffe.entity.RegisteredUser;
 import cbs.wantACoffe.exceptions.GroupHasNoNameException;
 import cbs.wantACoffe.exceptions.GroupNotExistsException;
 import cbs.wantACoffe.exceptions.MemberHasNoNicknameException;
@@ -34,18 +32,16 @@ import cbs.wantACoffe.repository.IGroupRepo;
 @TestMethodOrder(OrderAnnotation.class)
 public class GroupServiceUnitTest {
     @Autowired
-    private IGroupService groupService;
+    private GroupServiceImpl groupService;
 
     @MockBean
     private IGroupRepo groupRepo;
 
     private static Group testGroup;
-    private static List<RegisteredUser> testUsers;
 
     @BeforeAll
     static void init() {
         testGroup = CommonData.getTestGroup();
-        testUsers = CommonData.getRegUsersForGroupWithSuffix("_GroupServiceIntegrationTest");
     }
 
     @Test
@@ -77,7 +73,6 @@ public class GroupServiceUnitTest {
     @Test
     @Order(2)
     void testSaveGroupNoName() {
-        Group noName = new Group();
         
         assertThrows(GroupHasNoNameException.class,
                 () -> this.groupService.saveGroup(new Group()));

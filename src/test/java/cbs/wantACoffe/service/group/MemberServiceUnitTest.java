@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.mockito.Mockito;
 import org.junit.jupiter.api.Order;
@@ -27,9 +26,7 @@ import cbs.wantACoffe.exceptions.MemberHasNoNicknameException;
 import cbs.wantACoffe.exceptions.MemberNotInGroup;
 import cbs.wantACoffe.exceptions.NullValueInUserDataException;
 import cbs.wantACoffe.exceptions.UsernameEmailAlreadyExistsException;
-import cbs.wantACoffe.repository.IGroupRepo;
 import cbs.wantACoffe.repository.IMemberRepo;
-import cbs.wantACoffe.repository.IRegisteredUserRepo;
 
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;

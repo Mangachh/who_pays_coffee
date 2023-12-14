@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.ActiveProfiles;
 
 import cbs.wantACoffe.CommonData;
@@ -26,7 +27,7 @@ import cbs.wantACoffe.entity.RegisteredUser;
  * Test unitario de {@link AuthServiceImpl}
  */
 @ActiveProfiles("h2_test")
-@SpringBootTest
+@SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @TestMethodOrder(OrderAnnotation.class)
 public class AuthServiceImplUnitTest {
 

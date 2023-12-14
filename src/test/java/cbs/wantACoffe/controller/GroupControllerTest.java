@@ -52,7 +52,7 @@ public class GroupControllerTest {
         private static HttpHeaders header;
         private static RegisteredUser user;
         private static long groupId;
-        /*
+        
         @Test
         @Order(1)
         void addMember() throws URISyntaxException {
@@ -305,6 +305,6 @@ public class GroupControllerTest {
                 assertEquals(HttpStatusCode.valueOf(404), response.getStatusCode());
 
         }
-        */
+        
 
 }

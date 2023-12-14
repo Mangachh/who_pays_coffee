@@ -1,12 +1,10 @@
 package cbs.wantACoffe.service.group;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -38,7 +36,7 @@ import cbs.wantACoffe.repository.IRegisteredUserRepo;
 public class MemberServiceIntegrationTest {
 
     @Autowired
-    private IMemberService memberService;
+    private MemberServiceImpl memberService;
 
     @Autowired
     private IRegisteredUserRepo userRepo;
@@ -126,7 +124,6 @@ public class MemberServiceIntegrationTest {
     @Test
     @Order(5)
     void testFindMemberByGroupIdAndRegUserIdNotExists() {
-        RegisteredUser user = users.get(0);
 
         assertThrows(MemberNotInGroup.class,
                 () -> this.memberService.getMemberByGroupIdAndRegUserId(testGroup.getGroupId(), 2548L));
@@ -182,7 +179,7 @@ public class MemberServiceIntegrationTest {
     @Order(10)
     void testFindAllMembersByGroupId() {
         List<MemberGroup> members = this.memberService.getAllMembersByGroupId(testGroup.getGroupId());
-        assertTrue(true);
+        assertTrue(members.size() > 0);
     }
 
     @Test

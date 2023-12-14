@@ -3,7 +3,6 @@ package cbs.wantACoffe.repository;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -18,10 +17,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import cbs.wantACoffe.CommonData;
-import cbs.wantACoffe.dto.group.IGroupInfo;
-import cbs.wantACoffe.dto.user.IBasicUserInfo;
 import cbs.wantACoffe.entity.AdminUser;
-import cbs.wantACoffe.entity.RegisteredUser;
 
 /**
  * Test unitario par {@link IAdminUserRepo}

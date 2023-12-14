@@ -42,9 +42,6 @@ public class IPaymentRepoTest {
     private IGroupRepo groupRepo;
 
     @Autowired
-    private IMemberRepo memberRepo;
-
-    @Autowired
     private IRegisteredUserRepo regUserRepo;
 
     @Autowired

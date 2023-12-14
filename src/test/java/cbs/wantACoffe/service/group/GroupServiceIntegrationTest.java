@@ -4,7 +4,6 @@ import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -14,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.ActiveProfiles;
 
 import cbs.wantACoffe.CommonData;
@@ -28,12 +28,12 @@ import cbs.wantACoffe.exceptions.UsernameEmailAlreadyExistsException;
 import cbs.wantACoffe.service.user.IRegisteredUserService;
 
 @ActiveProfiles("h2_test")
-@SpringBootTest
+@SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @TestMethodOrder(OrderAnnotation.class)
 public class GroupServiceIntegrationTest {
 
     @Autowired
-    private IGroupService groupService;
+    private GroupServiceImpl groupService;
 
     @Autowired
     private IRegisteredUserService userService;
@@ -43,7 +43,6 @@ public class GroupServiceIntegrationTest {
 
     private static Group testGroup;
     private static List<RegisteredUser> testUsers;
-    private static Member testMember;
 
     @BeforeAll
     static void init() {
@@ -72,7 +71,6 @@ public class GroupServiceIntegrationTest {
         assertEquals(testGroup.getGroupId(), result.getGroupId());
 
         testGroup = result;
-        testMember = member;
     }
     
     @Test

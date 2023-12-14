@@ -13,6 +13,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.ActiveProfiles;
 
 import cbs.wantACoffe.CommonData;
@@ -30,7 +31,7 @@ import cbs.wantACoffe.repository.IRegisteredUserRepo;
 import cbs.wantACoffe.service.auth.IEncryptService;
 
 @ActiveProfiles("h2_test")
-@SpringBootTest
+@SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @TestMethodOrder(OrderAnnotation.class)
 public class AdminUserServiceImplIntegrationTest {    
     

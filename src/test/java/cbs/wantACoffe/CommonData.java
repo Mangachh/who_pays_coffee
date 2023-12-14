@@ -8,8 +8,6 @@ import cbs.wantACoffe.dto.token.Token;
 import cbs.wantACoffe.dto.token.Token.TokenType;
 import cbs.wantACoffe.entity.AdminUser;
 import cbs.wantACoffe.entity.Group;
-import cbs.wantACoffe.entity.Member;
-import cbs.wantACoffe.entity.Payment;
 import cbs.wantACoffe.entity.RegisteredUser;
 
 public class CommonData {
