@@ -160,7 +160,7 @@ public class AdminUserServiceImplIntegrationTest {
     @Test
     @Order(8)
     void findAllGroupsAndCountMembers() {
-        Group group = CommonData.getTestGroup();
+        Group group = CommonData.getTestGroup("_AdminUserServiceImplIntegrationTest");
         Member member = Member.builder()
                 .nickname("Prueba AdminUserIOmpl")
                 .group(group)

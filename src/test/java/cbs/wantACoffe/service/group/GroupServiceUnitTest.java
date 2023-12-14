@@ -41,7 +41,7 @@ public class GroupServiceUnitTest {
 
     @BeforeAll
     static void init() {
-        testGroup = CommonData.getTestGroup();
+        testGroup = CommonData.getTestGroup("_GroupServiceUnitTest");
     }
 
     @Test

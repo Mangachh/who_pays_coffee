@@ -63,7 +63,7 @@ public class IPaymentRepoTest {
 
     @BeforeAll
     static void getGroup() {
-        testGroup = CommonData.getTestGroup();
+        testGroup = CommonData.getTestGroup("_IPaymentRepoTest");
         testUsers = CommonData.getRegUsersForGroupWithSuffix("_IPaymentRepoTest");
         testMembers = new ArrayList<>();
         allPayments = new ArrayList<>();

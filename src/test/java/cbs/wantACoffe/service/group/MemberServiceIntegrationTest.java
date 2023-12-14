@@ -52,7 +52,7 @@ public class MemberServiceIntegrationTest {
     @BeforeAll
     static void populateUsers() {
         users = CommonData.getRegUsersForGroupWithSuffix("_MemberServiceIntegrationTest");
-        testGroup = CommonData.getTestGroup();
+        testGroup = CommonData.getTestGroup("_MemberServiceIntegrationTest");
     }
 
     @BeforeEach

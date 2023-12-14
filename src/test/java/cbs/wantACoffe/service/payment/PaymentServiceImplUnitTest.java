@@ -58,7 +58,7 @@ public class PaymentServiceImplUnitTest {
     static void init() {
         testPayments = new ArrayList<>();
 
-        testGroup = CommonData.getTestGroup();
+        testGroup = CommonData.getTestGroup("_PaymentServiceImplUnitTest");
         testUsers = CommonData.getRegUsersForGroupWithSuffix("_PaymentServiceImplUnitTest");
         testMembers = new ArrayList<>();
         for (RegisteredUser u : testUsers) {

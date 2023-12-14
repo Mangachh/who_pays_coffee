@@ -50,7 +50,7 @@ public class MemberServiceUnitTest {
     @BeforeAll
     static void populateUsers() {
         users = CommonData.getRegUsersForGroupWithSuffix("_MemberServiceUnitTest");
-        testGroup = CommonData.getTestGroup();
+        testGroup = CommonData.getTestGroup("_MemberServiceUnitTest");
     }
 
     @Test

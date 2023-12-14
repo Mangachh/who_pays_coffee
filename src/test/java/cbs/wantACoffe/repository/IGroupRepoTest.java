@@ -53,7 +53,7 @@ public class IGroupRepoTest {
     @BeforeAll
     static void getUsers() {
         members = CommonData.getRegUsersForGroupWithSuffix("_IGroupRepoTest");
-        testGroup = CommonData.getTestGroup();
+        testGroup = CommonData.getTestGroup("_IGroupRepotest");
     }
 
     @Test

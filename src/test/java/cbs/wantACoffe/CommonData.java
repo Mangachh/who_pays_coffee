@@ -44,9 +44,9 @@ public class CommonData {
         return new ArrayList<RegisteredUser>(users);
     }
     
-    public static Group getTestGroup() {
+    public static Group getTestGroup(final String suffix) {
         return Group.builder()
-                .groupName("Grupo test 1")
+                .groupName("Grupo test 1" + suffix)
                 .groupId(88L)
                 .build();
     }

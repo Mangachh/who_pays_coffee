@@ -187,7 +187,7 @@ public class AdminUserServiceImplUnitTest {
     @Test
     @Order(8)
     void findAllGroupsAndCountMembers() {
-        Group group = CommonData.getTestGroup();
+        Group group = CommonData.getTestGroup("_AdminUserServiceImplUnitTest");
         Member member = Member.builder()
                 .nickname("Prueba AdminUserIOmpl")
                 .group(group)

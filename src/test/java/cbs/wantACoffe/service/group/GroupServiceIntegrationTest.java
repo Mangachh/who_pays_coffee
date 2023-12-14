@@ -46,7 +46,7 @@ public class GroupServiceIntegrationTest {
 
     @BeforeAll
     static void init() {
-        testGroup = CommonData.getTestGroup();
+        testGroup = CommonData.getTestGroup("_GroupServiceIntegrationTest");
         testUsers = CommonData.getRegUsersForGroupWithSuffix("_GroupServiceIntegrationTest");
     }
 
