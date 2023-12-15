@@ -7,15 +7,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.Date;
 
-import org.assertj.core.api.UriAssert;
-
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties.Http;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -32,20 +29,19 @@ import cbs.wantACoffe.CommonData;
 import cbs.wantACoffe.dto.MemberGroup;
 import cbs.wantACoffe.dto.group.CreateGroup;
 import cbs.wantACoffe.dto.group.GroupModel;
-import cbs.wantACoffe.dto.payment.IPaymentTotal;
 import cbs.wantACoffe.dto.payment.PaymentModel;
 import cbs.wantACoffe.dto.payment.PaymentsByUser;
 import cbs.wantACoffe.dto.payment.SimplePaymentData;
 import cbs.wantACoffe.dto.user.RegisteredUserToken;
 import cbs.wantACoffe.entity.Group;
-import cbs.wantACoffe.entity.Member;
 import cbs.wantACoffe.entity.RegisteredUser;
+import cbs.wantACoffe.exceptions.GroupNotExistsException;
 import cbs.wantACoffe.exceptions.MemberIsNotAdmin;
 import cbs.wantACoffe.exceptions.MemberNotInGroup;
 import cbs.wantACoffe.exceptions.PaymentHasNoAmountException;
 import cbs.wantACoffe.exceptions.PaymentHasNoDateException;
 import cbs.wantACoffe.exceptions.PaymentHasNoGroupException;
-import lombok.RequiredArgsConstructor;
+import cbs.wantACoffe.exceptions.UserNotExistsException;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("h2_test")
@@ -93,7 +89,8 @@ public class PaymentControllerTest {
 
         headerAdmin = new HttpHeaders();
         headerAdmin.add("Authorization",
-                resAdminToken.getBody().getHead().concat(" ").concat(resAdminToken.getBody().getToken()));
+                resAdminToken.getBody().getHead().concat(" ")
+                        .concat(resAdminToken.getBody().getToken()));
 
         // user no admin
         userNoAdmin = CommonData.getTestUserWithSuffix("_NO_ADMIN_PaymentControllerTest");
@@ -102,7 +99,8 @@ public class PaymentControllerTest {
 
         headerNoAdmin = new HttpHeaders();
         headerNoAdmin.add("Authorization",
-                resNoAdminToken.getBody().getHead().concat(" ").concat(resNoAdminToken.getBody().getToken()));
+                resNoAdminToken.getBody().getHead().concat(" ")
+                        .concat(resNoAdminToken.getBody().getToken()));
 
         // voy a meter un grupo y un miembro y bla bla bla
 
@@ -219,7 +217,7 @@ public class PaymentControllerTest {
         assertEquals(HttpStatus.BAD_REQUEST, resp.getStatusCode());
 
     }
-    
+
     @Test
     @Order(5)
     void testAddPaymentNotAdminTryAddPayment() throws URISyntaxException {
@@ -239,7 +237,7 @@ public class PaymentControllerTest {
         assertEquals(HttpStatus.BAD_REQUEST, resp.getStatusCode());
 
     }
-    
+
     @Test
     @Order(6)
     void testAddPaymentAdminNoDate() throws URISyntaxException {
@@ -259,7 +257,7 @@ public class PaymentControllerTest {
         assertEquals(HttpStatus.BAD_REQUEST, resp.getStatusCode());
 
     }
-    
+
     @Test
     @Order(7)
     void testAddPaymentAdminNoAmount() throws URISyntaxException {
@@ -279,7 +277,7 @@ public class PaymentControllerTest {
         assertEquals(HttpStatus.BAD_REQUEST, resp.getStatusCode());
 
     }
-    
+
     @Test
     @Order(8)
     void testAddPaymentAdminNoGroup() throws URISyntaxException {
@@ -298,7 +296,7 @@ public class PaymentControllerTest {
                 PaymentHasNoGroupException.class);
         assertEquals(HttpStatus.BAD_REQUEST, resp.getStatusCode());
     }
-    
+
     @Test
     @Order(9)
     void testGetUserPayments() throws URISyntaxException {
@@ -312,20 +310,109 @@ public class PaymentControllerTest {
         ResponseEntity<PaymentsByUser> resp = this.restTemplate.exchange(request, PaymentsByUser.class);
         assertEquals(HttpStatus.OK, resp.getStatusCode());
 
-        // sabemos que tenemos pagos, vamos a ver que la lista no está ni vacía 
+        // sabemos que tenemos pagos, vamos a ver que la lista no está ni vacía
         // y que todos son del user determinado
         assertTrue(resp.getBody() != null);
         assertTrue(resp.getBody().getPaymentData().size() > 0);
         assertEquals(resp.getBody().getNickname(), nickname);
     }
 
-    // los que están mal ahorita pffff
+    @Test
+    @Order(10)
+    void testGetUserPaymentsNoUserID() throws URISyntaxException {
+        URI uri = this.getUri(UriType.GET_PAY);
+
+        uri = new URI(uri.toString() + ""
+                .concat("&groupId=").concat(String.valueOf(groupId)));
+        RequestEntity<Void> request = RequestEntity.get(uri).headers(headerNoAdmin).build();
+
+        ResponseEntity<UserNotExistsException> resp = this.restTemplate.exchange(request, UserNotExistsException.class);
+        assertEquals(HttpStatus.NOT_FOUND, resp.getStatusCode());
+    }
+    
+    @Test
+    @Order(11)
+    void testGetUserPaymentsNoGroupId() throws URISyntaxException {
+        URI uri = this.getUri(UriType.GET_PAY);
+
+        final Long id = members[0].getGroupId();
+        uri = new URI(uri.toString() + "?userId=".concat(id.toString()));
+
+        RequestEntity<Void> request = RequestEntity.get(uri).headers(headerNoAdmin).build();
+
+        ResponseEntity<GroupNotExistsException> resp = this.restTemplate.exchange(request,
+                GroupNotExistsException.class);
+        assertEquals(HttpStatus.BAD_REQUEST, resp.getStatusCode());
+    }
+    
+
+
+    @Test
+    @Order(12)
+    void testGetUserPaymentsDate() throws URISyntaxException {
+        URI uri = this.getUri(UriType.GET_PAY);
+        final String nickname = members[0].getNickname();
+        final Long id = members[0].getGroupId();
+        uri = new URI(uri.toString() + "?userId=".concat(id.toString())
+                .concat("&groupId=").concat(String.valueOf(groupId))
+                .concat("&initDate").concat(INIT_DATE.toString())
+                .concat("&endDate=").concat(END_DATE.toString()));
+
+        RequestEntity<Void> request = RequestEntity.get(uri).headers(headerNoAdmin).build();
+
+        ResponseEntity<PaymentsByUser> resp = this.restTemplate.exchange(request, PaymentsByUser.class);
+        assertEquals(HttpStatus.OK, resp.getStatusCode());
+
+        // sabemos que tenemos pagos, vamos a ver que la lista no está ni vacía
+        // y que todos son del user determinado
+        assertTrue(resp.getBody() != null);
+        assertTrue(resp.getBody().getPaymentData().size() > 0);
+        assertEquals(resp.getBody().getNickname(), nickname);
+
+        // miramos que las fechas sean correctas
+        for (SimplePaymentData payment : resp.getBody().getPaymentData()) {
+            assertTrue(
+                    payment.getPaymentDate().compareTo(INIT_DATE) >= 0 &&
+                            payment.getPaymentDate().compareTo(END_DATE) <= 0);
+        }
+    }
+    
+    @Test
+    @Order(13)
+    void testGetUserPaymentsDateNoUserId() throws URISyntaxException {
+        URI uri = this.getUri(UriType.GET_PAY);
+        uri = new URI(uri.toString()
+                .concat("&groupId=").concat(String.valueOf(groupId))
+                .concat("&initDate").concat(INIT_DATE.toString())
+                .concat("&endDate=").concat(END_DATE.toString()));
+
+        RequestEntity<Void> request = RequestEntity.get(uri).headers(headerNoAdmin).build();
+
+        ResponseEntity<UserNotExistsException> resp = this.restTemplate.exchange(request, UserNotExistsException.class);
+        assertEquals(HttpStatus.NOT_FOUND, resp.getStatusCode());
+    }
+
+    @Test
+    @Order(14)
+    void testGetUserPaymentsDateNoGroup() throws URISyntaxException {
+        URI uri = this.getUri(UriType.GET_PAY);
+        final Long id = members[0].getGroupId();
+        uri = new URI(uri.toString() + "?userId=".concat(id.toString())
+                .concat("&initDate").concat(INIT_DATE.toString())
+                .concat("&endDate=").concat(END_DATE.toString()));
+
+        RequestEntity<Void> request = RequestEntity.get(uri).headers(headerNoAdmin).build();
+
+        ResponseEntity<GroupNotExistsException> resp = this.restTemplate.exchange(request, GroupNotExistsException.class);
+        assertEquals(HttpStatus.BAD_REQUEST, resp.getStatusCode());
+
+    }
 
     enum UriType {
         ADD_PAY, GET_PAY
     }
 
-    private URI getUri(final UriType type) throws URISyntaxException{
+    private URI getUri(final UriType type) throws URISyntaxException {
         return switch (type) {
             case ADD_PAY -> new URI(address + "/payments/add");
             case GET_PAY -> new URI(address + "/payments/get/by/user");
