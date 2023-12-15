@@ -105,7 +105,7 @@ public class PaymentController {
         // O SU id no es igual al id que queremos meter
         log.info("Checking if user '{}' who inserts the payment is admin of the group", userPayed.getUserId());
         if (memberRequester.isAdmin() == false &&
-                memberRequester.getMemberId().equals(memberPayed.getMemberId())) {
+                memberRequester.getMemberId().equals(memberPayed.getMemberId()) == false) {
             throw new MemberIsNotAdmin();
         }
 
