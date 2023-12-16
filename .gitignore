@@ -2,10 +2,11 @@ HELP.md
 target/*
 
 ## this way the jar is included in the git
-!target/*jar
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+## ya no quiero el jar, fuera
+# !target/*jar
+# !.mvn/wrapper/maven-wrapper.jar
+# !**/src/main/**/target/
+# !**/src/test/**/target/
 
 ## docs
 entrega*
