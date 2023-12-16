@@ -148,6 +148,7 @@ public class PaymentControllerTest {
         ResponseEntity<MemberGroup[]> resGetMembs = restTemplate.exchange(reqGetMembers, MemberGroup[].class);
         assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
         members = resGetMembs.getBody();
+        System.out.println(members);
 
     }
 
@@ -160,7 +161,7 @@ public class PaymentControllerTest {
         // miembro
         for (MemberGroup m : members) {
             RequestEntity<PaymentModel> request = this.createPayModel(
-                    uri, headerAdmin, 27.5D, INIT_DATE, groupId, m.getUserId());
+                    uri, headerAdmin, 27.5D, INIT_DATE, groupId, m.getMemberId());
 
             ResponseEntity<String> response = this.restTemplate.exchange(request, String.class);
             assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -169,7 +170,7 @@ public class PaymentControllerTest {
         // meteremos pagos en fecha final
         for (MemberGroup m : members) {
             RequestEntity<PaymentModel> request = this.createPayModel(
-                    uri, headerAdmin, 21.5D, END_DATE, groupId, m.getUserId());
+                    uri, headerAdmin, 21.5D, END_DATE, groupId, m.getMemberId());
 
             ResponseEntity<String> response = this.restTemplate.exchange(request, String.class);
             assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -178,7 +179,7 @@ public class PaymentControllerTest {
         // pagos después de las fechas que usamos de test
         for (MemberGroup m : members) {
             RequestEntity<PaymentModel> request = this.createPayModel(
-                    uri, headerAdmin, 7.22D, BEFORE_INIT_DATE, groupId, m.getUserId());
+                    uri, headerAdmin, 7.22D, BEFORE_INIT_DATE, groupId, m.getMemberId());
 
             ResponseEntity<String> response = this.restTemplate.exchange(request, String.class);
             assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -186,7 +187,7 @@ public class PaymentControllerTest {
 
         for (MemberGroup m : members) {
             RequestEntity<PaymentModel> request = this.createPayModel(
-                    uri, headerAdmin, 666D, AFTER_END_DATE, groupId, m.getUserId());
+                    uri, headerAdmin, 666D, AFTER_END_DATE, groupId, m.getMemberId());
 
             ResponseEntity<String> response = this.restTemplate.exchange(request, String.class);
             assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -205,7 +206,7 @@ public class PaymentControllerTest {
             }
 
             RequestEntity<PaymentModel> request = this.createPayModel(
-                    uri, headerNoAdmin, 45.4D, END_DATE, groupId, m.getUserId());
+                    uri, headerNoAdmin, 45.4D, END_DATE, groupId, m.getMemberId());
 
             ResponseEntity<String> response = this.restTemplate.exchange(request, String.class);
             assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -237,7 +238,7 @@ public class PaymentControllerTest {
                         .amount(25D)
                         .paymentDate(INIT_DATE)
                         .groupId(55555L)
-                        .memberId(members[0].getUserId())
+                        .memberId(members[0].getMemberId())
                         .build());
 
         ResponseEntity<MemberNotInGroup> resp = this.restTemplate.exchange(request, MemberNotInGroup.class);
@@ -257,7 +258,7 @@ public class PaymentControllerTest {
                         .amount(25D)
                         .paymentDate(INIT_DATE)
                         .groupId(55555L)
-                        .memberId(members[0].getUserId())
+                        .memberId(members[0].getMemberId())
                         .build());
 
         ResponseEntity<MemberIsNotAdmin> resp = this.restTemplate.exchange(request, MemberIsNotAdmin.class);
@@ -276,7 +277,7 @@ public class PaymentControllerTest {
                 .body(PaymentModel.builder()
                         .amount(25D)
                         .groupId(groupId)
-                        .memberId(members[0].getUserId())
+                        .memberId(members[0].getMemberId())
                         .build());
 
         ResponseEntity<PaymentHasNoDateException> resp = this.restTemplate.exchange(request,
@@ -296,7 +297,7 @@ public class PaymentControllerTest {
                 .body(PaymentModel.builder()
                         .paymentDate(END_DATE)
                         .groupId(groupId)
-                        .memberId(members[0].getUserId())
+                        .memberId(members[0].getMemberId())
                         .build());
 
         ResponseEntity<PaymentHasNoAmountException> resp = this.restTemplate.exchange(request,
@@ -316,7 +317,7 @@ public class PaymentControllerTest {
                 .body(PaymentModel.builder()
                         .amount(25D)
                         .paymentDate(AFTER_END_DATE)
-                        .memberId(members[0].getUserId())
+                        .memberId(members[0].getMemberId())
                         .build());
 
         ResponseEntity<PaymentHasNoGroupException> resp = this.restTemplate.exchange(request,
@@ -328,14 +329,16 @@ public class PaymentControllerTest {
     @Order(9)
     void testGetUserPayments() throws URISyntaxException {
         final String nickname = members[0].getNickname();
-        final Long id = members[0].getGroupId();
+        final Long id = members[0].getMemberId();
 
         URI uri = new URI(this.getUriString(UriType.GET_USER_PAY)
-                .concat("?userId=").concat(id.toString())
+                .concat("?memberId=").concat(id.toString())
                 .concat("&groupId=").concat(String.valueOf(groupId)));
+        System.out.println(uri.toString());
         RequestEntity<Void> request = RequestEntity.get(uri).headers(headerNoAdmin).build();
-
+        
         ResponseEntity<PaymentsByUser> resp = this.restTemplate.exchange(request, PaymentsByUser.class);
+        System.out.println(resp);
         assertEquals(HttpStatus.OK, resp.getStatusCode());
 
         // sabemos que tenemos pagos, vamos a ver que la lista no está ni vacía
@@ -347,7 +350,7 @@ public class PaymentControllerTest {
 
     @Test
     @Order(10)
-    void testGetUserPaymentsNoUserID() throws URISyntaxException {
+    void testGetUserPaymentsNoMemberId() throws URISyntaxException {
         URI uri = new URI(this.getUriString(UriType.GET_USER_PAY)
                 .concat("&groupId=").concat(String.valueOf(groupId)));
         RequestEntity<Void> request = RequestEntity.get(uri).headers(headerNoAdmin).build();
@@ -362,7 +365,7 @@ public class PaymentControllerTest {
 
         final Long id = members[0].getGroupId();
         URI uri = new URI(this.getUriString(UriType.GET_USER_PAY)
-                .concat("?userId=").concat(id.toString()));
+                .concat("?memberId=").concat(id.toString()));
 
         RequestEntity<Void> request = RequestEntity.get(uri).headers(headerNoAdmin).build();
 
@@ -376,9 +379,9 @@ public class PaymentControllerTest {
     void testGetUserPaymentsDate() throws URISyntaxException {
 
         final String nickname = members[0].getNickname();
-        final Long id = members[0].getGroupId();
+        final Long id = members[0].getMemberId();
         URI uri = new URI(this.getUriString(UriType.GET_USER_PAY)
-                .concat("?userId=").concat(id.toString())
+                .concat("?memberId=").concat(id.toString())
                 .concat("&groupId=").concat(String.valueOf(groupId))
                 .concat("&initDate").concat(INIT_DATE.toString())
                 .concat("&endDate=").concat(END_DATE.toString()));
@@ -404,7 +407,7 @@ public class PaymentControllerTest {
 
     @Test
     @Order(13)
-    void testGetUserPaymentsDateNoUserId() throws URISyntaxException {
+    void testGetUserPaymentsDateNoMemberId() throws URISyntaxException {
         URI uri = new URI(this.getUriString(UriType.GET_USER_PAY)
                 .concat("&groupId=").concat(String.valueOf(groupId))
                 .concat("&initDate").concat(INIT_DATE.toString())
@@ -421,7 +424,7 @@ public class PaymentControllerTest {
     void testGetUserPaymentsDateNoGroup() throws URISyntaxException {
         final Long id = members[0].getGroupId();
         URI uri = new URI(this.getUriString(UriType.GET_USER_PAY)
-                .concat("?userId=").concat(id.toString())
+                .concat("?memberId=").concat(id.toString())
                 .concat("&initDate").concat(INIT_DATE.toString())
                 .concat("&endDate=").concat(END_DATE.toString()));
 
@@ -520,7 +523,7 @@ public class PaymentControllerTest {
     private String getUriString(final UriType type) throws URISyntaxException {
         return switch (type) {
             case ADD_PAY -> address + "/payments/add";
-            case GET_USER_PAY -> address + "/payments/get/by/user";
+            case GET_USER_PAY -> address + "/payments/get/by/member";
             case GET_GROUP_PAY -> address + "/payments/get/by/group";
             case DELETE_PAY -> address + "/payments/delete";
         };

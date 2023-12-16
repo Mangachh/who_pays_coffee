@@ -71,7 +71,7 @@ public class MemberServiceImpl implements IMemberService {
         List<Member> members = this.repo.findAllMembersByGroupGroupId(groupId);
         return members.stream().map(m -> MemberGroup.builder()
                 .groupId(groupId)
-                .userId(m.getMemberId())
+                .memberId(m.getMemberId())
                 .nickname(m.getNickname())
                 .username(m.getRegUser() == null ? null : m.getRegUser().getUsername())
                 .isAdmin(m.isAdmin())

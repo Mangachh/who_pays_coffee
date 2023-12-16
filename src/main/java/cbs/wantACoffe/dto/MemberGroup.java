@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 public class MemberGroup {
     
     private Long groupId;
-    private Long userId;
+    private Long memberId;
     private String nickname;
     private String username;
     

@@ -82,7 +82,7 @@ public class PaymentController {
 
         // Bien, este es el usuario que mete el pago en la app
         RegisteredUser userPayed = this.authService.getUserByToken(token);
-        log.info("User {} trying to make a payment", userPayed.getUsername());
+        log.info("User {} trying to make a payment to group {}", userPayed.getUsername(), paymentData.getGroupId());
 
         // a partir de este usuario, pillamos su membresía en el grupo determinado
         Member memberRequester = this.memberService.getMemberByGroupIdAndRegUserId(
@@ -96,20 +96,20 @@ public class PaymentController {
 
         // comprobamos que el miembro de pago esté en el grupo donde queremos meter pago
         // nunca está de más
-        log.info("Checking if member '{}' who inserts the payment is in the selected group", userPayed.getUserId());
+        log.info("Checking if member '{}' who inserts the payment is in the selected group", userPayed.getUsername());
         if (memberPayed.getGroup().getGroupId().equals(paymentData.getGroupId()) == false) {
             throw new MemberNotInGroup();
         }
 
         // SI el miembro que mete el pago en la app NO es admin
         // O SU id no es igual al id que queremos meter
-        log.info("Checking if user '{}' who inserts the payment is admin of the group", userPayed.getUserId());
+        log.info("Checking if user '{}' who inserts the payment is admin of the group", userPayed.getUsername());
         if (memberRequester.isAdmin() == false &&
                 memberRequester.getMemberId().equals(memberPayed.getMemberId()) == false) {
             throw new MemberIsNotAdmin();
         }
 
-        log.info("Member '{}' is saving a payment", userPayed.getUserId());
+        log.info("Member '{}' is saving a payment", userPayed.getUsername());
         // guardamos
         this.paymentService.savePayment(
                 Payment.builder()
@@ -134,7 +134,7 @@ public class PaymentController {
      * Es una buena manera de proteger os datos
      * 
      * @param token    -> token de sesión
-     * @param userId   -> id
+     * @param memberId   -> id
      * @param groupId  -> id del grupo donde está el requester
      * @param initDate -> opcional. Fecha de inicio de los pagos.
      * @param endDate  -> opcional. Fecha final de los pagos
@@ -144,17 +144,17 @@ public class PaymentController {
      * @throws InvalidTokenFormat
      * @throws MemberNotInGroup
      */
-    @GetMapping("get/by/user")
+    @GetMapping("get/by/member")
     public ResponseEntity<PaymentsByUser> getUserPayments(
             @RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token,
-            @RequestParam(name = "userId") Long userId,
+            @RequestParam(name = "memberId") Long memberId,
             @RequestParam(name = "groupId") Long groupId,
             @RequestParam(name = "initDate", required = false) Date initDate,
             @RequestParam(name = "endDate", required = false) Date endDate)
             throws UserNotExistsException, GroupNotExistsException, InvalidTokenFormat, MemberNotInGroup {
         log.info("Getting payments by member");
         // checkers????
-        if (userId == null) {
+        if (memberId == null) {
             throw new UserNotExistsException(); // de momento dejamos esta
         }
 
@@ -168,7 +168,7 @@ public class PaymentController {
         Member requestMember = this.getMemberByToken(groupId, token);
 
         // pillamos el miembro de quien queremos saber los pagos
-        Member payedMember = this.memberService.getMemberById(userId);
+        Member payedMember = this.memberService.getMemberById(memberId);
         log.info("{} member wants to know the payments from {}",
                 requestMember.getNickname(),
                 payedMember.getNickname());
@@ -231,6 +231,7 @@ public class PaymentController {
 
         // get the requester member
         Member requesterMember = this.getMemberByToken(groupId, token);
+        log.info("Member {} whants to know the payments from group {}", requesterMember.getNickname(), groupId);
 
         final List<Payment> payments;
         if (initDate == null || endDate == null) {
@@ -277,7 +278,8 @@ public class PaymentController {
 
         // get the requester member
         Member requesterMember = this.getMemberByToken(groupId, token);
-
+        log.info("Member {} whants to know the totals payments from group {}", requesterMember.getNickname(), groupId);
+            
         List<IPaymentTotal> payments = null;
         if (initDate == null || endDate == null) {
             log.info("No dates, so looking for all the payments");
