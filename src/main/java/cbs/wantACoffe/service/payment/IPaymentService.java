@@ -88,13 +88,12 @@ public interface IPaymentService {
      * Lista
      * @param groupId
      * @param memberNickname
-     * @deprecated
      * @return
      */
     List<IPaymentTotal> getMemberPaymentTotals(final Long groupId, final String memberNickname);
 
     /**
-     * @deprecated
+     * 
      * @param groupId
      * @param memberNickname
      * @param initDate

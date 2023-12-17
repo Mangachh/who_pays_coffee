@@ -76,7 +76,8 @@ public class PaymentController {
     public ResponseEntity<String> addPayment(
             @RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token,
             @RequestBody PaymentModel paymentData)
-            throws InvalidTokenFormat, UserNotExistsException, MemberNotInGroup, MemberIsNotAdmin, PaymentHasNoAmountException, PaymentHasNoDateException, PaymentHasNoGroupException {
+            throws InvalidTokenFormat, UserNotExistsException, MemberNotInGroup, MemberIsNotAdmin,
+            PaymentHasNoAmountException, PaymentHasNoDateException, PaymentHasNoGroupException {
 
         // user who makes the payment
 
@@ -134,7 +135,7 @@ public class PaymentController {
      * Es una buena manera de proteger os datos
      * 
      * @param token    -> token de sesión
-     * @param memberId   -> id
+     * @param memberId -> id
      * @param groupId  -> id del grupo donde está el requester
      * @param initDate -> opcional. Fecha de inicio de los pagos.
      * @param endDate  -> opcional. Fecha final de los pagos
@@ -279,7 +280,7 @@ public class PaymentController {
         // get the requester member
         Member requesterMember = this.getMemberByToken(groupId, token);
         log.info("Member {} whants to know the totals payments from group {}", requesterMember.getNickname(), groupId);
-            
+
         List<IPaymentTotal> payments = null;
         if (initDate == null || endDate == null) {
             log.info("No dates, so looking for all the payments");
@@ -293,10 +294,37 @@ public class PaymentController {
 
     }
 
+    // bien me he dejado este...
+    @GetMapping("get/totals/by/member")
+    public ResponseEntity<List<IPaymentTotal>> getTotalsByMember(
+            @RequestHeader(AuthUtils.HEADER_AUTH_TXT) String token,
+            @RequestParam(name = "groupId") Long groupId,
+            @RequestParam(name = "memberNickname") String nickname,
+            @RequestParam(name = "initDate", required = false) Date initDate,
+            @RequestParam(name = "endDate", required = false) Date endDate) throws MemberNotInGroup, InvalidTokenFormat, UserNotExistsException {
+        
+        // get the requester member
+        Member requesterMember = this.getMemberByToken(groupId, token);
+
+        log.info("Member {} whants to know the totals payments from group {}", requesterMember.getNickname(), groupId);
+
+        List<IPaymentTotal> payments = null;
+
+        if (initDate == null || endDate == null) {
+            log.info("No dates, so looking for all the payments");
+            payments = this.paymentService.getMemberPaymentTotals(groupId, nickname);
+        } else {
+            log.info("Dates found. Looking for payments between dates");
+            payments = this.paymentService.getMemberPaymentTotals(groupId, nickname, initDate, endDate);
+        }
+        return ResponseEntity.ok().body(payments);
+    }
+
     /**
      * Elimina un pago de un grupo determinado con un id determinado
-     * @param token -> token de usuario
-     * @param groupId -> grupo en el que se quita el pago
+     * 
+     * @param token     -> token de usuario
+     * @param groupId   -> grupo en el que se quita el pago
      * @param paymentId -> id del pago
      * @return
      * @throws MemberNotInGroup
@@ -319,7 +347,6 @@ public class PaymentController {
         return ResponseEntity.ok("Done");
     }
 
-    
     /**
      * Pilla un miembro de un grupo a partir del token.
      * También comprueba si el miembro pertence al grupo determinado
