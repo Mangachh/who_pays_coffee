@@ -56,12 +56,12 @@ public interface IPaymentRepo extends JpaRepository<Payment, Long> {
                         @Param("endDate") Date endDate);
 
         @Query(value = "SELECT " + Payment.COLUMN_MEMBER_PAYED_NAME_NAME + " AS nickname, " + "SUM("
-                        + Payment.COLUMN_AMOUNT_NAME + ") AS \"totalAmount\", "
+                        + Payment.COLUMN_AMOUNT_NAME + ") AS totalAmount, "
                         + Payment.COLUMN_MEMBER_PAYED_ID_NAME + " AS memberId" +
                         " FROM " + Payment.TABLE_NAME +
                         " WHERE " + Payment.COLUMN_GROUP_ID_NAME + " = :groupId" +
                         " AND " + Payment.COLUMN_MEMBER_PAYED_NAME_NAME + " = :memberNickname" +
-                        " GROUP BY " + Payment.COLUMN_MEMBER_PAYED_NAME_NAME, nativeQuery = true)
+                        " GROUP BY " + Payment.COLUMN_MEMBER_PAYED_ID_NAME  + ", " + Payment.COLUMN_MEMBER_PAYED_NAME_NAME, nativeQuery = true)
         List<IPaymentTotal> findTotalsByMemberAndGroup(
                         @Param("groupId") Long groupId,
                         @Param("memberNickname") String memberNickname);
@@ -81,7 +81,7 @@ public interface IPaymentRepo extends JpaRepository<Payment, Long> {
                         " WHERE " + Payment.COLUMN_GROUP_ID_NAME + " = :groupId" +
                         " AND " + Payment.COLUMN_MEMBER_PAYED_NAME_NAME + " = :memberNickname" +
                         " AND " + Payment.COLUMN_DATE_NAME + " BETWEEN :initDate AND :endDate" +
-                        " GROUP BY " + Payment.COLUMN_MEMBER_PAYED_NAME_NAME, nativeQuery = true)
+                        " GROUP BY " + Payment.COLUMN_MEMBER_PAYED_ID_NAME  + ", " + Payment.COLUMN_MEMBER_PAYED_NAME_NAME, nativeQuery = true)
         List<IPaymentTotal> findTotalsByMemberAndGroupBetweenDates(
                         @Param("groupId") Long groupId,
                         @Param("memberNickname") String memberNickname,
