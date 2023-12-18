@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>cbs.final</groupId>
 	<artifactId>coffee</artifactId>
-	<version>1.0</version>
+	<version>_gl_1.0</version>
 	<name>coffee</name>
 	<description>DAM&apos;s final project</description>
 	<properties>

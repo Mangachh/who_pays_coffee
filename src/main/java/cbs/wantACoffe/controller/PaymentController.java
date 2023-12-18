@@ -369,7 +369,7 @@ public class PaymentController {
 
         log.info("Checking if member {} is in group", member.getNickname());
         // check if member in group, again, better to be sure than sorry
-        if (member.getGroup().getGroupId() != groupId) {
+        if (member.getGroup().getGroupId().equals(groupId) == false) {
             throw new MemberNotInGroup();
         }
         return member;
